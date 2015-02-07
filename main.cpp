@@ -20,7 +20,7 @@ void collect_sources_referenced_by(path script_name, vector<path>& sources)
     // 根据时间戳决定是否编译该.cpp文件(生成早的文件数值小)
     if (!exists(obj_name) || last_write_time(script_name) >= last_write_time(obj_name)) {
         cout << "generate " << obj_name << endl;
-        cout << "source time: " << last_write_time(script_name) << " obj time: " << last_write_time(obj_name) << endl;
+        //cout << "source time: " << last_write_time(script_name) << " obj time: " << last_write_time(obj_name) << endl;
         // 构造编译器命令行
         string cmd_line;
         cmd_line = "g++ -std\\=c++11 -fmax-errors=1 -c -o "; // -fmax-errors=1让编译器在发现一个错误时就停下来

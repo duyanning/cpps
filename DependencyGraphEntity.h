@@ -1,0 +1,9 @@
+#ifndef DEPENDENCYGRAPHENTITY_H
+#define DEPENDENCYGRAPHENTITY_H
+
+class DependencyGraphEntity {
+};
+
+
+
+#endif // DEPENDENCYGRAPHENTITY_H
