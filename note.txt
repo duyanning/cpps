@@ -1,0 +1,23 @@
+* 编译boost::filesystem
+下载boost_1_57_0.7z（从源里直接安装老版本的boost，在编译用户程序时，会遇到问题）
+./bootstrap.sh --show-libraries 看有哪些库
+./bootstrap.sh --with-libraries=filesystem 说我只想要filesystem
+sudo ./b2 install 安装
+
+文档在这里 http://www.boost.org/doc/libs/1_57_0/more/getting_started/unix-variants.html
+5.1   Easy Build and Install
+
+
+* 运行时遇到问题
+duyanning@du-ASUS ~/work/cpps/debug $ cpps hi.cpp 
+cpps: error while loading shared libraries: libboost_filesystem.so.1.57.0: cannot open shared object file: No such file or directory
+
+这个文件明明有，位于/usr/local/lib
+
+sudo tee /etc/ld.so.conf.d/locallib.conf
+输入
+/usr/local/lib 回车
+Ctrl-D
+
+执行
+sudo ldconfig
