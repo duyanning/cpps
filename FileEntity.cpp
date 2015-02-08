@@ -8,6 +8,15 @@ FileEntity::FileEntity(string name, fs::path path)
 {
 }
 
+FileEntityPtr makeFileEntity(string name, fs::path path)
+{
+    return FileEntityPtr(new FileEntity(name, path));
+}
+
+fs::path FileEntity::path()
+{
+    return m_path;
+}
 
 void FileEntity::update()
 {

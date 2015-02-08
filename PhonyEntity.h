@@ -10,6 +10,8 @@ public:
     time_t timestamp();
 };
 
-typedef shared_ptr<PhonyEntity> PPhonyEntity;
+typedef shared_ptr<PhonyEntity> PhonyEntityPtr;
+
+PhonyEntityPtr makePhonyEntity(string name);
 
 #endif // PHONYENTITY_H

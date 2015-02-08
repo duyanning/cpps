@@ -1,39 +1,36 @@
 #include "std.h"
 #include "Cpp2ObjAction.h"
+#include "FileEntity.h"
 
 void Cpp2ObjAction::execute(PDependencyGraphEntity target,
                             vector<PDependencyGraphEntity>&  allPre, vector<PDependencyGraphEntity>& changedPre)
 {
-}
-    // def execute(self, target, allPre, changedPre):
-    //     Action.execute(self, target, allPre, changedPre)
+    // 构造命令行
+    FileEntityPtr cpp = static_pointer_cast<FileEntity>(allPre[0]);
+    fs::path cpp_path = cpp->path();
 
-    //     cpp_path = allPre[0].path()
-    //     obj_path = target.path()
-    //     dep_path = obj_path.replace(".o", ".d")
+    FileEntityPtr obj = static_pointer_cast<FileEntity>(target);
+    fs::path obj_path = obj->path();
 
-    //     if self.m_prj.type() == "dll":
-    //         cmd = "g++ -Wall -c -fPIC -o"
-    //     else:
-    //         cmd = "g++ -Wall -c -o"
+    fs::path dep_path = obj_path.parent_path();
+    dep_path += obj_path.stem();
+    dep_path += ".d";
 
-    //     cmd += " " + obj_path
+    string cmd = "g++ -Wall -c -o";
+
+    cmd += " " + obj_path.string();
 
     //     for p in allPre:
     //         if p.path().endswith(".cpp"):
     //             cmd += " " + p.path()
+    cmd += cpp_path.string();
 
-    //     optMgr = OptionManager()
-    //     options = optMgr.getOptionFor(cpp_path, self.m_prj.activeConfig())
+    cmd += " -fpch-deps -MMD -MF " + dep_path.string();
 
-    //     if not options == "":
-    //         cmd = cmd + " " + options
+    // 产生.o文件和.d文件
+    int gcc_status;
+    gcc_status = system(cmd.c_str());
+    if (gcc_status)
+        throw gcc_status;
 
-    //     cmd += " -fpch-deps -MMD -MF " + dep_path
-
-    //     #print cmd
-    //     print "Compiling " + os.path.basename(cpp_path) + " ..."
-    //     #os.system(cmd)
-    //     retcode = call(cmd, shell=True)
-    //     if retcode != 0:
-    //         self.m_prj.setCompileOk(False)
+}

@@ -18,11 +18,16 @@
 #include <regex>
 
 #include <boost/filesystem.hpp>
+#include <boost/program_options.hpp>
+
 
 #include <unistd.h>
 #include <sys/types.h>
 #include <pwd.h>
 
+#include "MiniLogger.h"
+
 using namespace std;
 //using namespace boost;
 namespace fs = boost::filesystem;
+namespace po = boost::program_options;

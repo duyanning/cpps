@@ -9,10 +9,13 @@ public:
     void update();
     time_t timestamp();
     time_t actualFileTimestamp();
+    fs::path path();
 private:
     fs::path m_path;
 };
 
-typedef shared_ptr<FileEntity> PFileEntity;
+typedef shared_ptr<FileEntity> FileEntityPtr;
+
+FileEntityPtr makeFileEntity(string name, fs::path path);
 
 #endif // FILEENTITY_H

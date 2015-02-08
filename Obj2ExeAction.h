@@ -9,5 +9,7 @@ public:
 
 };
 
+typedef shared_ptr<Obj2ExeAction> Obj2ExeActionPtr;
+Obj2ExeActionPtr makeObj2ExeAction();
 
 #endif // OBJ2EXEACTION_H

@@ -2,7 +2,7 @@
 #define ACTION_H
 
 class Action;
-typedef shared_ptr<Action> PAction;
+typedef shared_ptr<Action> ActionPtr;
 
 #include "DependencyGraphEntity.h"
 

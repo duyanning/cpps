@@ -1,41 +1,31 @@
 #include "std.h"
 #include "Obj2ExeAction.h"
+#include "FileEntity.h"
+
+Obj2ExeActionPtr makeObj2ExeAction()
+{
+    return Obj2ExeActionPtr(new Obj2ExeAction);
+}
 
 void Obj2ExeAction::execute(PDependencyGraphEntity target,
                             vector<PDependencyGraphEntity>&  allPre, vector<PDependencyGraphEntity>& changedPre)
 {
+    // 构造命令行
+    FileEntityPtr exe = static_pointer_cast<FileEntity>(target);
+    fs::path exe_path = exe->path();
+
+    string cmd = "g++ -o ";
+
+    cmd += exe_path.string();
+
+    for (auto p : allPre) {
+        FileEntityPtr f = static_pointer_cast<FileEntity>(p);
+        cmd = cmd + " " + f->path().string();
+    }
+
+    // 链接
+    int gcc_status;
+    gcc_status = system(cmd.c_str());
+    if (gcc_status)
+        throw gcc_status;
 }
-//     def execute(self, target, allPre, changedPre):
-//         if not self.m_prj.getCompileOk():
-//             return
-
-//         Action.execute(self, target, allPre, changedPre)
-
-//         exe_path = target.path()
-//         if self.m_prj.type() == "dll":
-//             cmd = "g++ -shared -fPIC -o "
-//         elif self.m_prj.type() == "lib":
-//             cmd = "ar rcs "
-//         else:
-//             cmd = "g++ -o "
-//         cmd += exe_path
-//         for p in allPre:
-//             if p.path().endswith(".o"):
-//                 cmd = cmd + " " + p.path()
-
-// #         for lib in self.m_prj.librariesList():
-// #             cmd = cmd + "-l" + lib + " "
-
-
-//         optMgr = OptionManager()
-//         options = optMgr.getOptionFor(exe_path, self.m_prj.activeConfig())
-
-//         if not options == "":
-//             cmd = cmd + " " + options
-
-//         print "Linking..."
-//         #print cmd
-//         #os.system(cmd)
-//         retcode = call(cmd, shell=True)
-//         if retcode != 0:
-//             self.m_prj.setLinkOk(False)

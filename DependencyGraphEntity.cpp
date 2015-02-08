@@ -39,3 +39,20 @@ void DependencyGraphEntity::executeActions(PDependencyGraphEntity target, vector
     for (auto a : actions)
         a->execute(target, allPre, changedPre);
 }
+
+    // def show(self, level=0, indent="  "):
+    //     print level*indent, self.name()
+
+    //     for p in self.prerequisiteList:
+    //         p.show(level+1)
+
+void DependencyGraphEntity::show(int level, string indent)
+{
+    for (int i = 0; i < level; i++)
+        cout << indent;
+    cout << name() << endl;
+
+    for (auto p : prerequisiteList)
+        p->show(level + 1);
+}
+
