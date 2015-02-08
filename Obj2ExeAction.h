@@ -1,13 +1,13 @@
-#ifndef CPP2OBJACTION_H
-#define CPP2OBJACTION_H
+#ifndef OBJ2EXEACTION_H
+#define OBJ2EXEACTION_H
 
 #include "Action.h"
 
-class Cpp2ObjAction : public Action {
+class Obj2ExeAction : public Action {
 public:
     void execute(PDependencyGraphEntity target, vector<PDependencyGraphEntity>&  allPre, vector<PDependencyGraphEntity>& changedPre);
+
 };
 
-typedef shared_ptr<Cpp2ObjAction> PCpp2ObjAction;
 
-#endif // CPP2OBJACTION_H
+#endif // OBJ2EXEACTION_H

@@ -22,3 +22,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <pwd.h>
+
+using namespace std;
+//using namespace boost;
+namespace fs = boost::filesystem;

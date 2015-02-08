@@ -1,11 +1,13 @@
 #include "std.h"
+#include "FileEntity.h"
+#include "PhonyEntity.h"
+#include "Obj2ExeAction.h"
+#include "Cpp2ObjAction.h"
+#include "UpdateDependencyGraphAction.h"
 
-using namespace std;
-using namespace boost::filesystem;
+fs::path build_dir;
 
-path build_dir;
-
-void collect_sources_referenced_by(path script_name, vector<path>& sources)
+void collect_sources_referenced_by(fs::path script_name, vector<fs::path>& sources)
 {
     // 如果已经处理过该文件，就不要再处理，避免循环引用
     if (find(sources.begin(), sources.end(), script_name) != sources.end()) {
@@ -14,7 +16,7 @@ void collect_sources_referenced_by(path script_name, vector<path>& sources)
     }
     
 
-    path obj_name = build_dir;
+    fs::path obj_name = build_dir;
     obj_name /= script_name.stem();
     obj_name += ".o";
     // 根据时间戳决定是否编译该.cpp文件(生成早的文件数值小)
@@ -50,7 +52,7 @@ void collect_sources_referenced_by(path script_name, vector<path>& sources)
         if (regex_search(line, matches, pat)) {
             cout << "found " << matches[1] << " in " << script_name << endl;
             // 一个.cpp文件中引用的另一个.cpp文件，是以相对路径的形式指明的
-            path a = script_name;
+            fs::path a = script_name;
             a.remove_filename();
             a /= matches.str(1);
             if (exists(a)) {
@@ -73,7 +75,7 @@ int main(int argc, char* argv[])
         return 0;
     }
 
-    path script_name(argv[1]);
+    fs::path script_name(argv[1]);
 
     if (!exists(script_name)) {
         cout << "No such file.\n";
@@ -86,26 +88,70 @@ int main(int argc, char* argv[])
     }
 
     // 确保~/.cpps/cache的存在
-    path home_dir(getpwuid(getuid())->pw_dir);
-    path cache_dir_name(".cpps/cache");
-    path cache_dir = home_dir;
+    fs::path home_dir(getpwuid(getuid())->pw_dir);
+    fs::path cache_dir_name(".cpps/cache");
+    fs::path cache_dir = home_dir;
     cache_dir /= cache_dir_name;
     create_directories(cache_dir);
 
     // 在cache中创建build文件夹
-    path script_dir = canonical(script_name).parent_path().relative_path();
+    fs::path script_dir = canonical(script_name).parent_path().relative_path();
     build_dir = cache_dir;
     build_dir /= script_dir;
     create_directories(build_dir);
 
     // 确定可执行文件的名字
-    path exe_name = build_dir;
+    fs::path exe_name = build_dir;
     exe_name /= script_name.stem();
 
 
     // 确定所有.cpp文件的名字
-    vector<path> sources; // 绝对路径
+    vector<fs::path> sources; // 绝对路径
     collect_sources_referenced_by(canonical(script_name), sources);
+
+
+    PFileEntity exe {new FileEntity(exe_name.filename().string(), exe_name)};
+    exe->addAction(PAction(new Obj2ExeAction));
+    PPhonyEntity update_dependency{new PhonyEntity("update dependency graph")}; 
+
+    // for src_path in srcListOneByOne:
+    for (auto src_path : sources) {
+
+        // 根据.cpp文件的名字，确定.o文件的名字
+        fs::path obj_path = build_dir;
+        obj_path /= src_path.stem();
+        obj_path += ".o";
+
+        // 
+        PFileEntity obj{new FileEntity(obj_path.filename().string(), obj_path)};
+        obj->addAction(PAction(new Cpp2ObjAction));
+
+        // 可执行文件依赖.o文件
+        exe->addPrerequisite(obj);
+
+        // .o文件依赖.cpp文件
+        PFileEntity src{new FileEntity(src_path.filename().string(), src_path)};
+        obj->addPrerequisite(src);
+
+        // 根据.cpp文件的名字，确定.dep文件的名字
+        fs::path dep_path = build_dir;
+        dep_path /= src_path.stem();
+        dep_path += ".d";
+
+        if (exists(dep_path)) {
+            PPhonyEntity obj_update {new PhonyEntity("update for " + obj_path.string())};
+            obj_update->addAction(PUpdateDependencyGraphAction(new UpdateDependencyGraphAction(obj)));
+            update_dependency->addPrerequisite(obj_update);
+
+            PFileEntity dep {new FileEntity(dep_path.filename().string(), dep_path)};
+            obj_update->addPrerequisite(dep);
+        }
+
+
+    } // for
+    
+    exe->update();
+
 
 
     // 构造编译器命令行
