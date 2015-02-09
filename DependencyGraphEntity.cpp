@@ -1,15 +1,8 @@
 #include "std.h"
 #include "DependencyGraphEntity.h"
 
-DependencyGraphEntity::DependencyGraphEntity(string name)
-    :
-    m_name(name)
+DependencyGraphEntity::DependencyGraphEntity()
 {
-}
-
-string DependencyGraphEntity::name()
-{
-    return m_name;
 }
 
 void DependencyGraphEntity::addAction(shared_ptr<Action> action)
@@ -17,13 +10,13 @@ void DependencyGraphEntity::addAction(shared_ptr<Action> action)
     actions.push_back(action);
 }
 
-void DependencyGraphEntity::addPrerequisite(PDependencyGraphEntity p)
+void DependencyGraphEntity::addPrerequisite(EntityPtr p)
 {
     prerequisiteList.push_back(p);
 }
 
 
-void DependencyGraphEntity::updatePrerequisites(vector<PDependencyGraphEntity>& changed)
+void DependencyGraphEntity::updatePrerequisites(vector<EntityPtr>& changed)
 {
     for (auto p : prerequisiteList) {
         time_t oldStamp = p->timestamp();
@@ -34,17 +27,11 @@ void DependencyGraphEntity::updatePrerequisites(vector<PDependencyGraphEntity>& 
             
 }
 
-void DependencyGraphEntity::executeActions(PDependencyGraphEntity target, vector<PDependencyGraphEntity>&  allPre, vector<PDependencyGraphEntity>& changedPre)
+void DependencyGraphEntity::executeActions(EntityPtr target, vector<EntityPtr>&  allPre, vector<EntityPtr>& changedPre)
 {
     for (auto a : actions)
         a->execute(target, allPre, changedPre);
 }
-
-    // def show(self, level=0, indent="  "):
-    //     print level*indent, self.name()
-
-    //     for p in self.prerequisiteList:
-    //         p.show(level+1)
 
 void DependencyGraphEntity::show(int level, string indent)
 {
@@ -55,4 +42,3 @@ void DependencyGraphEntity::show(int level, string indent)
     for (auto p : prerequisiteList)
         p->show(level + 1);
 }
-

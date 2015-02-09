@@ -2,26 +2,25 @@
 #define DEPENDENCYGRAPHENTITY_H
 
 class DependencyGraphEntity;
-typedef shared_ptr<DependencyGraphEntity> PDependencyGraphEntity;
+typedef shared_ptr<DependencyGraphEntity> EntityPtr;
 
 #include "Action.h"
 
 class DependencyGraphEntity : public enable_shared_from_this<DependencyGraphEntity> {
 public:
-    DependencyGraphEntity(string name);
+    DependencyGraphEntity();
     void addAction(ActionPtr action);
-    void addPrerequisite(PDependencyGraphEntity p);
+    void addPrerequisite(EntityPtr p);
     virtual void update() = 0;
-    void updatePrerequisites(vector<PDependencyGraphEntity>& changed);
+    void updatePrerequisites(vector<EntityPtr>& changed);
     virtual time_t timestamp() = 0;
-    string name();
-    void executeActions(PDependencyGraphEntity target, vector<PDependencyGraphEntity>&  allPre, vector<PDependencyGraphEntity>& changedPre);
+    virtual string name() = 0;
+    void executeActions(EntityPtr target, vector<EntityPtr>&  allPre, vector<EntityPtr>& changedPre);
     void show(int level = 0, string indent = "  ");
 protected:
-    vector<PDependencyGraphEntity> prerequisiteList;
+    vector<EntityPtr> prerequisiteList;
     vector<ActionPtr> actions;
 private:
-    string m_name;
 };
 
 

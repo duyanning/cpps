@@ -5,7 +5,7 @@
 
 class Cpp2ObjAction : public Action {
 public:
-    void execute(PDependencyGraphEntity target, vector<PDependencyGraphEntity>&  allPre, vector<PDependencyGraphEntity>& changedPre);
+    void execute(EntityPtr target, vector<EntityPtr>&  allPre, vector<EntityPtr>& changedPre);
 };
 
 typedef shared_ptr<Cpp2ObjAction> Cpp2ObjActionPtr;

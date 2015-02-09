@@ -5,7 +5,7 @@
 
 class Obj2ExeAction : public Action {
 public:
-    void execute(PDependencyGraphEntity target, vector<PDependencyGraphEntity>&  allPre, vector<PDependencyGraphEntity>& changedPre);
+    void execute(EntityPtr target, vector<EntityPtr>&  allPre, vector<EntityPtr>& changedPre);
 
 };
 

@@ -2,8 +2,7 @@
 #include "Cpp2ObjAction.h"
 #include "FileEntity.h"
 
-void Cpp2ObjAction::execute(PDependencyGraphEntity target,
-                            vector<PDependencyGraphEntity>&  allPre, vector<PDependencyGraphEntity>& changedPre)
+void Cpp2ObjAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector<EntityPtr>& changedPre)
 {
     // 构造命令行
     FileEntityPtr cpp = static_pointer_cast<FileEntity>(allPre[0]);
@@ -13,20 +12,20 @@ void Cpp2ObjAction::execute(PDependencyGraphEntity target,
     fs::path obj_path = obj->path();
 
     fs::path dep_path = obj_path.parent_path();
-    dep_path += obj_path.stem();
+    dep_path /= obj_path.stem();
     dep_path += ".d";
 
-    string cmd = "g++ -Wall -c -o";
+    string cmd = "g++ -std=c++11 -fmax-errors=1 -Wall -c -o";
 
-    cmd += " " + obj_path.string();
+    cmd += " ";
+    cmd += obj_path.string();
 
-    //     for p in allPre:
-    //         if p.path().endswith(".cpp"):
-    //             cmd += " " + p.path()
+    cmd += " ";
     cmd += cpp_path.string();
 
     cmd += " -fpch-deps -MMD -MF " + dep_path.string();
 
+    MINILOG0(cmd);
     // 产生.o文件和.d文件
     int gcc_status;
     gcc_status = system(cmd.c_str());

@@ -8,4 +8,4 @@ using namespace std;
 // 2，也可按不同的logger开启关闭
 // 3，下级logger是否开启或关闭，还受上级logger状态的控制
 MiniLogger MiniLogger::default_logger(cout, true);
-bool MiniLogger::disable_all_loggers = false;
+bool MiniLogger::disable_all_loggers = true;

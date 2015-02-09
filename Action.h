@@ -8,7 +8,7 @@ typedef shared_ptr<Action> ActionPtr;
 
 class Action : public enable_shared_from_this<Action> {
 public:
-    virtual void execute(PDependencyGraphEntity target, vector<PDependencyGraphEntity>&  allPre, vector<PDependencyGraphEntity>& changedPre) = 0;
+    virtual void execute(EntityPtr target, vector<EntityPtr>&  allPre, vector<EntityPtr>& changedPre) = 0;
 };
 
 

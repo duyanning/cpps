@@ -5,7 +5,8 @@
 
 class FileEntity : public DependencyGraphEntity {
 public:
-    FileEntity(string name, fs::path path);
+    FileEntity(fs::path path);
+    string name();
     void update();
     time_t timestamp();
     time_t actualFileTimestamp();
@@ -16,6 +17,6 @@ private:
 
 typedef shared_ptr<FileEntity> FileEntityPtr;
 
-FileEntityPtr makeFileEntity(string name, fs::path path);
+FileEntityPtr makeFileEntity(fs::path path);
 
 #endif // FILEENTITY_H

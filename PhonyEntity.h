@@ -8,6 +8,9 @@ public:
     PhonyEntity(string name);
     void update();
     time_t timestamp();
+    string name();
+private:
+    string m_name;
 };
 
 typedef shared_ptr<PhonyEntity> PhonyEntityPtr;

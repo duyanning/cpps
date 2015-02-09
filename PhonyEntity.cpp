@@ -4,8 +4,13 @@
 
 PhonyEntity::PhonyEntity(string name)
     :
-    DependencyGraphEntity(name)
+    m_name(name)
 {
+}
+
+string PhonyEntity::name()
+{
+    return m_name;
 }
 
 PhonyEntityPtr makePhonyEntity(string name)
@@ -15,7 +20,7 @@ PhonyEntityPtr makePhonyEntity(string name)
 
 void PhonyEntity::update()
 {
-    vector<PDependencyGraphEntity> changed;
+    vector<EntityPtr> changed;
     updatePrerequisites(changed);
     executeActions(shared_from_this(), prerequisiteList, changed);
 }

@@ -5,7 +5,8 @@
 #include "Cpp2ObjAction.h"
 #include "UpdateDependencyGraphAction.h"
 
-// cmd_line = "g++ -std\\=c++11 -fmax-errors=1"; // -fmax-errors=1让编译器在发现一个错误时就停下来
+// g++ -std=c++11 -fmax-errors=1  // -fmax-errors=1让编译器在发现一个错误时就停下来
+
 fs::path build_dir;
 
 void collect_sources_referenced_by(fs::path script_name, vector<fs::path>& sources)
@@ -50,6 +51,7 @@ int main(int argc, char* argv[])
 {
     // 处理命令行参数
     bool verbose = false;
+    bool show_dep_graph = false;
     string src_file;
 
     po::options_description desc("Allowed options");
@@ -57,7 +59,8 @@ int main(int argc, char* argv[])
         ("help", "produce help message")
         ("compression", po::value<int>(), "set compression level")
         ("verbose,v", po::bool_switch(&verbose), "be verbose")
-        ("script,s", po::value(&src_file), ".cpp file including int main()")
+        ("dependency,d", po::bool_switch(&show_dep_graph), "show dependency graph")
+        ("script", po::value(&src_file), ".cpp file including int main()")
         ;
 
     po::positional_options_description p;
@@ -117,8 +120,8 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-
-    FileEntityPtr exe = makeFileEntity(exe_name.filename().string(), exe_name);
+    // 构建依赖关系图
+    FileEntityPtr exe = makeFileEntity(exe_name);
     exe->addAction(makeObj2ExeAction());
 
     PhonyEntityPtr update_dependency = makePhonyEntity("update dependency graph"); 
@@ -131,14 +134,14 @@ int main(int argc, char* argv[])
         obj_path += ".o";
 
         // 
-        FileEntityPtr obj{new FileEntity(obj_path.filename().string(), obj_path)};
+        FileEntityPtr obj{new FileEntity(obj_path)};
         obj->addAction(ActionPtr(new Cpp2ObjAction));
 
         // 可执行文件依赖.o文件
         exe->addPrerequisite(obj);
 
         // .o文件依赖.cpp文件
-        FileEntityPtr src{new FileEntity(src_path.filename().string(), src_path)};
+        FileEntityPtr src = makeFileEntity(src_path);
         obj->addPrerequisite(src);
 
         // 根据.cpp文件的名字，确定.dep文件的名字
@@ -147,30 +150,37 @@ int main(int argc, char* argv[])
         dep_path += ".d";
 
         if (exists(dep_path)) {
-            PhonyEntityPtr obj_update {new PhonyEntity("update for " + obj_path.string())};
-            obj_update->addAction(PUpdateDependencyGraphAction(new UpdateDependencyGraphAction(obj)));
+            PhonyEntityPtr obj_update = makePhonyEntity("update for " + obj_path.string());
+            obj_update->addAction(makeUpdateDependencyGraphAction(obj));
             update_dependency->addPrerequisite(obj_update);
 
-            FileEntityPtr dep {new FileEntity(dep_path.filename().string(), dep_path)};
+            FileEntityPtr dep = makeFileEntity(dep_path);
             obj_update->addPrerequisite(dep);
         }
 
 
     } // for
 
-    // 构建
+    // 根据依赖关系图进行构建
     try {
-        update_dependency->show();
-        //update_dependency->update();
-        exe->show();
-        //exe->update();
-        return 0;
+        if (show_dep_graph) {
+            cout << "--------------------------------------------------------------" << endl;
+            update_dependency->show();
+            cout << "--------------------------------------------------------------" << endl;
+        }
+        update_dependency->update();
+
+        if (show_dep_graph) {
+            exe->show();
+            cout << "--------------------------------------------------------------" << endl;
+        }
+        exe->update();
     }
     catch (int) {
         return -1;
     }
 
-    // 运行
+    // 运行产生的可执行文件
     system(exe_name.c_str());
 
     return 0;

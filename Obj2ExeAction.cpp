@@ -7,8 +7,7 @@ Obj2ExeActionPtr makeObj2ExeAction()
     return Obj2ExeActionPtr(new Obj2ExeAction);
 }
 
-void Obj2ExeAction::execute(PDependencyGraphEntity target,
-                            vector<PDependencyGraphEntity>&  allPre, vector<PDependencyGraphEntity>& changedPre)
+void Obj2ExeAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector<EntityPtr>& changedPre)
 {
     // 构造命令行
     FileEntityPtr exe = static_pointer_cast<FileEntity>(target);
@@ -23,6 +22,7 @@ void Obj2ExeAction::execute(PDependencyGraphEntity target,
         cmd = cmd + " " + f->path().string();
     }
 
+    MINILOG0(cmd);
     // 链接
     int gcc_status;
     gcc_status = system(cmd.c_str());

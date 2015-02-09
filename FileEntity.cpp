@@ -1,16 +1,21 @@
 #include "std.h"
 #include "FileEntity.h"
 
-FileEntity::FileEntity(string name, fs::path path)
+FileEntity::FileEntity(fs::path path)
 :
-    DependencyGraphEntity(name),
     m_path(path)
 {
 }
 
-FileEntityPtr makeFileEntity(string name, fs::path path)
+string FileEntity::name()
 {
-    return FileEntityPtr(new FileEntity(name, path));
+    return m_path.string();
+}
+
+
+FileEntityPtr makeFileEntity(fs::path path)
+{
+    return FileEntityPtr(new FileEntity(path));
 }
 
 fs::path FileEntity::path()
@@ -21,7 +26,7 @@ fs::path FileEntity::path()
 void FileEntity::update()
 {
     // make all prerequisites
-    vector<PDependencyGraphEntity> changed;
+    vector<EntityPtr> changed;
     updatePrerequisites(changed);
 
     // check to see if execution is needed

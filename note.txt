@@ -1,4 +1,5 @@
-* 编译boost::filesystem
+* 用了boost
+** filesystem
 下载boost_1_57_0.7z（从源里直接安装老版本的boost，在编译用户程序时，会遇到问题）
 ./bootstrap.sh --show-libraries 看有哪些库
 ./bootstrap.sh --with-libraries=filesystem 说我只想要filesystem
@@ -6,7 +7,18 @@ sudo ./b2 install 安装
 
 文档在这里 http://www.boost.org/doc/libs/1_57_0/more/getting_started/unix-variants.html
 5.1   Easy Build and Install
+** program_options
+因为之前只选择了filesystem，此时想安装program options
+再运行./bootstrap.sh --show-libraries
+却只显示已经安装的filesystem
 
+想了个办法，运行
+./bootstrap.sh --without-libraries=filesystem
+然后再运行
+./bootstrap.sh --show-libraries
+
+就能看到所有库的名字了
+./bootstrap.sh --with-libraries=filesystem,program_options
 
 * 运行时遇到问题
 duyanning@du-ASUS ~/work/cpps/debug $ cpps hi.cpp 
