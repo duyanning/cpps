@@ -18,6 +18,7 @@ int main(int argc, char* argv[])
     bool verbose = false;
     bool show_dep_graph = false;
     string src_file;
+    string script_args;
 
     po::options_description desc("Allowed options");
     desc.add_options()
@@ -26,10 +27,12 @@ int main(int argc, char* argv[])
         ("verbose,v", po::bool_switch(&verbose), "be verbose")
         ("dependency,d", po::bool_switch(&show_dep_graph), "show dependency graph")
         ("script", po::value(&src_file), ".cpp file including int main()")
+        ("args", po::value<vector<string>>(), "args being passed to the script")
         ;
 
     po::positional_options_description p;
-    p.add("script", -1);
+    p.add("script", 1);
+    p.add("args", -1);
 
     po::variables_map vm;
     po::store(po::command_line_parser(argc, argv).options(desc).positional(p).run(), vm);
@@ -43,6 +46,15 @@ int main(int argc, char* argv[])
     if (vm.count("script") == 0) {
         cout << "usage: cpps something.cpp" << endl;
         return 0;
+    }
+
+    if (vm.count("args")) {
+        for (auto a : vm["args"].as<vector<string>>()) {
+            script_args += " '"; // 把脚本的参数用单引号括起来，避免通配符展开。该展开的通配符在解释器执行时已经展开过了
+            script_args += a;
+            script_args += "'";
+        }
+
     }
 
     // 解释.cpp脚本
@@ -153,8 +165,11 @@ int main(int argc, char* argv[])
         return -1;
     }
 
+    string cmd_line= exe_name.string();
+    cmd_line += script_args;
+    MINILOG0("final cmd line: " << cmd_line);
     // 运行产生的可执行文件
-    system(exe_name.c_str());
+    system(cmd_line.c_str());
 
     return 0;
 }
