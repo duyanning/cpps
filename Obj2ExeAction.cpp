@@ -2,9 +2,15 @@
 #include "Obj2ExeAction.h"
 #include "FileEntity.h"
 
-Obj2ExeActionPtr makeObj2ExeAction()
+Obj2ExeAction::Obj2ExeAction(string other_options)
+    :
+    m_other_options(other_options)
 {
-    return Obj2ExeActionPtr(new Obj2ExeAction);
+}
+
+Obj2ExeActionPtr makeObj2ExeAction(string other_options)
+{
+    return Obj2ExeActionPtr(new Obj2ExeAction(other_options));
 }
 
 void Obj2ExeAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector<EntityPtr>& changedPre)
@@ -13,7 +19,7 @@ void Obj2ExeAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector
     FileEntityPtr exe = static_pointer_cast<FileEntity>(target);
     fs::path exe_path = exe->path();
 
-    string cmd = "g++ -o ";
+    string cmd = "g++ -std=c++11 -fmax-errors=1 -o ";
 
     cmd += exe_path.string();
 
@@ -21,6 +27,9 @@ void Obj2ExeAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector
         FileEntityPtr f = static_pointer_cast<FileEntity>(p);
         cmd = cmd + " " + f->path().string();
     }
+
+    cmd += " ";
+    cmd += m_other_options;
 
     MINILOG0(cmd);
     // 链接

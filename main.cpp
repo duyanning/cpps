@@ -9,7 +9,7 @@
 
 fs::path build_dir;
 
-void collect_sources_referenced_by(fs::path script_name, vector<fs::path>& sources)
+void collect_sources_referenced_by(fs::path script_name, vector<fs::path>& sources, vector<string>& libs)
 {
     // 如果已经处理过该文件，就不要再处理，避免循环引用
     if (find(sources.begin(), sources.end(), script_name) != sources.end()) {
@@ -24,10 +24,11 @@ void collect_sources_referenced_by(fs::path script_name, vector<fs::path>& sourc
     ifstream in(script_name.native());
 
     string line;
-    regex pat{R"(using\s+(\w+\.cpp))"};
+    regex using_pat {R"(using\s+(\w+\.cpp))"};
+    regex linklib_pat {R"(linklib\s+(\w+))"};
     while (getline(in,line)) {
         smatch matches;
-        if (regex_search(line, matches, pat)) {
+        if (regex_search(line, matches, using_pat)) {
             MINILOG0("found " << matches[1] << " in " << script_name);
             // 一个.cpp文件中引用的另一个.cpp文件，是以相对路径的形式指明的
             fs::path a = script_name;
@@ -35,13 +36,20 @@ void collect_sources_referenced_by(fs::path script_name, vector<fs::path>& sourc
             a /= matches.str(1);
             if (exists(a)) {
                 // 递归处理
-                collect_sources_referenced_by(a, sources);
+                collect_sources_referenced_by(a, sources, libs);
             }
             else {
                 cout << a << "referenced by " << script_name << " does NOT exsit!"<< endl;
                 throw 1;
             }
         }
+
+        if (regex_search(line, matches, linklib_pat)) {
+            MINILOG0("found lib " << matches[1] << " in " << script_name);
+            libs.push_back(matches[1]);
+        }
+
+
     }
 
 }
@@ -111,10 +119,11 @@ int main(int argc, char* argv[])
     exe_name /= script_name.stem();
     MINILOG0("exe: " << exe_name.string());
 
-    // 确定所有.cpp文件的名字，如果某个文件不存在，则结束。
+    // 确定所有.cpp文件的名字（如果某个文件不存在，则结束），以及所有库的名字
     vector<fs::path> sources; // 绝对路径
+    vector<string> libs; // 库的名称，即链接时命令行上-l之后的部分
     try {
-        collect_sources_referenced_by(canonical(script_name), sources);
+        collect_sources_referenced_by(canonical(script_name), sources, libs);
     }
     catch (int) {
         return -1;
@@ -122,7 +131,12 @@ int main(int argc, char* argv[])
 
     // 构建依赖关系图
     FileEntityPtr exe = makeFileEntity(exe_name);
-    exe->addAction(makeObj2ExeAction());
+    string lib_options;
+    for (auto l : libs) {
+        lib_options += " -l";
+        lib_options += l;
+    }
+    exe->addAction(makeObj2ExeAction(lib_options));
 
     PhonyEntityPtr update_dependency = makePhonyEntity("update dependency graph"); 
 
