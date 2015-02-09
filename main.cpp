@@ -4,55 +4,12 @@
 #include "Obj2ExeAction.h"
 #include "Cpp2ObjAction.h"
 #include "UpdateDependencyGraphAction.h"
-
+#include "ShebangMagic.h"
 // g++ -std=c++11 -fmax-errors=1  // -fmax-errors=1让编译器在发现一个错误时就停下来
 
 fs::path build_dir;
 
-void collect_sources_referenced_by(fs::path script_name, vector<fs::path>& sources, vector<string>& libs)
-{
-    // 如果已经处理过该文件，就不要再处理，避免循环引用
-    if (find(sources.begin(), sources.end(), script_name) != sources.end()) {
-        MINILOG0(script_name << "is already in list.");
-        return;
-    }
-
-    MINILOG0("collect sources referenced by " << script_name);
-
-    sources.push_back(script_name);
-
-    ifstream in(script_name.native());
-
-    string line;
-    regex using_pat {R"(using\s+(\w+\.cpp))"};
-    regex linklib_pat {R"(linklib\s+(\w+))"};
-    while (getline(in,line)) {
-        smatch matches;
-        if (regex_search(line, matches, using_pat)) {
-            MINILOG0("found " << matches[1] << " in " << script_name);
-            // 一个.cpp文件中引用的另一个.cpp文件，是以相对路径的形式指明的
-            fs::path a = script_name;
-            a.remove_filename();
-            a /= matches.str(1);
-            if (exists(a)) {
-                // 递归处理
-                collect_sources_referenced_by(a, sources, libs);
-            }
-            else {
-                cout << a << "referenced by " << script_name << " does NOT exsit!"<< endl;
-                throw 1;
-            }
-        }
-
-        if (regex_search(line, matches, linklib_pat)) {
-            MINILOG0("found lib " << matches[1] << " in " << script_name);
-            libs.push_back(matches[1]);
-        }
-
-
-    }
-
-}
+void collect_sources_and_libs(fs::path script_name, vector<fs::path>& sources, vector<string>& libs);
 
 
 int main(int argc, char* argv[])
@@ -101,6 +58,8 @@ int main(int argc, char* argv[])
         return -1;
     }
 
+    ShebangMagic shebangMagic(script_name.string());
+
     // 确保cache(即目录~/.cpps/cache)的存在
     fs::path home_dir(getpwuid(getuid())->pw_dir);
     fs::path cache_dir_name(".cpps/cache");
@@ -123,7 +82,7 @@ int main(int argc, char* argv[])
     vector<fs::path> sources; // 绝对路径
     vector<string> libs; // 库的名称，即链接时命令行上-l之后的部分
     try {
-        collect_sources_referenced_by(canonical(script_name), sources, libs);
+        collect_sources_and_libs(canonical(script_name), sources, libs);
     }
     catch (int) {
         return -1;
@@ -198,4 +157,49 @@ int main(int argc, char* argv[])
     system(exe_name.c_str());
 
     return 0;
+}
+
+
+void collect_sources_and_libs(fs::path script_name, vector<fs::path>& sources, vector<string>& libs)
+{
+    // 如果已经处理过该文件，就不要再处理，避免循环引用
+    if (find(sources.begin(), sources.end(), script_name) != sources.end()) {
+        MINILOG0(script_name << "is already in list.");
+        return;
+    }
+
+    MINILOG0("collect sources referenced by " << script_name);
+
+    sources.push_back(script_name);
+
+    ifstream in(script_name.native());
+
+    string line;
+    regex using_pat {R"(using\s+(\w+\.cpp))"};
+    regex linklib_pat {R"(linklib\s+(\w+))"};
+    while (getline(in,line)) {
+        smatch matches;
+        if (regex_search(line, matches, using_pat)) {
+            MINILOG0("found " << matches[1] << " in " << script_name);
+            // 一个.cpp文件中引用的另一个.cpp文件，是以相对路径的形式指明的
+            fs::path a = script_name;
+            a.remove_filename();
+            a /= matches.str(1);
+            if (exists(a)) {
+                // 递归处理
+                collect_sources_and_libs(a, sources, libs);
+            }
+            else {
+                cout << a << "referenced by " << script_name << " does NOT exsit!"<< endl;
+                throw 1;
+            }
+        }
+
+        if (regex_search(line, matches, linklib_pat)) {
+            MINILOG0("found lib " << matches[1] << " in " << script_name);
+            libs.push_back(matches[1]);
+        }
+
+    }
+
 }
