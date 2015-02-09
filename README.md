@@ -1,5 +1,19 @@
 # cpps - C++代码的(伪)解释器
 
+## 编译安装
+    mkdir build-cpps
+    cd build-cpps
+    cmake ../cpps
+    make
+    sudo make install
+    
+特别注意：
+
+我自己编译时用的是
+
+* gcc 4.9.1
+* boost 1.57.0
+
 ## 如果脚本由一个.cpp文件组成
 比如hello.cpp
 
@@ -36,6 +50,9 @@ foo.h
     
 不需要什么Makefile
 
+然后执行下边这行即可
+
+cpps hello.cpp
 
 ## 如果你在foo.cpp中使用了某个库
 比如boost_filesystem
@@ -49,3 +66,17 @@ foo.h
 你只要在任何一个.cpp文件中写这样一行即可：
 
     // linklib boost_filesystem
+
+## 还支持shebang
+在你的hello.cpp文件第一行写上：
+
+    #!/usr/local/bin/cpps
+
+然后执行
+
+    chmod +x hello.cpp
+    ./hello.cpp
+    
+感觉是不是很爽？
+
+
