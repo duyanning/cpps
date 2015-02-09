@@ -8,22 +8,33 @@
 // g++ -std=c++11 -fmax-errors=1  // -fmax-errors=1让编译器在发现一个错误时就停下来
 
 fs::path build_dir;
+fs::path exe_name;
+fs::path script_name;
 
 void collect_sources_and_libs(fs::path script_name, vector<fs::path>& sources, vector<string>& libs);
+int build();
 
+// 命令行参数对应的变量
+bool verbose = false;
+bool show_dep_graph = false;
+string src_file;
+
+int run_by = 1; // 0 - system(); 1 - execv()
+
+const int max_num_of_args = 100;
+const int max_len_of_arg = 100;
+char script_arg_vector[max_num_of_args][max_len_of_arg];
+char* script_argv[max_num_of_args];
+int script_argc;
 
 int main(int argc, char* argv[])
 {
     // 处理命令行参数
-    bool verbose = false;
-    bool show_dep_graph = false;
-    string src_file;
-    string script_args;
 
     po::options_description desc("Allowed options");
     desc.add_options()
-        ("help", "produce help message")
-        ("compression", po::value<int>(), "set compression level")
+        ("help,h", "produce help message")
+        ("run-by,r", po::value<int>(&run_by)->default_value(1), "run by 0 - system() or 1 - execv()")
         ("verbose,v", po::bool_switch(&verbose), "be verbose")
         ("dependency,d", po::bool_switch(&show_dep_graph), "show dependency graph")
         ("script", po::value(&src_file), ".cpp file including int main()")
@@ -48,17 +59,58 @@ int main(int argc, char* argv[])
         return 0;
     }
 
-    if (vm.count("args")) {
-        for (auto a : vm["args"].as<vector<string>>()) {
-            script_args += " '"; // 把脚本的参数用单引号括起来，避免通配符展开。该展开的通配符在解释器执行时已经展开过了
-            script_args += a;
-            script_args += "'";
-        }
 
+    script_name = src_file;
+    int status = 0;
+    status = build();
+    if (status)
+        return status;
+
+    if (run_by == 1) {
+        MINILOG0("run using execv()");
+
+        for (int i = 0; i < max_num_of_args; i++) {
+            script_argv[i] = script_arg_vector[i];
+            script_arg_vector[i][0] = '\0';
+        }
+        script_argc = 0;
+
+        strcpy(script_argv[0], script_name.c_str());
+        script_argc++;
+
+        if (vm.count("args")) {
+            for (auto a : vm["args"].as<vector<string>>()) {
+                strcpy(script_arg_vector[script_argc++], a.c_str());
+            }
+        }
+        script_argv[script_argc] = 0;
+
+        execv(exe_name.c_str(), script_argv);
+    }
+    else if (run_by == 0) {
+        MINILOG0("run using system()");
+        string script_args;
+        if (vm.count("args")) {
+            for (auto a : vm["args"].as<vector<string>>()) {
+                script_args += " '"; // 把脚本的参数用单引号括起来，避免通配符展开。该展开的通配符在解释器执行时已经展开过了
+                script_args += a;
+                script_args += "'";
+            }
+        }
+        
+        string cmd_line= exe_name.string();
+        cmd_line += script_args;
+        MINILOG0("final cmd line: " << cmd_line);
+        // 运行产生的可执行文件
+        system(cmd_line.c_str());
     }
 
-    // 解释.cpp脚本
-    fs::path script_name(src_file);
+    return 0;
+}
+
+int build()
+{
+
 
     if (!exists(script_name)) {
         cout << "No such file.\n";
@@ -86,7 +138,7 @@ int main(int argc, char* argv[])
     create_directories(build_dir);
 
     // 确定可执行文件的名字
-    fs::path exe_name = build_dir;
+    exe_name = build_dir;
     exe_name /= script_name.stem();
     MINILOG0("exe: " << exe_name.string());
 
@@ -165,15 +217,8 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    string cmd_line= exe_name.string();
-    cmd_line += script_args;
-    MINILOG0("final cmd line: " << cmd_line);
-    // 运行产生的可执行文件
-    system(cmd_line.c_str());
-
     return 0;
 }
-
 
 void collect_sources_and_libs(fs::path script_name, vector<fs::path>& sources, vector<string>& libs)
 {
