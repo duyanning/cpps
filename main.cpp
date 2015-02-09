@@ -50,12 +50,13 @@ int main(int argc, char* argv[])
     po::notify(vm);    
 
     if (vm.count("help")) {
+        cout << "Usage: cpps [options] file" << endl;
         cout << desc << "\n";
         return 0;
     }
 
     if (vm.count("script") == 0) {
-        cout << "usage: cpps something.cpp" << endl;
+        cout << "Usage: cpps [options] file" << endl;
         return 0;
     }
 

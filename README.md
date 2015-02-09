@@ -1,4 +1,18 @@
-# cpps - C++代码的(伪)解释器
+# cpps - C++脚本的(伪)解释器
+
+## 为什么说是(伪)解释器？
+
+因为它并不是传统意义上的解释器，而是背后调用gcc先对源代码进行编译，然后再执行产生的exe程序的。
+
+C++代码本身就不适合解释执行，
+
+而我想要的不过是脚本的好处（而非解释器的）：
+
+* 就地编写，就地运行
+* 不用创建复杂的工程
+* 从edit->build->run的循环中删掉build的环节
+
+因为C++代码编译的时间也不短，所以cpps内建了一个全透明的build system，当你的脚本包含多个.cpp的时候，它只会编译变动的部分。
 
 ## 编译安装
     mkdir build-cpps
@@ -22,9 +36,7 @@
 cpps hello.cpp
 
 ## 如果脚本由多个.cpp文件组成
-以一个例子来说明
-
-如果你的c++代码位于目录~/work/hello下：
+比如你的c++代码位于目录~/work/hello下，共有三个文件：
 
 hello.cpp
 
@@ -54,7 +66,7 @@ foo.h
 
 cpps hello.cpp
 
-## 如果你在foo.cpp中使用了某个库
+## 如果你在hello.cpp中使用了某个库
 比如boost_filesystem
 
 ### 在编译环境下
@@ -66,7 +78,7 @@ cpps hello.cpp
 你只要在任何一个.cpp文件中写这样一行即可：
 
     // linklib boost_filesystem
-
+    
 ## 还支持shebang
 在你的hello.cpp文件第一行写上：
 
@@ -79,4 +91,7 @@ cpps hello.cpp
     
 感觉是不是很爽？
 
+只可惜，这一行并不是合法的C++代码
+
+cpps认它，别的编译器却不认它。
 
