@@ -94,7 +94,7 @@ cpps hello.cpp
 ## 还支持shebang
 在你的hello.cpp文件第一行写上：
 
-    #!/usr/local/bin/cpps
+    #!/usr/bin/env cpps
 
 然后执行
 

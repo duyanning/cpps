@@ -11,8 +11,7 @@ void Cpp2ObjAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector
     FileEntityPtr obj = static_pointer_cast<FileEntity>(target);
     fs::path obj_path = obj->path();
 
-    fs::path dep_path = obj_path.parent_path();
-    dep_path /= obj_path.stem();
+    fs::path dep_path = obj_path;
     dep_path += ".d";
 
     string cmd = "g++ -std=c++11 -fmax-errors=1 -Wall -c -o";

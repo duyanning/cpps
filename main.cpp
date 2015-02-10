@@ -182,9 +182,8 @@ int build()
         FileEntityPtr src = makeFileEntity(src_path);
         obj->addPrerequisite(src);
 
-        // 根据.cpp文件的名字，确定.dep文件的名字
-        fs::path dep_path = build_dir;
-        dep_path /= src_path.stem();
+        // 根据.o文件的名字，确定.dep文件的名字
+        fs::path dep_path = obj_path;
         dep_path += ".d";
 
         if (exists(dep_path)) {
