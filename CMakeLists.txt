@@ -39,3 +39,14 @@ if (BOOST_PROGRAM_OPTIONS)
 endif ()
 
 install (TARGETS cpps DESTINATION bin)
+
+enable_testing()
+add_test (cppsruns cpps)
+
+add_test (cppsusage cpps)
+set_tests_properties (cppsusage
+  PROPERTIES PASS_REGULAR_EXPRESSION "Usage")
+
+add_test (cppshelp cpps -h)
+set_tests_properties (cppshelp
+  PROPERTIES PASS_REGULAR_EXPRESSION "Allowed")

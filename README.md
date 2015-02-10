@@ -12,13 +12,23 @@ C++代码本身就不适合解释执行，
 * 不用创建复杂的工程
 * 从edit->build->run的循环中删掉build的环节
 
-因为C++代码编译的时间也不短，所以cpps内建了一个全透明的build system，当你的脚本包含多个.cpp的时候，它只会编译变动的部分。
+因为C++代码编译的时间也不短，所以cpps会缓存第一次运行所产生的exe文件（放心，不会弄脏你的目录）。
+
+另外，cpps还内建了一个全透明的build system，当你第一次运行脚本之后，如果你对代码又做了修改，再次运行脚本时，只有变动的部分才会被重新编译。
+
+当然，前提是你的脚本由多个.cpp文件组成。
+
 
 ## 编译安装
+
     mkdir build-cpps
     cd build-cpps
     cmake ../cpps
     make
+    make test
+
+如果没有问题的话
+
     sudo make install
     
 特别注意：
@@ -26,7 +36,7 @@ C++代码本身就不适合解释执行，
 我自己编译时用的是
 
 * gcc 4.9.1
-* boost 1.57.0
+* boost 1.57.0 （只用到了filesystem、program_options两个子库）
 
 ## 如果脚本由一个.cpp文件组成
 比如hello.cpp
