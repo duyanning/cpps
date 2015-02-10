@@ -27,6 +27,8 @@ char script_arg_vector[max_num_of_args][max_len_of_arg];
 char* script_argv[max_num_of_args];
 int script_argc;
 
+char usage[] = "Usage: cpps [options] script.cpp [args]";
+
 int main(int argc, char* argv[])
 {
     // 处理命令行参数
@@ -50,13 +52,13 @@ int main(int argc, char* argv[])
     po::notify(vm);    
 
     if (vm.count("help")) {
-        cout << "Usage: cpps [options] file" << endl;
+        cout << usage << endl;
         cout << desc << "\n";
         return 0;
     }
 
     if (vm.count("script") == 0) {
-        cout << "Usage: cpps [options] file" << endl;
+        cout << usage << endl;
         return 0;
     }
 
