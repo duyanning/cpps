@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
-#include <boost/filesystem.hpp> // linklib boost_filesystem
+#include <boost/filesystem.hpp>
+// linklib boost_filesystem
+// linklib boost_system
 
 using namespace std;
 namespace fs = boost::filesystem;

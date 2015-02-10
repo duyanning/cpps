@@ -1,6 +1,6 @@
 from subprocess import *
 
-compile_cmd = "g++ -std=c++11 hello.cpp -o hello -lboost_filesystem"
+compile_cmd = "g++ -std=c++11 hello.cpp -o hello -lboost_filesystem -lboost_system"
 retcode = call(compile_cmd, shell=True)
 
 run_cmd = "./hello > a.txt"

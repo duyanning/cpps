@@ -27,7 +27,7 @@ char script_arg_vector[max_num_of_args][max_len_of_arg];
 char* script_argv[max_num_of_args];
 int script_argc;
 
-char usage[] = "Usage: cpps [options] script.cpp [args]";
+char usage[] = "Usage: cpps [options] <script.cpp> [args]";
 
 int main(int argc, char* argv[])
 {
