@@ -70,6 +70,8 @@ foo.h
 
     #include "foo.h" // using foo.cpp
     
+这就相当于python的import
+
 不需要什么Makefile
 
 然后执行下边这行即可
