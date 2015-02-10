@@ -6,9 +6,9 @@ ShebangMagic::ShebangMagic(string script_name)
     m_script_name(script_name)
 {
     fstream f(m_script_name, ios::in | ios::out);
-    if (!f.get() == '#')
+    if (f.get() != '#')
         return;
-    if (!f.get() == '!')
+    if (f.get() != '!')
         return;
     MINILOG0("shebang found");
 
