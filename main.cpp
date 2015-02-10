@@ -13,11 +13,13 @@ fs::path script_name;
 
 void collect_sources_and_libs(fs::path script_name, vector<fs::path>& sources, vector<string>& libs);
 int build();
+int generate_skeleton_file(string file_name);
 
 // 命令行参数对应的变量
 bool verbose = false;
 bool show_dep_graph = false;
 string src_file;
+string skeleton_file;
 
 int run_by = 1; // 0 - system(); 1 - execv()
 
@@ -41,6 +43,7 @@ int main(int argc, char* argv[])
         ("dependency,d", po::bool_switch(&show_dep_graph), "show dependency graph")
         ("script", po::value(&src_file), ".cpp file including int main()")
         ("args", po::value<vector<string>>(), "args being passed to the script")
+        ("gen,g", po::value(&skeleton_file), "generate script skeleton")
         ;
 
     po::positional_options_description p;
@@ -54,6 +57,11 @@ int main(int argc, char* argv[])
     if (vm.count("help")) {
         cout << usage << endl;
         cout << desc << "\n";
+        return 0;
+    }
+
+    if (vm.count("gen")) {
+        generate_skeleton_file(skeleton_file);
         return 0;
     }
 
@@ -264,4 +272,32 @@ void collect_sources_and_libs(fs::path script_name, vector<fs::path>& sources, v
 
     }
 
+}
+
+
+int generate_skeleton_file(string file_name)
+{
+    fs::path p(file_name);
+    if (exists(p)) {
+        cout << file_name << " already exists." << endl;
+        return 0;
+    }
+
+    ofstream f(file_name);
+    char skeleton[] =
+        R"(//#!/usr/bin/env cpps
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+    cout << "welcome to cpps" << endl;
+    return 0;
+}
+)";
+
+    f << skeleton;
+    cout << skeleton_file << " created." << "\n";
+    return 1;
 }
