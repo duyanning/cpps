@@ -9,5 +9,6 @@ public:
 };
 
 typedef shared_ptr<Cpp2ObjAction> Cpp2ObjActionPtr;
+Cpp2ObjActionPtr makeCpp2ObjAction();
 
 #endif // CPP2OBJACTION_H

@@ -1,6 +1,12 @@
 #include "std.h"
 #include "Cpp2ObjAction.h"
 #include "FileEntity.h"
+#include "Loggers.h"
+
+Cpp2ObjActionPtr makeCpp2ObjAction()
+{
+    return Cpp2ObjActionPtr(new Cpp2ObjAction);
+}
 
 void Cpp2ObjAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector<EntityPtr>& changedPre)
 {
@@ -24,7 +30,8 @@ void Cpp2ObjAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector
 
     cmd += " -fpch-deps -MMD -MF " + dep_path.string();
 
-    MINILOG0(cmd);
+    MINILOG(build_exe_summay_logger, "compiling " << cpp_path.filename().string());
+    MINILOG(build_exe_detail_logger, cmd);
     // 产生.o文件和.d文件
     int gcc_status;
     gcc_status = system(cmd.c_str());

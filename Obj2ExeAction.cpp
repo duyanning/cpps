@@ -1,6 +1,7 @@
 #include "std.h"
 #include "Obj2ExeAction.h"
 #include "FileEntity.h"
+#include "Loggers.h"
 
 Obj2ExeAction::Obj2ExeAction(string other_options)
     :
@@ -31,7 +32,8 @@ void Obj2ExeAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector
     cmd += " ";
     cmd += m_other_options;
 
-    MINILOG0(cmd);
+    MINILOG(build_exe_summay_logger, "linking " << exe_path.filename().string());
+    MINILOG(build_exe_detail_logger, cmd);
     // 链接
     int gcc_status;
     gcc_status = system(cmd.c_str());

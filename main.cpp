@@ -3,15 +3,22 @@
 #include "PhonyEntity.h"
 #include "Obj2ExeAction.h"
 #include "Cpp2ObjAction.h"
+#include "H2GchAction.h"
 #include "UpdateDependencyGraphAction.h"
 #include "ShebangMagic.h"
-// g++ -std=c++11 -fmax-errors=1  // -fmax-errors=1让编译器在发现一个错误时就停下来
+#include "GchMagic.h"
+#include "helpers.h"
 
 fs::path build_dir;
 fs::path exe_name;
 fs::path script_name;
 
-void collect_sources_and_libs(fs::path script_name, vector<fs::path>& sources, vector<string>& libs);
+vector<fs::path> sources; // 所有.cpp文件的绝对路径
+vector<string> libs; // 库的名称，即链接时命令行上-l之后的部分
+vector<fs::path> headers_to_pc; // 所有需要预编译的头文件的绝对路径
+
+
+void collect_info(fs::path script_name);
 int build();
 int generate_skeleton_file(string file_name);
 
@@ -119,50 +126,9 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-int build()
+
+int build_exe()
 {
-
-
-    if (!exists(script_name)) {
-        cout << "No such file.\n";
-        return -1;
-    }
-
-    if (script_name.extension() != ".cpp") {
-        cout << script_name << " should have a .cpp suffix." << endl;
-        return -1;
-    }
-
-    ShebangMagic shebangMagic(script_name.string());
-
-    // 确保cache(即目录~/.cpps/cache)的存在
-    fs::path home_dir(getpwuid(getuid())->pw_dir);
-    fs::path cache_dir_name(".cpps/cache");
-    fs::path cache_dir = home_dir;
-    cache_dir /= cache_dir_name;
-    create_directories(cache_dir);
-
-    // 在cache中为该脚本创建build文件夹
-    fs::path script_dir = canonical(script_name).parent_path().relative_path();
-    build_dir = cache_dir;
-    build_dir /= script_dir;
-    create_directories(build_dir);
-
-    // 确定可执行文件的名字
-    exe_name = build_dir;
-    exe_name /= script_name.stem();
-    MINILOG0("exe: " << exe_name.string());
-
-    // 确定所有.cpp文件的名字（如果某个文件不存在，则结束），以及所有库的名字
-    vector<fs::path> sources; // 绝对路径
-    vector<string> libs; // 库的名称，即链接时命令行上-l之后的部分
-    try {
-        collect_sources_and_libs(canonical(script_name), sources, libs);
-    }
-    catch (int) {
-        return -1;
-    }
-
     // 构建依赖关系图
     FileEntityPtr exe = makeFileEntity(exe_name);
     string lib_options;
@@ -182,8 +148,8 @@ int build()
         obj_path += ".o";
 
         // 
-        FileEntityPtr obj{new FileEntity(obj_path)};
-        obj->addAction(ActionPtr(new Cpp2ObjAction));
+        FileEntityPtr obj = makeFileEntity(obj_path);
+        obj->addAction(makeCpp2ObjAction());
 
         // 可执行文件依赖.o文件
         exe->addPrerequisite(obj);
@@ -192,7 +158,7 @@ int build()
         FileEntityPtr src = makeFileEntity(src_path);
         obj->addPrerequisite(src);
 
-        // 根据.o文件的名字，确定.dep文件的名字
+        // 根据.o文件的名字，确定.d文件的名字
         fs::path dep_path = obj_path;
         dep_path += ".d";
 
@@ -209,19 +175,121 @@ int build()
     } // for
 
     // 根据依赖关系图进行构建
-    try {
-        if (show_dep_graph) {
-            cout << "--------------------------------------------------------------" << endl;
-            update_dependency->show();
-            cout << "--------------------------------------------------------------" << endl;
-        }
-        update_dependency->update();
 
-        if (show_dep_graph) {
-            exe->show();
-            cout << "--------------------------------------------------------------" << endl;
+    if (show_dep_graph) {
+        cout << "--------------------------------------------------------------" << endl;
+        update_dependency->show();
+        cout << "--------------------------------------------------------------" << endl;
+    }
+    update_dependency->update();
+
+    if (show_dep_graph) {
+        exe->show();
+        cout << "--------------------------------------------------------------" << endl;
+    }
+    exe->update();
+
+
+    return 0;
+
+}
+
+int build_gch()
+{
+    if (headers_to_pc.empty())
+        return 0;
+			
+    PhonyEntityPtr all_gch  = makePhonyEntity("generate all gch");
+    PhonyEntityPtr update_dependency = makePhonyEntity("update dependency graph");
+
+    for (auto header_path : headers_to_pc) {
+        fs::path gch_path = header_path;
+        gch_path += ".gch";
+
+
+
+        FileEntityPtr gch = makeFileEntity(gch_path);
+        gch->addAction(makeH2GchAction());
+
+        // 
+        all_gch->addPrerequisite(gch);
+
+        // .gch文件依赖.h文件
+        FileEntityPtr header = makeFileEntity(header_path);
+        gch->addPrerequisite(header);
+
+        // 根据.gch文件的名字，确定.d文件的名字
+        fs::path dep_path = shadow(gch_path);
+        dep_path += ".d";
+
+        if (exists(dep_path)) {
+            PhonyEntityPtr gch_update = makePhonyEntity("update for " + gch_path.string());
+            gch_update->addAction(makeUpdateDependencyGraphAction(gch));
+            update_dependency->addPrerequisite(gch_update);
+
+            FileEntityPtr dep = makeFileEntity(dep_path);
+            gch_update->addPrerequisite(dep);
         }
-        exe->update();
+    } // for
+
+    // 根据依赖关系图进行构建
+    if (show_dep_graph) {
+        cout << "--------------------------------------------------------------" << endl;
+        update_dependency->show();
+        cout << "--------------------------------------------------------------" << endl;
+
+    }
+    update_dependency->update();
+
+    if (show_dep_graph) {
+        all_gch->show();
+        cout << "--------------------------------------------------------------" << endl;
+    }
+    all_gch->update();
+
+    return 0;
+}
+
+int build()
+{
+    if (!exists(script_name)) {
+        cout << "No such file.\n";
+        return -1;
+    }
+
+    if (script_name.extension() != ".cpp") {
+        cout << script_name << " should have a .cpp suffix." << endl;
+        return -1;
+    }
+
+    ShebangMagic shebang_magic(script_name.string());
+
+    // 确保cache(即目录~/.cpps/cache)的存在
+    fs::path home_dir(getpwuid(getuid())->pw_dir);
+    fs::path cache_dir_name(".cpps/cache");
+    fs::path cache_dir = home_dir;
+    cache_dir /= cache_dir_name;
+    create_directories(cache_dir);
+
+    // 在cache中为该脚本创建build文件夹(如果.cpp位于不同的目录怎么办？)
+    fs::path script_dir = canonical(script_name).parent_path().relative_path();
+    build_dir = cache_dir;
+    build_dir /= script_dir;
+    create_directories(build_dir);
+
+    // 确定可执行文件的名字
+    exe_name = build_dir;
+    exe_name /= script_name.stem();
+    MINILOG0("exe: " << exe_name.string());
+
+
+    try {
+        // 确定所有.cpp文件的路径；确定所有库的名字；确定所有的预编译头文件路径
+        collect_info(canonical(script_name));
+        
+        GchMagic gch_magic(headers_to_pc); 
+        build_gch();
+        build_exe();
     }
     catch (int) {
         return -1;
@@ -230,7 +298,7 @@ int build()
     return 0;
 }
 
-void collect_sources_and_libs(fs::path script_name, vector<fs::path>& sources, vector<string>& libs)
+void collect_info(fs::path script_name)
 {
     // 如果已经处理过该文件，就不要再处理，避免循环引用
     if (find(sources.begin(), sources.end(), script_name) != sources.end()) {
@@ -238,7 +306,7 @@ void collect_sources_and_libs(fs::path script_name, vector<fs::path>& sources, v
         return;
     }
 
-    MINILOG0("collect sources referenced by " << script_name);
+    MINILOG0("collect info from " << script_name);
 
     sources.push_back(script_name);
 
@@ -247,8 +315,10 @@ void collect_sources_and_libs(fs::path script_name, vector<fs::path>& sources, v
     string line;
     regex using_pat {R"(using\s+(\w+\.cpp))"};
     regex linklib_pat {R"(linklib\s+(\w+))"};
+    regex precompile_pat {R"(precompile\s+(\w+\.h))"};
     while (getline(in,line)) {
         smatch matches;
+        // 搜集引用的.cpp文件
         if (regex_search(line, matches, using_pat)) {
             MINILOG0("found " << matches[1] << " in " << script_name);
             // 一个.cpp文件中引用的另一个.cpp文件，是以相对路径的形式指明的
@@ -257,7 +327,7 @@ void collect_sources_and_libs(fs::path script_name, vector<fs::path>& sources, v
             a /= matches.str(1);
             if (exists(a)) {
                 // 递归处理
-                collect_sources_and_libs(a, sources, libs);
+                collect_info(a);
             }
             else {
                 cout << a << "referenced by " << script_name << " does NOT exsit!"<< endl;
@@ -265,10 +335,28 @@ void collect_sources_and_libs(fs::path script_name, vector<fs::path>& sources, v
             }
         }
 
+        // 搜集使用的库名字
         if (regex_search(line, matches, linklib_pat)) {
             MINILOG0("found lib " << matches[1] << " in " << script_name);
             libs.push_back(matches[1]);
         }
+
+        // 搜集需要预编译的头文件
+        if (regex_search(line, matches, precompile_pat)) {
+            MINILOG0("found header to precompile " << matches[1] << " in " << script_name);
+            // 一个.cpp文件要求预编译某个头文件，是以相对路径的形式指明的
+            fs::path a = script_name;
+            a.remove_filename();
+            a /= matches.str(1);
+            if (exists(a)) {
+                headers_to_pc.push_back(a);
+            }
+            else {
+                cout << a << "to precompile referenced by " << script_name << " does NOT exsit!"<< endl;
+                throw 1;
+            }
+        }
+
 
     }
 
