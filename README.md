@@ -114,3 +114,11 @@ cpps hello.cpp
 
 cpps认它，别的编译器却不认它。
 
+更好的做法是：不要在.cpp文件中直接添加shebang，而是新建一个扩展名为.cpps的文件，比如：
+    
+    hello.cpps
+    
+然后在这个文件中的第一行写shebang，第二行给出.cpp脚本的路径（绝对路径、相对路径都可以），如下：
+
+    #!/usr/bin/env cpps
+    hello.cpp
