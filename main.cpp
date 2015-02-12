@@ -10,7 +10,6 @@
 #include "helpers.h"
 #include "Loggers.h"
 
-fs::path build_dir;
 fs::path exe_name;
 fs::path script_name;
 
@@ -22,6 +21,7 @@ vector<fs::path> headers_to_pc; // 所有需要预编译的头文件的绝对路
 void collect_info(fs::path script_name);
 int build();
 int generate_skeleton_file(string file_name);
+fs::path resolve_shebang_wrapper(fs::path wrapper_path);
 
 // 命令行参数对应的变量
 bool verbose = false;
@@ -41,7 +41,7 @@ int script_argc;
 char usage[] = "Usage: cpps [options] <script.cpp> [args]";
 
 int main(int argc, char* argv[])
-{
+try {
     // 处理命令行参数
 
     po::options_description desc("Allowed options");
@@ -90,7 +90,20 @@ int main(int argc, char* argv[])
     }
 
 
+
     script_name = src_file;
+
+    if (!exists(script_name)) {
+        cout << "No such file.\n";
+        return -1;
+    }
+
+    if (extension(script_name) == ".cpps") {
+        script_name = resolve_shebang_wrapper(script_name);
+        MINILOG(shebang_logger, "resolved to " << script_name);
+
+    }
+
     int status = 0;
     status = build();
     if (status)
@@ -136,6 +149,9 @@ int main(int argc, char* argv[])
     }
 
     return 0;
+}
+catch (int) {
+    return -1;
 }
 
 
@@ -270,11 +286,6 @@ int build_gch()
 
 int build()
 {
-    if (!exists(script_name)) {
-        cout << "No such file.\n";
-        return -1;
-    }
-
     if (script_name.extension() != ".cpp") {
         cout << script_name << " should have a .cpp suffix." << endl;
         return -1;
@@ -287,21 +298,16 @@ int build()
     exe_name = shadow(script_path);
     exe_name += ".exe";
 
-    try {
-        // 确定所有.cpp文件的路径；确定所有库的名字；确定所有的预编译头文件路径
-        collect_info(canonical(script_name));
-        if (collect_only) {
-            return 0;
-        }
+    // 确定所有.cpp文件的路径；确定所有库的名字；确定所有的预编译头文件路径
+    collect_info(canonical(script_name));
+    if (collect_only) {
+        return 0;
+    }
 
         
-        GchMagic gch_magic(headers_to_pc); 
-        build_gch();
-        build_exe();
-    }
-    catch (int) {
-        return -1;
-    }
+    GchMagic gch_magic(headers_to_pc); 
+    build_gch();
+    build_exe();
 
     return 0;
 }
@@ -396,4 +402,27 @@ int main()
     f << skeleton;
     cout << skeleton_file << " created." << "\n";
     return 1;
+}
+
+fs::path resolve_shebang_wrapper(fs::path wrapper_path)
+{
+    // 得到实际脚本的路径
+    ifstream in(wrapper_path.string());
+    string firstline, secondline;
+    getline(in, firstline);
+    getline(in, secondline);
+    fs::path script_path(secondline);
+
+
+    if (!script_path.is_absolute()) { // 如果该路径是个相对路径，根据wrapper的路径进行拼装
+        script_path = wrapper_path.parent_path();;
+        script_path /= secondline;
+    }
+
+    if (!exists(script_path)) {
+        cout << script_path << " referenced by " << wrapper_path << " does NOT exist." << endl;
+        throw -1;
+    }
+
+    return script_path;
 }

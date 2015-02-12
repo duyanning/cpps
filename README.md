@@ -79,17 +79,24 @@ foo.h
 cpps hello.cpp
 
 ## 如果你在hello.cpp中使用了某个库
-比如boost_filesystem
+比如pthread
 
 ### 在编译环境下
 
-你需要在命令行写-lboost_filesystem才能将该库链接进来
+你需要在命令行写-lpthread才能将该库链接进来
 
 ### 在解释环境
 
-你只要在任何一个.cpp文件中写这样一行即可：
+你只要在任何一个.cpp文件中加上这样的注释即可：
 
-    // linklib boost_filesystem
+    // linklib pthread
+    
+## 预编译头文件
+你还可以通过预编译头文件来加速
+比如你打算将std.h搞成预编译头文件
+那么只要在某个.cpp文件中加上这样的注释
+
+    #include "std.h" // precompile std.h
     
 ## 还支持shebang
 在你的hello.cpp文件第一行写上：
