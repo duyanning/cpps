@@ -7,7 +7,9 @@ ADD_DEFINITIONS(
     # Other flags
 )
 
-set (CPPS_SRCS main.cpp Action.cpp DependencyGraphEntity.cpp Obj2ExeAction.cpp ShebangMagic.cpp Cpp2ObjAction.cpp FileEntity.cpp MiniLogger.cpp PhonyEntity.cpp UpdateDependencyGraphAction.cpp)
+set (CPPS_SRCS Action.cpp H2GchAction.cpp Obj2ExeAction.cpp Cpp2ObjAction.cpp helpers.cpp PhonyEntity.cpp DependencyGraphEntity.cpp Loggers.cpp ShebangMagic.cpp FileEntity.cpp main.cpp UpdateDependencyGraphAction.cpp GchMagic.cpp MiniLogger.cpp)
+
+
 
 add_executable (cpps ${CPPS_SRCS})
 
