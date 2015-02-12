@@ -78,6 +78,11 @@ int main(int argc, char* argv[])
         return 0;
     }
 
+    if (verbose) {
+        build_gch_summay_logger.enable();
+        build_exe_summay_logger.enable();
+    }
+
 
     script_name = src_file;
     int status = 0;
@@ -144,8 +149,7 @@ int build_exe()
     for (auto src_path : sources) {
 
         // 根据.cpp文件的名字，确定.o文件的名字
-        fs::path obj_path = build_dir;
-        obj_path /= src_path.stem();
+        fs::path obj_path = shadow(src_path);
         obj_path += ".o";
 
         // 
