@@ -32,6 +32,10 @@ void Cpp2ObjAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector
 
     MINILOG(build_exe_summay_logger, "compiling " << cpp_path.filename().string());
     MINILOG(build_exe_detail_logger, cmd);
+
+    // 确保目录存在
+    create_directories(obj_path.parent_path());
+
     // 产生.o文件和.d文件
     int gcc_status;
     gcc_status = system(cmd.c_str());

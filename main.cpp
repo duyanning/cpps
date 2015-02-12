@@ -25,6 +25,7 @@ int generate_skeleton_file(string file_name);
 
 // 命令行参数对应的变量
 bool verbose = false;
+bool collect_only = false;
 bool show_dep_graph = false;
 string src_file;
 string skeleton_file;
@@ -52,6 +53,7 @@ int main(int argc, char* argv[])
         ("script", po::value(&src_file), ".cpp file including int main()")
         ("args", po::value<vector<string>>(), "args being passed to the script")
         ("gen,g", po::value(&skeleton_file), "generate script skeleton")
+        ("collect,c", po::bool_switch(&collect_only), "only collect info")
         ;
 
     po::positional_options_description p;
@@ -81,6 +83,10 @@ int main(int argc, char* argv[])
     if (verbose) {
         build_gch_summay_logger.enable();
         build_exe_summay_logger.enable();
+    }
+
+    if (collect_only) {
+        collect_info_logger.enable();
     }
 
 
@@ -276,28 +282,18 @@ int build()
 
     ShebangMagic shebang_magic(script_name.string());
 
-    // 确保cache(即目录~/.cpps/cache)的存在
-    fs::path home_dir(getpwuid(getuid())->pw_dir);
-    fs::path cache_dir_name(".cpps/cache");
-    fs::path cache_dir = home_dir;
-    cache_dir /= cache_dir_name;
-    create_directories(cache_dir);
-
-    // 在cache中为该脚本创建build文件夹(如果.cpp位于不同的目录怎么办？)
-    fs::path script_dir = canonical(script_name).parent_path().relative_path();
-    build_dir = cache_dir;
-    build_dir /= script_dir;
-    create_directories(build_dir);
-
     // 确定可执行文件的名字
-    exe_name = build_dir;
-    exe_name /= script_name.stem();
-    MINILOG0("exe: " << exe_name.string());
-
+    fs::path script_path = canonical(script_name);
+    exe_name = shadow(script_path);
+    exe_name += ".exe";
 
     try {
         // 确定所有.cpp文件的路径；确定所有库的名字；确定所有的预编译头文件路径
         collect_info(canonical(script_name));
+        if (collect_only) {
+            return 0;
+        }
+
         
         GchMagic gch_magic(headers_to_pc); 
         build_gch();
@@ -314,25 +310,25 @@ void collect_info(fs::path script_name)
 {
     // 如果已经处理过该文件，就不要再处理，避免循环引用
     if (find(sources.begin(), sources.end(), script_name) != sources.end()) {
-        MINILOG0(script_name << "is already in list.");
+        MINILOG(collect_info_logger, script_name << "is already collected.");
         return;
     }
 
-    MINILOG0("collect info from " << script_name);
+    MINILOG(collect_info_logger, "collecting " << script_name);
 
     sources.push_back(script_name);
 
     ifstream in(script_name.native());
 
     string line;
-    regex using_pat {R"(using\s+(\w+\.cpp))"};
+    regex using_pat {R"(using\s+([\w\./]+\.cpp))"};
     regex linklib_pat {R"(linklib\s+(\w+))"};
-    regex precompile_pat {R"(precompile\s+(\w+\.h))"};
+    regex precompile_pat {R"(precompile\s+([\w\./]+\.h))"};
     while (getline(in,line)) {
         smatch matches;
         // 搜集引用的.cpp文件
         if (regex_search(line, matches, using_pat)) {
-            MINILOG0("found " << matches[1] << " in " << script_name);
+            MINILOG(collect_info_logger, "found " << matches[1]);
             // 一个.cpp文件中引用的另一个.cpp文件，是以相对路径的形式指明的
             fs::path a = script_name;
             a.remove_filename();
@@ -349,13 +345,13 @@ void collect_info(fs::path script_name)
 
         // 搜集使用的库名字
         if (regex_search(line, matches, linklib_pat)) {
-            MINILOG0("found lib " << matches[1] << " in " << script_name);
+            MINILOG(collect_info_logger, "found lib " << matches[1]);
             libs.push_back(matches[1]);
         }
 
         // 搜集需要预编译的头文件
         if (regex_search(line, matches, precompile_pat)) {
-            MINILOG0("found header to precompile " << matches[1] << " in " << script_name);
+            MINILOG(collect_info_logger, "found pch " << matches[1]);
             // 一个.cpp文件要求预编译某个头文件，是以相对路径的形式指明的
             fs::path a = script_name;
             a.remove_filename();
@@ -364,7 +360,7 @@ void collect_info(fs::path script_name)
                 headers_to_pc.push_back(a);
             }
             else {
-                cout << a << "to precompile referenced by " << script_name << " does NOT exsit!"<< endl;
+                cout << a << "referenced by " << script_name << " does NOT exsit!"<< endl;
                 throw 1;
             }
         }

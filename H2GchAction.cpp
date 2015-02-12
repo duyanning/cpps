@@ -38,6 +38,10 @@ void H2GchAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector<E
 
     MINILOG(build_gch_summay_logger, "precompiling " << h_path.filename().string());
     MINILOG(build_gch_detail_logger, cmd);
+
+    // 确保目录存在
+    create_directories(dep_path.parent_path());
+
     // 产生.gch和.d文件
     int gcc_status;
     gcc_status = system(cmd.c_str());

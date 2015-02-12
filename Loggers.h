@@ -10,5 +10,6 @@ extern MiniLogger build_gch_logger;
 extern MiniLogger build_gch_summay_logger;
 extern MiniLogger build_gch_detail_logger;
 extern MiniLogger dep_graph_logger;
+extern MiniLogger collect_info_logger;
 
 #endif // LOGGERS_H

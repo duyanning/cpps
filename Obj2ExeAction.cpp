@@ -34,6 +34,10 @@ void Obj2ExeAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector
 
     MINILOG(build_exe_summay_logger, "linking " << exe_path.filename().string());
     MINILOG(build_exe_detail_logger, cmd);
+
+    // 确保目录存在
+    create_directories(exe_path.parent_path());
+
     // 链接
     int gcc_status;
     gcc_status = system(cmd.c_str());
