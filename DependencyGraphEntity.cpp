@@ -33,12 +33,12 @@ void DependencyGraphEntity::executeActions(EntityPtr target, vector<EntityPtr>& 
         a->execute(target, allPre, changedPre);
 }
 
-void DependencyGraphEntity::show(int level, string indent)
+void DependencyGraphEntity::show(ostream& os, int level, string indent)
 {
     for (int i = 0; i < level; i++)
-        cout << indent;
-    cout << name() << endl;
+        os << indent;
+    os << name() << endl;
 
     for (auto p : prerequisiteList)
-        p->show(level + 1);
+        p->show(os, level + 1);
 }

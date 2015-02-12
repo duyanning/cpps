@@ -114,4 +114,16 @@ MiniLogger::end_line()
 #define MINILOGPROC(logger, proc, args) MINILOGPROC_IF(true, logger, proc, args)
 
 
+#define MINILOGBLK_IF(cond, logger, code)       \
+    if (cond) {                                 \
+        if (logger.is_enabled()) {              \
+            std::ostream& os(logger.get_os());  \
+            code                                \
+        }                                       \
+    }
+
+
+#define MINILOGBLK(logger, code) MINILOGBLK_IF(true, logger, code)
+
+
 #endif // MINILOGGER_H

@@ -16,7 +16,7 @@ public:
     virtual time_t timestamp() = 0;
     virtual string name() = 0;
     void executeActions(EntityPtr target, vector<EntityPtr>&  allPre, vector<EntityPtr>& changedPre);
-    void show(int level = 0, string indent = "  ");
+    void show(ostream& os, int level = 0, string indent = "  ");
 protected:
     vector<EntityPtr> prerequisiteList;
     vector<ActionPtr> actions;

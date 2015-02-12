@@ -8,6 +8,7 @@
 #include "ShebangMagic.h"
 #include "GchMagic.h"
 #include "helpers.h"
+#include "Loggers.h"
 
 fs::path build_dir;
 fs::path exe_name;
@@ -176,17 +177,21 @@ int build_exe()
 
     // 根据依赖关系图进行构建
 
-    if (show_dep_graph) {
-        cout << "--------------------------------------------------------------" << endl;
-        update_dependency->show();
-        cout << "--------------------------------------------------------------" << endl;
-    }
+    MINILOGBLK_IF(
+        show_dep_graph, dep_graph_logger,
+        os << endl;
+        update_dependency->show(os);
+        os << endl;
+        );
+
     update_dependency->update();
 
-    if (show_dep_graph) {
-        exe->show();
-        cout << "--------------------------------------------------------------" << endl;
-    }
+    MINILOGBLK_IF(
+        show_dep_graph, dep_graph_logger,
+        exe->show(os);
+        os << endl;
+        );
+
     exe->update();
 
 
@@ -233,18 +238,21 @@ int build_gch()
     } // for
 
     // 根据依赖关系图进行构建
-    if (show_dep_graph) {
-        cout << "--------------------------------------------------------------" << endl;
-        update_dependency->show();
-        cout << "--------------------------------------------------------------" << endl;
+    MINILOGBLK_IF(
+        show_dep_graph, dep_graph_logger,
+        os << endl;
+        update_dependency->show(os);
+        os << endl;
+        );
 
-    }
     update_dependency->update();
 
-    if (show_dep_graph) {
-        all_gch->show();
-        cout << "--------------------------------------------------------------" << endl;
-    }
+    MINILOGBLK_IF(
+        show_dep_graph, dep_graph_logger,
+        all_gch->show(os);
+        os << endl;
+        );
+
     all_gch->update();
 
     return 0;
