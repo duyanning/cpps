@@ -5,10 +5,11 @@
 
 class H2GchAction : public Action {
 public:
-    void execute(EntityPtr target, vector<EntityPtr>&  allPre, vector<EntityPtr>& changedPre);
+    void execute(EntityPtr target, vector<EntityPtr>&  allPre, vector<EntityPtr>& changedPre) override;
 };
 
-typedef shared_ptr<H2GchAction> H2GchActionPtr;
+using H2GchActionPtr = shared_ptr<H2GchAction>;
+
 H2GchActionPtr makeH2GchAction();
 
 

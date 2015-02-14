@@ -5,6 +5,10 @@ DependencyGraphEntity::DependencyGraphEntity()
 {
 }
 
+DependencyGraphEntity::~DependencyGraphEntity()
+{
+}
+
 void DependencyGraphEntity::addAction(shared_ptr<Action> action)
 {
     actions.push_back(action);

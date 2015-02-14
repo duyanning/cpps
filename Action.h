@@ -2,13 +2,14 @@
 #define ACTION_H
 
 class Action;
-typedef shared_ptr<Action> ActionPtr;
+using ActionPtr = shared_ptr<Action>;
 
 #include "DependencyGraphEntity.h"
 
 class Action : public enable_shared_from_this<Action> {
 public:
     virtual void execute(EntityPtr target, vector<EntityPtr>&  allPre, vector<EntityPtr>& changedPre) = 0;
+    virtual ~Action() = 0;
 };
 
 

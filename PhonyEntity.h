@@ -6,14 +6,14 @@
 class PhonyEntity : public DependencyGraphEntity {
 public:
     PhonyEntity(string name);
-    void update();
-    time_t timestamp();
-    string name();
+    void update() override;
+    time_t timestamp() override;
+    string name() override;
 private:
     string m_name;
 };
 
-typedef shared_ptr<PhonyEntity> PhonyEntityPtr;
+using PhonyEntityPtr = shared_ptr<PhonyEntity>;
 
 PhonyEntityPtr makePhonyEntity(string name);
 

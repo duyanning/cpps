@@ -2,6 +2,7 @@
 #include "Cpp2ObjAction.h"
 #include "FileEntity.h"
 #include "Loggers.h"
+#include "helpers.h"
 
 Cpp2ObjActionPtr makeCpp2ObjAction()
 {
@@ -19,6 +20,9 @@ void Cpp2ObjAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector
 
     fs::path dep_path = obj_path;
     dep_path += ".d";
+
+    fs::path birthcert_path = obj_path;
+    birthcert_path += ".birthcert";
 
     string cmd = "g++ -std=c++11 -fmax-errors=1 -Wall -c -o";
 
@@ -42,4 +46,7 @@ void Cpp2ObjAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector
     if (gcc_status)
         throw gcc_status;
 
+    // 产生出生证明文件
+    ofstream ofs(birthcert_path.string());
+    ofs << cpp->sig().timestamp << "\n" << cpp->sig().size << endl;
 }

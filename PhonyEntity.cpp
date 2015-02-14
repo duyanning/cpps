@@ -28,5 +28,5 @@ void PhonyEntity::update()
 
 time_t PhonyEntity::timestamp()
 {
-    return time(0);
+    return time(0);             // 当前时间
 }

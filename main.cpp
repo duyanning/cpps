@@ -1,5 +1,6 @@
 #include "std.h"
 #include "FileEntity.h"
+#include "VulnerableFileEntity.h"
 #include "PhonyEntity.h"
 #include "Obj2ExeAction.h"
 #include "Cpp2ObjAction.h"
@@ -29,6 +30,7 @@ bool collect_only = false;
 bool show_dep_graph = false;
 string src_file;
 string skeleton_file;
+bool clear_run = false;
 
 int run_by = 1; // 0 - system(); 1 - execv()
 
@@ -54,6 +56,7 @@ try {
         ("args", po::value<vector<string>>(), "args being passed to the script")
         ("gen,g", po::value(&skeleton_file), "generate script skeleton")
         ("collect,c", po::bool_switch(&collect_only), "only collect info")
+        ("clear", po::bool_switch(&clear_run), "run within a clear environment")
         ;
 
     po::positional_options_description p;
@@ -176,7 +179,7 @@ int build_exe()
         obj_path += ".o";
 
         // 
-        FileEntityPtr obj = makeFileEntity(obj_path);
+        FileEntityPtr obj = makeVulnerableFileEntity(obj_path);
         obj->addAction(makeCpp2ObjAction());
 
         // 可执行文件依赖.o文件
@@ -240,7 +243,7 @@ int build_gch()
 
 
 
-        FileEntityPtr gch = makeFileEntity(gch_path);
+        FileEntityPtr gch = makeVulnerableFileEntity(gch_path);
         gch->addAction(makeH2GchAction());
 
         // 
@@ -305,6 +308,37 @@ int build()
         return 0;
     }
 
+    if (clear_run) {
+        // 在build前删除所有的产生的文件
+        safe_remove(exe_name);
+        for (auto src : sources) {
+            fs::path obj_path = shadow(src);
+            obj_path += ".o";
+            safe_remove(obj_path);
+
+            fs::path dep_path = obj_path;
+            dep_path += ".d";
+            safe_remove(dep_path);
+
+            fs::path bc_path = obj_path;
+            bc_path += ".birthcert";
+            safe_remove(bc_path);
+        }
+
+        for (auto h : headers_to_pc) {
+            fs::path gch_path = shadow(h);
+            gch_path += ".gch";
+            safe_remove(gch_path);
+
+            fs::path dep_path = gch_path;
+            dep_path += ".d";
+            safe_remove(dep_path);
+
+            fs::path bc_path = gch_path;
+            bc_path += ".birthcert";
+            safe_remove(bc_path);
+        }
+    }
         
     GchMagic gch_magic(headers_to_pc); 
     build_gch();

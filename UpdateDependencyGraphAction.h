@@ -7,12 +7,12 @@
 class UpdateDependencyGraphAction : public Action {
 public:
     UpdateDependencyGraphAction(FileEntityPtr obj);
-    void execute(EntityPtr target, vector<EntityPtr>&  allPre, vector<EntityPtr>& changedPre);
+    void execute(EntityPtr target, vector<EntityPtr>&  allPre, vector<EntityPtr>& changedPre) override;
 private:
     FileEntityPtr m_obj;
 };
 
-typedef shared_ptr<UpdateDependencyGraphAction> UpdateDependencyGraphActionPtr;
+using UpdateDependencyGraphActionPtr = shared_ptr<UpdateDependencyGraphAction>;
 
 UpdateDependencyGraphActionPtr makeUpdateDependencyGraphAction(FileEntityPtr obj);
 

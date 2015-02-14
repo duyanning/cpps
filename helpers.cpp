@@ -85,3 +85,9 @@ bool is_a_c_src(fs::path f)
     return false;
     
 }
+
+void safe_remove(fs::path f)
+{
+    if (exists(f))
+        remove(f);
+}

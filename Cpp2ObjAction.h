@@ -5,10 +5,10 @@
 
 class Cpp2ObjAction : public Action {
 public:
-    void execute(EntityPtr target, vector<EntityPtr>&  allPre, vector<EntityPtr>& changedPre);
+    void execute(EntityPtr target, vector<EntityPtr>&  allPre, vector<EntityPtr>& changedPre) override;
 };
 
-typedef shared_ptr<Cpp2ObjAction> Cpp2ObjActionPtr;
+using Cpp2ObjActionPtr = shared_ptr<Cpp2ObjAction>;
 Cpp2ObjActionPtr makeCpp2ObjAction();
 
 #endif // CPP2OBJACTION_H

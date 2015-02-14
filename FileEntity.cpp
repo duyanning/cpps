@@ -34,9 +34,11 @@ void FileEntity::update()
     for (auto p : prerequisiteList) {
         if (p->timestamp() == 0) {
             string errMsg = name()  + ": cannot make `" + p->name() + "'";
-            cout << errMsg << endl;
+            cout << errMsg << endl; // todo: throw an exception
+            throw 1;
         }
-        if (this->timestamp() < p->timestamp()) {
+
+        if (this->timestamp() < p->timestamp()) { // todo: if two phonyentities compare? <=
             needExecute = true;
             break;
         }
@@ -47,8 +49,10 @@ void FileEntity::update()
         executeActions(shared_from_this(), prerequisiteList, changed);
 }
 
-
-time_t FileEntity::actualFileTimestamp()
+// 若文件不存在，就认为它的生日为0
+// 若它作为目标文件，生日为0意味着这是一个最古老的文件，它比任何依赖文件都要老，所以必须重新生成
+// 若它作为依赖文件，生日0意味着文件不存在，没法用它生成目标文件
+time_t FileEntity::timestamp()
 {
     time_t timestamp;
     if (!exists(m_path))
@@ -60,7 +64,11 @@ time_t FileEntity::actualFileTimestamp()
     return timestamp;
 }
 
-time_t FileEntity::timestamp()
+FileSig FileEntity::sig()
 {
-    return actualFileTimestamp();
+    FileSig sig;
+    sig.timestamp = last_write_time(m_path);
+    sig.size = file_size(m_path);
+    return sig;
 }
+

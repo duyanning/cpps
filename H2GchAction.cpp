@@ -21,6 +21,9 @@ void H2GchAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector<E
     fs::path dep_path = shadow(gch_path);
     dep_path += ".d";
 
+    fs::path birthcert_path = gch_path;
+    birthcert_path += ".birthcert";
+
     // we should remove old .d before generate new one
     // otherwise, we will get a warning message
     if (exists(dep_path))
@@ -52,5 +55,10 @@ void H2GchAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector<E
     gcc_status = system(cmd.c_str());
     if (gcc_status)
         throw gcc_status;
+
+    // 产生出生证明文件
+    ofstream ofs(birthcert_path.string());
+    ofs << h->sig().timestamp << "\n" << h->sig().size << endl;
+
 }
 
