@@ -11,3 +11,4 @@ MiniLogger build_gch_detail_logger(cout, false, &build_gch_logger);
 MiniLogger dep_graph_logger(cout, true);
 MiniLogger collect_info_logger(cout, false);
 MiniLogger shebang_logger(cout, false);
+MiniLogger perm_logger(cout, false);

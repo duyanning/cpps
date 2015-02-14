@@ -14,7 +14,7 @@ GchMagic::GchMagic(vector<fs::path>& headers_to_precompile)
         fs::path shadow_gch = shadow(gch);
         if (exists(shadow_gch)) {
             MINILOG(gch_magic_logger, shadow_gch << "\n=>\n" << gch);
-            rename(shadow_gch, gch);
+            move(shadow_gch, gch);
         }
     }
     MINILOG(gch_magic_logger, "move from shadow - completed");
@@ -29,7 +29,7 @@ GchMagic::~GchMagic()
         fs::path shadow_gch = shadow(gch);
         if (exists(gch)) {
             MINILOG(gch_magic_logger, gch << "\n=>\n" << shadow_gch);
-            rename(gch, shadow_gch);
+            move(gch, shadow_gch);
         }
     }
     MINILOG(gch_magic_logger, "move to shadow - completed");

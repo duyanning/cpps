@@ -83,6 +83,7 @@ try {
     if (verbose) {
         build_gch_summay_logger.enable();
         build_exe_summay_logger.enable();
+        perm_logger.enable();
     }
 
     if (collect_only) {
@@ -286,8 +287,8 @@ int build_gch()
 
 int build()
 {
-    if (script_name.extension() != ".cpp") {
-        cout << script_name << " should have a .cpp suffix." << endl;
+    if (!is_a_cpp_src(script_name) && !is_a_c_src(script_name)) {
+        cout << script_name << " should have a C/C++ suffix." << endl;
         return -1;
     }
 
@@ -327,9 +328,9 @@ void collect_info(fs::path script_name)
     ifstream in(script_name.native());
 
     string line;
-    regex using_pat {R"(using\s+([\w\./]+\.cpp))"};
+    regex using_pat {R"(using\s+([\w\./]+\.(cpp|cxx|c\+\+|C|cc|cp|CPP)))"};
     regex linklib_pat {R"(linklib\s+(\w+))"};
-    regex precompile_pat {R"(precompile\s+([\w\./]+\.h))"};
+    regex precompile_pat {R"(precompile\s+([\w\./]+\.(h|hpp|H|hh)))"};
     while (getline(in,line)) {
         smatch matches;
         // 搜集引用的.cpp文件

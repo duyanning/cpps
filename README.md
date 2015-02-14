@@ -93,7 +93,9 @@ cpps hello.cpp
     
 ## 预编译头文件
 你还可以通过预编译头文件来加速
+
 比如你打算将std.h搞成预编译头文件
+
 那么只要在某个.cpp文件中加上这样的注释
 
     #include "std.h" // precompile std.h
@@ -122,3 +124,8 @@ cpps认它，别的编译器却不认它。
 
     #!/usr/bin/env cpps
     hello.cpp
+
+然后将这个.cpps文件设置成可执行的
+
+    chmod +x hello.cpps
+    ./hello.cpps

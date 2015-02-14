@@ -39,6 +39,11 @@ void H2GchAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector<E
     MINILOG(build_gch_summay_logger, "precompiling " << h_path.filename().string());
     MINILOG(build_gch_detail_logger, cmd);
 
+    // 因为预编译头文件要生成在.h文件所在目录，你不一定能有权限
+    if (!can_write_in(gch_path.parent_path())) {
+        MINILOG(perm_logger, "permissin prevent from generating " << gch_path);
+        return;
+    }
     // 确保目录存在
     create_directories(dep_path.parent_path());
 
