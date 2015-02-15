@@ -21,7 +21,7 @@ vector<fs::path> headers_to_pc; // 所有需要预编译的头文件的绝对路
 
 
 void collect_info(fs::path script_name);
-int build();
+void build();
 void generate_skeleton_file(string file_name);
 void generate_class_files(string class_name);
 fs::path resolve_shebang_wrapper(fs::path wrapper_path);
@@ -117,10 +117,7 @@ try {
 
     }
 
-    int status = 0;
-    status = build();
-    if (status)
-        return status;
+    build();
 
     if (run_by == 1) {
         MINILOG0("run using execv()");
@@ -163,12 +160,12 @@ try {
 
     return 0;
 }
-catch (int) {
-    return -1;
+catch (int exit_code) {
+    return exit_code;
 }
 
 
-int build_exe()
+void build_exe()
 {
     // 构建依赖关系图
     FileEntityPtr exe = makeFileEntity(exe_name);
@@ -233,15 +230,12 @@ int build_exe()
 
     exe->update();
 
-
-    return 0;
-
 }
 
-int build_gch()
+void build_gch()
 {
     if (headers_to_pc.empty())
-        return 0;
+        return;
 			
     PhonyEntityPtr all_gch  = makePhonyEntity("generate all gch");
     PhonyEntityPtr update_dependency = makePhonyEntity("update dependency graph");
@@ -294,14 +288,13 @@ int build_gch()
 
     all_gch->update();
 
-    return 0;
 }
 
-int build()
+void build()
 {
     if (!is_a_cpp_src(script_name) && !is_a_c_src(script_name)) {
         cout << script_name << " should have a C/C++ suffix." << endl;
-        return -1;
+        throw 1;
     }
 
     ShebangMagic shebang_magic(script_name.string());
@@ -314,7 +307,7 @@ int build()
     // 确定所有.cpp文件的路径；确定所有库的名字；确定所有的预编译头文件路径
     collect_info(canonical(script_name));
     if (collect_only) {
-        return 0;
+        throw 0;
     }
 
     if (clear_run) {
@@ -353,7 +346,6 @@ int build()
     build_gch();
     build_exe();
 
-    return 0;
 }
 
 void collect_info(fs::path script_name)
