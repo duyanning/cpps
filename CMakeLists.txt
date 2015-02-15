@@ -7,7 +7,7 @@ ADD_DEFINITIONS(
     # Other flags
 )
 
-set (CPPS_SRCS Action.cpp H2GchAction.cpp Obj2ExeAction.cpp Cpp2ObjAction.cpp helpers.cpp PhonyEntity.cpp DependencyGraphEntity.cpp Loggers.cpp ShebangMagic.cpp FileEntity.cpp main.cpp UpdateDependencyGraphAction.cpp GchMagic.cpp MiniLogger.cpp VulnerableFileEntity.cpp)
+set (CPPS_SRCS Action.cpp H2GchAction.cpp Obj2ExeAction.cpp Cpp2ObjAction.cpp helpers.cpp PhonyEntity.cpp DependencyGraphEntity.cpp Loggers.cpp ShebangMagic.cpp FileEntity.cpp main.cpp UpdateDependencyGraphAction.cpp GchMagic.cpp MiniLogger.cpp VulnerableFileEntity.cpp samples.cpp)
 
 
 
