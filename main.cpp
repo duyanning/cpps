@@ -42,6 +42,7 @@ const int max_len_of_arg = 100;
 char script_arg_vector[max_num_of_args][max_len_of_arg];
 char* script_argv[max_num_of_args];
 int script_argc;
+int max_line_scan = -1;              // 最多扫描这么多行，-1代表全部扫描
 
 char usage[] = "Usage: cpps [options] <script.cpp> [args]";
 
@@ -61,6 +62,7 @@ try {
         ("class,c", po::value(&class_name), "generate .h/.cpp for a class")
         ("collect", po::bool_switch(&collect_only), "only collect info")
         ("clear", po::bool_switch(&clear_run), "run within a clear environment")
+        ("max-line-scan", po::value<int>(&max_line_scan), "scan up to N lines")
         ;
 
     po::positional_options_description p;
@@ -366,6 +368,7 @@ void collect_info(fs::path script_name)
     regex using_pat {R"(using\s+([\w\./]+\.(cpp|cxx|c\+\+|C|cc|cp|CPP)))"};
     regex linklib_pat {R"(linklib\s+(\w+))"};
     regex precompile_pat {R"(precompile\s+([\w\./]+\.(h|hpp|H|hh)))"};
+    int n = 0;
     while (getline(in,line)) {
         smatch matches;
         // 搜集引用的.cpp文件
@@ -407,6 +410,12 @@ void collect_info(fs::path script_name)
             }
         }
 
+
+        if (max_line_scan != -1) {
+            n++;
+            if (n >= max_line_scan)
+                break;
+        }
 
     }
 
