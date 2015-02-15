@@ -1,3 +1,7 @@
+#ifndef STD_H
+#define STD_H
+
+
 #include <vector>
 #include <list>
 #include <deque>
@@ -19,7 +23,7 @@
 
 #include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
-
+#include <boost/algorithm/string/case_conv.hpp>
 
 #include <unistd.h>
 #include <sys/types.h>
@@ -31,3 +35,7 @@ using namespace std;
 //using namespace boost;
 namespace fs = boost::filesystem;
 namespace po = boost::program_options;
+namespace al = boost::algorithm;
+
+
+#endif // STD_H

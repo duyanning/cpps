@@ -91,3 +91,4 @@ void safe_remove(fs::path f)
     if (exists(f))
         remove(f);
 }
+

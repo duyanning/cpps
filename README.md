@@ -129,3 +129,14 @@ cpps认它，别的编译器却不认它。
 
     chmod +x hello.cpps
     ./hello.cpps
+
+咦？
+好像在个shell脚本中调用cpps hello.cpp即可
+
+## 干干净净运行
+cpps --clear hello.cpp
+相当于先clear all，再build，然后运行。
+
+如果你用新版本的cpps运行以前运行过的C++程序时遇到问题，可以这样试一下。
+
+

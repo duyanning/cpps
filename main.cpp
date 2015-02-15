@@ -10,6 +10,7 @@
 #include "GchMagic.h"
 #include "helpers.h"
 #include "Loggers.h"
+#include "samples.h"
 
 fs::path exe_name;
 fs::path script_name;
@@ -21,7 +22,8 @@ vector<fs::path> headers_to_pc; // 所有需要预编译的头文件的绝对路
 
 void collect_info(fs::path script_name);
 int build();
-int generate_skeleton_file(string file_name);
+void generate_skeleton_file(string file_name);
+void generate_class_files(string class_name);
 fs::path resolve_shebang_wrapper(fs::path wrapper_path);
 
 // 命令行参数对应的变量
@@ -30,6 +32,7 @@ bool collect_only = false;
 bool show_dep_graph = false;
 string src_file;
 string skeleton_file;
+string class_name;
 bool clear_run = false;
 
 int run_by = 1; // 0 - system(); 1 - execv()
@@ -55,7 +58,8 @@ try {
         ("script", po::value(&src_file), ".cpp file including int main()")
         ("args", po::value<vector<string>>(), "args being passed to the script")
         ("gen,g", po::value(&skeleton_file), "generate script skeleton")
-        ("collect,c", po::bool_switch(&collect_only), "only collect info")
+        ("class,c", po::value(&class_name), "generate .h/.cpp for a class")
+        ("collect", po::bool_switch(&collect_only), "only collect info")
         ("clear", po::bool_switch(&clear_run), "run within a clear environment")
         ;
 
@@ -75,6 +79,11 @@ try {
 
     if (vm.count("gen")) {
         generate_skeleton_file(skeleton_file);
+        return 0;
+    }
+
+    if (vm.count("class")) {
+        generate_class_files(class_name);
         return 0;
     }
 
@@ -411,33 +420,71 @@ void collect_info(fs::path script_name)
 
 }
 
-
-int generate_skeleton_file(string file_name)
+void generate_skeleton_file(string file_name)
 {
-    fs::path p(file_name);
-    if (exists(p)) {
+    ofstream f;
+
+    if (fs::exists(file_name)) {
         cout << file_name << " already exists." << endl;
-        return 0;
+        return;
     }
+    f.open(file_name);
+    f << main_sample;
+    f.close();
 
-    ofstream f(file_name);
-    char skeleton[] =
-        R"(//#!/usr/bin/env cpps
-#include <iostream>
+    
+    if (fs::exists("std.h")) {
+        cout << "std.h already exists." << endl;
+        return;
+    }
+    f.open("std.h");
+    f << std_header_sample;
+    f.close();
+}
 
-using namespace std;
-
-int main()
+void generate_class_files(string class_name)
 {
-    cout << "welcome to cpps" << endl;
-    return 0;
-}
-)";
+    string h_name = class_name + ".h";
+    string cpp_name = class_name + ".cpp";
+        
+    ofstream f;
+    regex pat;
+    string format;
 
-    f << skeleton;
-    cout << skeleton_file << " created." << "\n";
-    return 1;
+    if (fs::exists(h_name)) {
+        cout << h_name << " already exists." << endl;
+        return;
+    }
+    f.open(h_name);
+    pat = "XXX_H";
+    format = al::to_upper_copy(class_name) + "_H";
+    string h_content = regex_replace(class_h_sample, pat, format);
+
+    pat = "XXX";
+    format = class_name;
+    h_content = regex_replace(h_content, pat, format);
+    f << h_content;
+    f.close();
+
+    
+    if (fs::exists(cpp_name)) {
+        cout << cpp_name << " already exists." << endl;
+        return;
+    }
+    f.open(cpp_name);
+    pat = "XXX";
+    format = class_name;
+    string cpp_content = regex_replace(class_cpp_sample, pat, format);
+    f << cpp_content;
+    f.close();
 }
+
+// string input {"x 1 y2 22 zaq 34567"};
+// regex pat {"(\w+)\s(\d+)"};
+// // word space number
+// string format {"{$1,$2}\n"};
+// cout << regex_replace(input,pat,format);
+
 
 fs::path resolve_shebang_wrapper(fs::path wrapper_path)
 {
