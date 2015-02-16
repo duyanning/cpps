@@ -47,6 +47,7 @@ void H2GchAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector<E
         MINILOG(perm_logger, "permissin prevent from generating " << gch_path);
         return;
     }
+
     // 确保目录存在
     create_directories(dep_path.parent_path());
 

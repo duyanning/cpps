@@ -78,6 +78,17 @@ foo.h
 
 cpps hello.cpp
 
+
+如果你的.h文件与.cpp文件同名的话，那就更简单了
+
+    #include "VeryVeryVeryLong.h" // usingcpp
+   
+上面这行就相当于
+
+    #include "VeryVeryVeryLong.h" // using VeryVeryVeryLong.cpp
+    
+不但少打很多字，而且避免了文件改名后需要修改多处的问题
+
 ## 如果你在hello.cpp中使用了某个库
 比如pthread
 
@@ -98,7 +109,7 @@ cpps hello.cpp
 
 那么只要在某个.cpp文件中加上这样的注释
 
-    #include "std.h" // precompile std.h
+    #include "std.h" // precompile
     
 ## 还支持shebang
 在你的hello.cpp文件第一行写上：

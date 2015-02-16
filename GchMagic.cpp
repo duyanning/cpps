@@ -1,4 +1,4 @@
-#include "std.h"
+#include "std.h" // precompile
 #include "GchMagic.h"
 #include "helpers.h"
 #include "Loggers.h"
@@ -19,11 +19,20 @@ GchMagic::GchMagic(vector<fs::path>& headers_to_precompile)
         gch += ".gch";
         fs::path shadow_gch = shadow(gch);
 
+        // 跟其他编译系统生成的预编译头文件和谐相处，暂时将其改名
+        if (exists(gch)) {
+            fs::path other_gch = gch;
+            other_gch += ".old";
+            rename(gch, other_gch);
+        }
+
         // 因为运行cpps的用户不一定有在.h所在目录下产生文件（.gch）的权
-        // 力，所以即便用户要求对某个.h文件进行预编译，也不一定能产生对
+        // 限，所以即便用户要求对某个.h文件进行预编译，也不一定能产生对
         // 应的.gch文件。但.gch文件只要存在，其出生证明文件就存在
         if (exists(shadow_gch)) {
             MINILOG(gch_magic_logger, shadow_gch << "\n=>\n" << gch);
+
+
             move(shadow_gch, gch);
 
             fs::path gch_birthcert = gch;
@@ -34,6 +43,7 @@ GchMagic::GchMagic(vector<fs::path>& headers_to_precompile)
 
         }
     }
+
     MINILOG(gch_magic_logger, "move from shadow - completed");
 }
 
@@ -44,6 +54,7 @@ GchMagic::~GchMagic()
         fs::path gch = h;
         gch += ".gch";
         fs::path shadow_gch = shadow(gch);
+
         if (exists(gch)) {
             MINILOG(gch_magic_logger, gch << "\n=>\n" << shadow_gch);
             move(gch, shadow_gch);
@@ -54,6 +65,16 @@ GchMagic::~GchMagic()
             shadow_gch_birthcert += ".birthcert";
             move(gch_birthcert, shadow_gch_birthcert);
         }
+
+        // 跟其他编译系统生成的目录形式的预编译头文件和谐相处，恢复其原名
+        fs::path other_gch = gch;
+        other_gch += ".old";
+        if (exists(other_gch)) {
+            rename(other_gch, gch);
+        }
+
     }
+
+
     MINILOG(gch_magic_logger, "move to shadow - completed");
 }

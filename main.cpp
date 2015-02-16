@@ -1,20 +1,25 @@
-#include "std.h"
-#include "FileEntity.h"
-#include "VulnerableFileEntity.h"
-#include "PhonyEntity.h"
-#include "Obj2ExeAction.h"
-#include "Cpp2ObjAction.h"
-#include "H2GchAction.h"
-#include "UpdateDependencyGraphAction.h"
-#include "ShebangMagic.h"
-#include "GchMagic.h"
-#include "helpers.h"
-#include "Loggers.h"
-#include "samples.h"
+#include "std.h"                // precompile
+#include "FileEntity.h"         // usingcpp
+#include "VulnerableFileEntity.h" // usingcpp
+#include "PhonyEntity.h"          // usingcpp
+#include "Obj2ExeAction.h"        // usingcpp
+#include "Cpp2ObjAction.h"        // usingcpp
+#include "H2GchAction.h"          // usingcpp
+#include "UpdateDependencyGraphAction.h" // usingcpp
+#include "ShebangMagic.h"                // usingcpp
+#include "GchMagic.h"                    // usingcpp
+#include "helpers.h"                     // usingcpp
+#include "Loggers.h"                     // usingcpp
+#include "samples.h"                     // usingcpp
+// using MiniLogger.cpp
+
+// linklib boost_filesystem
+// linklib boost_program_options
+// linklib boost_system
 
 // 搜集到的项目信息
 fs::path exe_path;              // 生成的可执行文件的绝对路径
-fs::path script_name;           // 命令行上指定的脚本路径（这是个相对路径）
+fs::path script_file;           // 命令行上指定的脚本路径（这是个相对路径）
 vector<fs::path> sources; // 所有.cpp文件的绝对路径
 vector<string> libs; // 库的名称，即链接时命令行上-l之后的部分
 vector<fs::path> headers_to_pc; // 所有需要预编译的头文件的绝对路径
@@ -24,8 +29,8 @@ bool verbose = false;
 bool collect_only = false;
 bool build_only = false;
 bool show_dep_graph = false;
-string src_file;
-string skeleton_file;
+string script_file_name;
+string main_file_name;
 string class_name;
 bool clear_run = false;
 int run_by = 1; // 0 - system(); 1 - execv()
@@ -34,7 +39,7 @@ int max_line_scan = -1;              // 最多扫描这么多行，-1代表全�
 void collect_info();
 void build();
 void run();
-void generate_skeleton_file(string file_name);
+void generate_main_file(string main_file__name);
 void generate_class_files(string class_name);
 fs::path resolve_shebang_wrapper(fs::path wrapper_path);
 
@@ -50,9 +55,9 @@ try {
         ("run-by,r", po::value<int>(&run_by)->default_value(1), "run by 0 - system() or 1 - execv()")
         ("verbose,v", po::bool_switch(&verbose), "be verbose")
         ("dependency,d", po::bool_switch(&show_dep_graph), "show dependency graph")
-        ("script", po::value(&src_file), ".cpp file including int main()")
+        ("script", po::value(&script_file_name), ".cpp file including int main()")
         ("args", po::value<vector<string>>(), "args being passed to the script")
-        ("gen,g", po::value(&skeleton_file), "generate script skeleton")
+        ("generate,g", po::value(&main_file_name), "generate a script skeleton")
         ("class,c", po::value(&class_name), "generate .h/.cpp pair for a class")
         ("collect", po::bool_switch(&collect_only), "only collect information")
         ("build", po::bool_switch(&build_only), "only build")
@@ -74,7 +79,7 @@ try {
     }
 
     if (vm.count("gen")) {
-        generate_skeleton_file(skeleton_file);
+        generate_main_file(main_file_name);
         return 0;
     }
 
@@ -98,20 +103,20 @@ try {
         collect_info_logger.enable();
     }
 
-    script_name = src_file;
+    script_file = script_file_name;
 
-    if (!exists(script_name)) {
+    if (!exists(script_file)) {
         cout << "No such file.\n";
         return 1;
     }
 
-    if (extension(script_name) == ".cpps") {
-        script_name = resolve_shebang_wrapper(script_name);
-        MINILOG(shebang_logger, "resolved to " << script_name);
+    if (extension(script_file) == ".cpps") {
+        script_file = resolve_shebang_wrapper(script_file);
+        MINILOG(shebang_logger, "resolved to " << script_file);
     }
 
-    if (!is_a_cpp_src(script_name) && !is_a_c_src(script_name)) {
-        cout << script_name << " should have a C/C++ suffix." << endl;
+    if (!is_a_cpp_src(script_file) && !is_a_c_src(script_file)) {
+        cout << script_file << " should have a C/C++ suffix." << endl;
         return 1;
     }
 
@@ -262,6 +267,7 @@ void build_gch()
 
 void build()
 {
+    GchMagic gch_magic(headers_to_pc); 
 
     if (clear_run) {
         // 在build前删除所有的产生的文件
@@ -295,10 +301,9 @@ void build()
         }
     }
         
-    GchMagic gch_magic(headers_to_pc); 
     build_gch();
 
-    ShebangMagic shebang_magic(script_name.string());
+    ShebangMagic shebang_magic(script_file.string());
     build_exe();
 
 }
@@ -307,25 +312,43 @@ void scan(fs::path src_path)
 {
     // 如果已经处理过该文件，就不要再处理，避免循环引用
     if (find(sources.begin(), sources.end(), src_path) != sources.end()) {
-        MINILOG(collect_info_logger, src_path << "is already collected.");
+        MINILOG(collect_info_logger, src_path << " is already collected.");
         return;
     }
 
-    MINILOG(collect_info_logger, "collecting " << src_path);
+    MINILOG(collect_info_logger, "scanning " << src_path);
 
     sources.push_back(src_path);
 
     ifstream in(src_path.native());
 
     string line;
+    regex usingcpp_pat {R"(^\s*#include\s+"([\w\./]+)\.h"\s+//\s+usingcpp)"};
     regex using_pat {R"(using\s+([\w\./]+\.(cpp|cxx|c\+\+|C|cc|cp|CPP)))"};
     regex linklib_pat {R"(linklib\s+(\w+))"};
-    regex precompile_pat {R"(precompile\s+([\w\./]+\.(h|hpp|H|hh)))"};
+    regex precompile_pat {R"***(^\s*#include\s+"([\w\./]+\.(h|hpp|H|hh))"\s+//\s+precompile)***"};
     int n = 0;
     while (getline(in,line)) {
         smatch matches;
         // 搜集引用的.cpp文件
-        if (regex_search(line, matches, using_pat)) {
+        if (regex_search(line, matches, usingcpp_pat)) {
+            string cpp_file_name = matches[1];
+            cpp_file_name += ".cpp";
+            MINILOG(collect_info_logger, "found " << cpp_file_name);
+            // 一个.cpp文件中引用的另一个.cpp文件，是以相对路径的形式指明的
+            fs::path a = src_path;
+            a.remove_filename();
+            a /= cpp_file_name;
+            if (exists(a)) {
+                // 递归处理
+                scan(a);
+            }
+            else {
+                cout << a << "referenced by " << src_path << " does NOT exsit!"<< endl;
+                throw 1;
+            }
+        }
+        else if (regex_search(line, matches, using_pat)) {
             MINILOG(collect_info_logger, "found " << matches[1]);
             // 一个.cpp文件中引用的另一个.cpp文件，是以相对路径的形式指明的
             fs::path a = src_path;
@@ -355,6 +378,10 @@ void scan(fs::path src_path)
             a.remove_filename();
             a /= matches.str(1);
             if (exists(a)) {
+                if (find(headers_to_pc.begin(), headers_to_pc.end(), a) != headers_to_pc.end()) {
+                    MINILOG(collect_info_logger, a << " is already collected.");
+                    return;
+                }
                 headers_to_pc.push_back(a);
             }
             else {
@@ -372,12 +399,14 @@ void scan(fs::path src_path)
 
     }
 
+    MINILOG(collect_info_logger, "scanning " << src_path << " completed");
+
 }
 
 void collect_info()
 {
     // 确定可执行文件的路径
-    fs::path script_path = canonical(script_name);
+    fs::path script_path = canonical(script_file);
     exe_path = shadow(script_path);
     exe_path += ".exe";
 
@@ -402,7 +431,7 @@ void run()
         }
         script_argc = 0;
 
-        strcpy(script_argv[0], script_name.c_str());
+        strcpy(script_argv[0], script_file.c_str());
         script_argc++;
 
         if (vm.count("args")) {
@@ -434,15 +463,15 @@ void run()
 
 }
 
-void generate_skeleton_file(string file_name)
+void generate_main_file(string main_file_name)
 {
     ofstream f;
 
-    if (fs::exists(file_name)) {
-        cout << file_name << " already exists." << endl;
+    if (fs::exists(main_file_name)) {
+        cout << main_file_name << " already exists." << endl;
         return;
     }
-    f.open(file_name);
+    f.open(main_file_name);
     f << main_sample;
     f.close();
 
