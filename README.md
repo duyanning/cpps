@@ -43,7 +43,7 @@ C++代码本身就不适合解释执行，
 
 那你执行下面这行即可：
 
-cpps hello.cpp
+    cpps hello.cpp
 
 ## 如果脚本由多个.cpp文件组成
 比如你的c++代码位于目录~/work/hello下，共有三个文件：
@@ -145,9 +145,18 @@ cpps认它，别的编译器却不认它。
 好像在个shell脚本中调用cpps hello.cpp即可
 
 ## 干干净净运行
-cpps --clear hello.cpp
+
+    cpps --clear hello.cpp
+    
 相当于先clear all，再build，然后运行。
 
 如果你用新版本的cpps运行以前运行过的C++程序时遇到问题，可以这样试一下。
+
+
+## 我想得到cpps在背后生成的那个可执行文件
+
+    cpps --build hello.cpp -o hello
+    
+cpps就会把它生成的那个可执行文件给你拷贝一份
 
 

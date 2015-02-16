@@ -17,6 +17,16 @@
 // linklib boost_program_options
 // linklib boost_system
 
+// 路径相关的变量名约定：
+// xxx_file 文件的相对路径，类型fs::path
+// xxx_dir 目录的相对路径，类型fs::path
+// xxx_file_path 文件的绝对路径，类型fs::path
+// xxx_dir_path 目录的绝对路径，类型fs::path
+// xxx_file_name 文件的相对路径或绝对路径，类型string
+// xxx_dir_name 目录的相对路径或绝对路径，类型string
+// 如果xxx部分足够清晰，可省略file与dir后缀。
+
+
 // 搜集到的项目信息
 fs::path exe_path;              // 生成的可执行文件的绝对路径
 fs::path script_file;           // 命令行上指定的脚本路径（这是个相对路径）
@@ -35,6 +45,7 @@ string class_name;
 bool clear_run = false;
 int run_by = 1; // 0 - system(); 1 - execv()
 int max_line_scan = -1;              // 最多扫描这么多行，-1代表全部扫描
+string output_name;
 
 void collect_info();
 void build();
@@ -61,6 +72,7 @@ try {
         ("class,c", po::value(&class_name), "generate .h/.cpp pair for a class")
         ("collect", po::bool_switch(&collect_only), "only collect information")
         ("build", po::bool_switch(&build_only), "only build")
+        ("output,o", po::value(&output_name), "only build")
         ("clear", po::bool_switch(&clear_run), "run within a clear environment")
         ("max-line-scan", po::value<int>(&max_line_scan), "scan up to N lines")
         ;
@@ -204,6 +216,21 @@ void build_exe()
         );
 
     exe->update();
+
+    if (vm.count("output")) {
+        fs::path output_path = output_name;
+        if (!exists(output_path)) {
+            copy(exe_path, output_path);
+        }
+        else if (!is_directory(output_path)) {
+            remove(output_path);
+            copy(exe_path, output_path);
+        }
+        else {
+            cout << "a directory named " << output_name << " already exists" << endl;
+        }
+
+    }
 
 }
 
