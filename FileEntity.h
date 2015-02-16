@@ -4,8 +4,9 @@
 #include "DependencyGraphEntity.h"
 
 struct FileSig {
-    time_t timestamp;            // 文件的日期
-    uintmax_t size;             // 文件的大小
+    fs::path path;
+    time_t timestamp {0};            // 文件的日期
+    uintmax_t size {0};             // 文件的大小
 };
 
 inline
@@ -20,6 +21,18 @@ inline
 bool operator!=(FileSig a, FileSig b)
 {
     return !(a == b);
+}
+
+inline
+ostream& operator<<(ostream& os, const FileSig& sig)
+{
+    return os << sig.path << "\n" << sig.timestamp << "\n" << sig.size << "\n";
+}
+
+inline
+istream& operator>>(istream& is, FileSig& sig)
+{
+    return is >> sig.path >> sig.timestamp >> sig.size;
 }
 
 class FileEntity : public DependencyGraphEntity {

@@ -60,33 +60,55 @@ po::variables_map vm;
 int main(int argc, char* argv[])
 try {
     // 处理命令行参数
-    po::options_description desc("Allowed options");
-    desc.add_options()
+    po::options_description info_opts("Information options");    
+    info_opts.add_options()
         ("help,h", "produce help message")
-        ("run-by,r", po::value<int>(&run_by)->default_value(1), "run by 0 - system() or 1 - execv()")
         ("verbose,v", po::bool_switch(&verbose), "be verbose")
         ("dependency,d", po::bool_switch(&show_dep_graph), "show dependency graph")
-        ("script", po::value(&script_file_name), ".cpp file including int main()")
-        ("args", po::value<vector<string>>(), "args being passed to the script")
-        ("generate,g", po::value(&main_file_name), "generate a script skeleton")
-        ("class,c", po::value(&class_name), "generate .h/.cpp pair for a class")
-        ("collect", po::bool_switch(&collect_only), "only collect information")
+        ("collect", po::bool_switch(&collect_only), "only show information collected")
+        ;
+
+    po::options_description build_opts("Build options");
+    build_opts.add_options()
         ("build", po::bool_switch(&build_only), "only build")
-        ("output,o", po::value(&output_name), "only build")
+        ("output,o", po::value(&output_name), "output resulting exe as named")
         ("clear", po::bool_switch(&clear_run), "run within a clear environment")
         ("max-line-scan", po::value<int>(&max_line_scan), "scan up to N lines")
         ;
+
+    po::options_description run_opts("Run options");
+    run_opts.add_options()
+        ("run-by,r", po::value<int>(&run_by)->default_value(1), "run by: 0 - system, 1 - execv")
+        ;
+
+    po::options_description generation_opts("Generation options");
+    generation_opts.add_options()
+        ("generate,g", po::value(&main_file_name), "generate a script skeleton")
+        ("class,c", po::value(&class_name), "generate .h/.cpp pair for a class")
+        ;
+
+    po::options_description hidden_opts("Hidden options");
+    hidden_opts.add_options()
+        ("script", po::value(&script_file_name), ".cpp file including int main()")
+        ("args", po::value<vector<string>>(), "args being passed to the script")
+        ;
+
+    po::options_description cmdline_options; // 用于解析命令的选项
+    cmdline_options.add(info_opts).add(build_opts).add(run_opts).add(generation_opts).add(hidden_opts);
+
+    po::options_description visible_options; // 呈现给用户的选项
+    visible_options.add(info_opts).add(build_opts).add(run_opts).add(generation_opts);
 
     po::positional_options_description p;
     p.add("script", 1);
     p.add("args", -1);
 
-    po::store(po::command_line_parser(argc, argv).options(desc).positional(p).run(), vm);
+    po::store(po::command_line_parser(argc, argv).options(cmdline_options).positional(p).run(), vm);
     po::notify(vm);    
 
     if (vm.count("help")) {
         cout << usage << endl;
-        cout << desc << "\n";
+        cout << visible_options << "\n";
         return 0;
     }
 

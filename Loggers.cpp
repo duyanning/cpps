@@ -12,3 +12,4 @@ MiniLogger dep_graph_logger(cout, true);
 MiniLogger collect_info_logger(cout, false);
 MiniLogger shebang_logger(cout, false);
 MiniLogger perm_logger(cout, false);
+MiniLogger birthcert_logger(cout, false);

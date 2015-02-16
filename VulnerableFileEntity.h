@@ -10,7 +10,8 @@ class VulnerableFileEntity : public FileEntity {
 public:
     VulnerableFileEntity(fs::path path);
     void update() override;
-    FileSig src_sig();
+    void src_sig_vector(vector<FileSig>& sig_vector);
+    void write_birth_cert(fs::path dep_path);
 };
 
 using VulnerableFileEntityPtr = shared_ptr<VulnerableFileEntity>;

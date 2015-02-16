@@ -34,7 +34,7 @@ void FileEntity::update()
     for (auto p : prerequisiteList) {
         if (p->timestamp() == 0) {
             string errMsg = name()  + ": cannot make `" + p->name() + "'";
-            cout << errMsg << endl; // todo: throw an exception
+            cout << errMsg << endl;
             throw 1;
         }
 
@@ -67,6 +67,7 @@ time_t FileEntity::timestamp()
 FileSig FileEntity::sig()
 {
     FileSig sig;
+    sig.path = m_path;
     sig.timestamp = last_write_time(m_path);
     sig.size = file_size(m_path);
     return sig;

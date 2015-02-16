@@ -1,6 +1,6 @@
 #include "std.h"
 #include "Cpp2ObjAction.h"      // using Action.cpp
-#include "FileEntity.h"
+#include "VulnerableFileEntity.h"
 #include "Loggers.h"
 #include "helpers.h"
 
@@ -15,7 +15,7 @@ void Cpp2ObjAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector
     FileEntityPtr cpp = static_pointer_cast<FileEntity>(allPre[0]);
     fs::path cpp_path = cpp->path();
 
-    FileEntityPtr obj = static_pointer_cast<FileEntity>(target);
+    VulnerableFileEntityPtr obj = static_pointer_cast<VulnerableFileEntity>(target);
     fs::path obj_path = obj->path();
 
     fs::path dep_path = obj_path;
@@ -46,7 +46,7 @@ void Cpp2ObjAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector
     if (gcc_status)
         throw gcc_status;
 
-    // 产生出生证明文件
-    ofstream ofs(birthcert_path.string());
-    ofs << cpp->sig().timestamp << "\n" << cpp->sig().size << endl;
+    // 产生出生证明文件（gcc编译时，如果遇到#include的头文件不存在，就算fatal error，也不会生成.d文件）
+    obj->write_birth_cert(dep_path);
+
 }
