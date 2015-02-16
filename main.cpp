@@ -12,44 +12,38 @@
 #include "Loggers.h"
 #include "samples.h"
 
-fs::path exe_name;
-fs::path script_name;
-
+// 搜集到的项目信息
+fs::path exe_path;              // 生成的可执行文件的绝对路径
+fs::path script_name;           // 命令行上指定的脚本路径（这是个相对路径）
 vector<fs::path> sources; // 所有.cpp文件的绝对路径
 vector<string> libs; // 库的名称，即链接时命令行上-l之后的部分
 vector<fs::path> headers_to_pc; // 所有需要预编译的头文件的绝对路径
 
-
-void collect_info(fs::path script_name);
-void build();
-void generate_skeleton_file(string file_name);
-void generate_class_files(string class_name);
-fs::path resolve_shebang_wrapper(fs::path wrapper_path);
-
 // 命令行参数对应的变量
 bool verbose = false;
 bool collect_only = false;
+bool build_only = false;
 bool show_dep_graph = false;
 string src_file;
 string skeleton_file;
 string class_name;
 bool clear_run = false;
-
 int run_by = 1; // 0 - system(); 1 - execv()
-
-const int max_num_of_args = 100;
-const int max_len_of_arg = 100;
-char script_arg_vector[max_num_of_args][max_len_of_arg];
-char* script_argv[max_num_of_args];
-int script_argc;
 int max_line_scan = -1;              // 最多扫描这么多行，-1代表全部扫描
 
+void collect_info();
+void build();
+void run();
+void generate_skeleton_file(string file_name);
+void generate_class_files(string class_name);
+fs::path resolve_shebang_wrapper(fs::path wrapper_path);
+
 char usage[] = "Usage: cpps [options] <script.cpp> [args]";
+po::variables_map vm;
 
 int main(int argc, char* argv[])
 try {
     // 处理命令行参数
-
     po::options_description desc("Allowed options");
     desc.add_options()
         ("help,h", "produce help message")
@@ -59,8 +53,9 @@ try {
         ("script", po::value(&src_file), ".cpp file including int main()")
         ("args", po::value<vector<string>>(), "args being passed to the script")
         ("gen,g", po::value(&skeleton_file), "generate script skeleton")
-        ("class,c", po::value(&class_name), "generate .h/.cpp for a class")
-        ("collect", po::bool_switch(&collect_only), "only collect info")
+        ("class,c", po::value(&class_name), "generate .h/.cpp pair for a class")
+        ("collect", po::bool_switch(&collect_only), "only collect information")
+        ("build", po::bool_switch(&build_only), "only build")
         ("clear", po::bool_switch(&clear_run), "run within a clear environment")
         ("max-line-scan", po::value<int>(&max_line_scan), "scan up to N lines")
         ;
@@ -69,7 +64,6 @@ try {
     p.add("script", 1);
     p.add("args", -1);
 
-    po::variables_map vm;
     po::store(po::command_line_parser(argc, argv).options(desc).positional(p).run(), vm);
     po::notify(vm);    
 
@@ -104,61 +98,35 @@ try {
         collect_info_logger.enable();
     }
 
-
-
     script_name = src_file;
 
     if (!exists(script_name)) {
         cout << "No such file.\n";
-        return -1;
+        return 1;
     }
 
     if (extension(script_name) == ".cpps") {
         script_name = resolve_shebang_wrapper(script_name);
         MINILOG(shebang_logger, "resolved to " << script_name);
-
     }
 
+    if (!is_a_cpp_src(script_name) && !is_a_c_src(script_name)) {
+        cout << script_name << " should have a C/C++ suffix." << endl;
+        return 1;
+    }
+
+    // 搜集信息
+    collect_info();
+    if (collect_only)
+        return 0;
+
+    // 构建
     build();
+    if (build_only)
+        return 0;
 
-    if (run_by == 1) {
-        MINILOG0("run using execv()");
-
-        for (int i = 0; i < max_num_of_args; i++) {
-            script_argv[i] = script_arg_vector[i];
-            script_arg_vector[i][0] = '\0';
-        }
-        script_argc = 0;
-
-        strcpy(script_argv[0], script_name.c_str());
-        script_argc++;
-
-        if (vm.count("args")) {
-            for (auto a : vm["args"].as<vector<string>>()) {
-                strcpy(script_arg_vector[script_argc++], a.c_str());
-            }
-        }
-        script_argv[script_argc] = 0;
-
-        execv(exe_name.c_str(), script_argv);
-    }
-    else if (run_by == 0) {
-        MINILOG0("run using system()");
-        string script_args;
-        if (vm.count("args")) {
-            for (auto a : vm["args"].as<vector<string>>()) {
-                script_args += " '"; // 把脚本的参数用单引号括起来，避免通配符展开。该展开的通配符在解释器执行时已经展开过了
-                script_args += a;
-                script_args += "'";
-            }
-        }
-        
-        string cmd_line= exe_name.string();
-        cmd_line += script_args;
-        MINILOG0("final cmd line: " << cmd_line);
-        // 运行产生的可执行文件
-        system(cmd_line.c_str());
-    }
+    // 运行
+    run();
 
     return 0;
 }
@@ -170,7 +138,7 @@ catch (int exit_code) {
 void build_exe()
 {
     // 构建依赖关系图
-    FileEntityPtr exe = makeFileEntity(exe_name);
+    FileEntityPtr exe = makeFileEntity(exe_path);
     string lib_options;
     for (auto l : libs) {
         lib_options += " -l";
@@ -294,27 +262,10 @@ void build_gch()
 
 void build()
 {
-    if (!is_a_cpp_src(script_name) && !is_a_c_src(script_name)) {
-        cout << script_name << " should have a C/C++ suffix." << endl;
-        throw 1;
-    }
-
-    ShebangMagic shebang_magic(script_name.string());
-
-    // 确定可执行文件的名字
-    fs::path script_path = canonical(script_name);
-    exe_name = shadow(script_path);
-    exe_name += ".exe";
-
-    // 确定所有.cpp文件的路径；确定所有库的名字；确定所有的预编译头文件路径
-    collect_info(canonical(script_name));
-    if (collect_only) {
-        throw 0;
-    }
 
     if (clear_run) {
         // 在build前删除所有的产生的文件
-        safe_remove(exe_name);
+        safe_remove(exe_path);
         for (auto src : sources) {
             fs::path obj_path = shadow(src);
             obj_path += ".o";
@@ -346,23 +297,25 @@ void build()
         
     GchMagic gch_magic(headers_to_pc); 
     build_gch();
+
+    ShebangMagic shebang_magic(script_name.string());
     build_exe();
 
 }
 
-void collect_info(fs::path script_name)
+void scan(fs::path src_path)
 {
     // 如果已经处理过该文件，就不要再处理，避免循环引用
-    if (find(sources.begin(), sources.end(), script_name) != sources.end()) {
-        MINILOG(collect_info_logger, script_name << "is already collected.");
+    if (find(sources.begin(), sources.end(), src_path) != sources.end()) {
+        MINILOG(collect_info_logger, src_path << "is already collected.");
         return;
     }
 
-    MINILOG(collect_info_logger, "collecting " << script_name);
+    MINILOG(collect_info_logger, "collecting " << src_path);
 
-    sources.push_back(script_name);
+    sources.push_back(src_path);
 
-    ifstream in(script_name.native());
+    ifstream in(src_path.native());
 
     string line;
     regex using_pat {R"(using\s+([\w\./]+\.(cpp|cxx|c\+\+|C|cc|cp|CPP)))"};
@@ -375,15 +328,15 @@ void collect_info(fs::path script_name)
         if (regex_search(line, matches, using_pat)) {
             MINILOG(collect_info_logger, "found " << matches[1]);
             // 一个.cpp文件中引用的另一个.cpp文件，是以相对路径的形式指明的
-            fs::path a = script_name;
+            fs::path a = src_path;
             a.remove_filename();
             a /= matches.str(1);
             if (exists(a)) {
                 // 递归处理
-                collect_info(a);
+                scan(a);
             }
             else {
-                cout << a << "referenced by " << script_name << " does NOT exsit!"<< endl;
+                cout << a << "referenced by " << src_path << " does NOT exsit!"<< endl;
                 throw 1;
             }
         }
@@ -398,14 +351,14 @@ void collect_info(fs::path script_name)
         if (regex_search(line, matches, precompile_pat)) {
             MINILOG(collect_info_logger, "found pch " << matches[1]);
             // 一个.cpp文件要求预编译某个头文件，是以相对路径的形式指明的
-            fs::path a = script_name;
+            fs::path a = src_path;
             a.remove_filename();
             a /= matches.str(1);
             if (exists(a)) {
                 headers_to_pc.push_back(a);
             }
             else {
-                cout << a << "referenced by " << script_name << " does NOT exsit!"<< endl;
+                cout << a << "referenced by " << src_path << " does NOT exsit!"<< endl;
                 throw 1;
             }
         }
@@ -417,6 +370,66 @@ void collect_info(fs::path script_name)
                 break;
         }
 
+    }
+
+}
+
+void collect_info()
+{
+    // 确定可执行文件的路径
+    fs::path script_path = canonical(script_name);
+    exe_path = shadow(script_path);
+    exe_path += ".exe";
+
+    // 确定所有.cpp文件的路径；确定所有库的名字；确定所有的预编译头文件的路径
+    scan(canonical(script_path));
+}
+
+void run()
+{
+    const int max_num_of_args = 100;
+    const int max_len_of_arg = 100;
+    char script_arg_vector[max_num_of_args][max_len_of_arg];
+    char* script_argv[max_num_of_args];
+    int script_argc;
+
+    if (run_by == 1) {
+        MINILOG0("run using execv()");
+
+        for (int i = 0; i < max_num_of_args; i++) {
+            script_argv[i] = script_arg_vector[i];
+            script_arg_vector[i][0] = '\0';
+        }
+        script_argc = 0;
+
+        strcpy(script_argv[0], script_name.c_str());
+        script_argc++;
+
+        if (vm.count("args")) {
+            for (auto a : vm["args"].as<vector<string>>()) {
+                strcpy(script_arg_vector[script_argc++], a.c_str());
+            }
+        }
+        script_argv[script_argc] = 0;
+
+        execv(exe_path.c_str(), script_argv);
+    }
+    else if (run_by == 0) {
+        MINILOG0("run using system()");
+        string script_args;
+        if (vm.count("args")) {
+            for (auto a : vm["args"].as<vector<string>>()) {
+                script_args += " '"; // 把脚本的参数用单引号括起来，避免通配符展开。该展开的通配符在解释器执行时已经展开过了
+                script_args += a;
+                script_args += "'";
+            }
+        }
+        
+        string cmd_line= exe_path.string();
+        cmd_line += script_args;
+        MINILOG0("final cmd line: " << cmd_line);
+        // 运行产生的可执行文件
+        system(cmd_line.c_str());
     }
 
 }
