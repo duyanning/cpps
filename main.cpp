@@ -78,7 +78,7 @@ try {
         return 0;
     }
 
-    if (vm.count("gen")) {
+    if (vm.count("generate")) {
         generate_main_file(main_file_name);
         return 0;
     }
