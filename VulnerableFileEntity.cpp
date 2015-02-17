@@ -20,7 +20,7 @@ void VulnerableFileEntity::update()
     updatePrerequisites(changed);
 
     vector<FileSig> old_sig_vector;
-    this->src_sig_vector(old_sig_vector);
+    this->get_src_sigs_from_birthcert(old_sig_vector);
 
     vector<FileSig> new_sig_vector;
     // check to see if execution is needed
@@ -61,7 +61,7 @@ void VulnerableFileEntity::update()
 }
 
 // 从自己的出生证明文件中读取生成自己的源文件的签名
-void VulnerableFileEntity::src_sig_vector(vector<FileSig>& sig_vector)
+void VulnerableFileEntity::get_src_sigs_from_birthcert(vector<FileSig>& sig_vector)
 {
     // 自己的出生证明文件总是跟自己在一起
     if (!exists(path()))
@@ -110,8 +110,8 @@ void get_pre_file_paths_from_dep_file(fs::path dep_path, vector<fs::path>& pre_f
 }
 
 
-// （根据.d文件中指出的依赖关系）生成出生证明
-void VulnerableFileEntity::write_birth_cert(fs::path dep_path)
+// （根据.d文件中指出的依赖关系）生成出生证明文件
+void VulnerableFileEntity::generate_birth_cert(fs::path dep_path)
 {
     vector<fs::path> pre_file_paths;
     get_pre_file_paths_from_dep_file(dep_path, pre_file_paths);

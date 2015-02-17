@@ -17,7 +17,7 @@
 // linklib boost_program_options
 // linklib boost_system
 
-// 路径相关的变量名约定：
+// 路径相关的变量命名约定：
 // xxx_file 文件的相对路径，类型fs::path
 // xxx_dir 目录的相对路径，类型fs::path
 // xxx_file_path 文件的绝对路径，类型fs::path
@@ -316,11 +316,10 @@ void build_gch()
 
 void build()
 {
-    GchMagic gch_magic(headers_to_pc); 
-
     if (clear_run) {
         // 在build前删除所有的产生的文件
         safe_remove(exe_path);
+
         for (auto src : sources) {
             fs::path obj_path = shadow(src);
             obj_path += ".o";
@@ -349,12 +348,12 @@ void build()
             safe_remove(bc_path);
         }
     }
-        
+
+    GchMagic gch_magic(headers_to_pc); 
     build_gch();
 
     ShebangMagic shebang_magic(script_file.string());
     build_exe();
-
 }
 
 void scan(fs::path src_path)
@@ -570,13 +569,6 @@ void generate_class_files(string class_name)
     f << cpp_content;
     f.close();
 }
-
-// string input {"x 1 y2 22 zaq 34567"};
-// regex pat {"(\w+)\s(\d+)"};
-// // word space number
-// string format {"{$1,$2}\n"};
-// cout << regex_replace(input,pat,format);
-
 
 fs::path resolve_shebang_wrapper(fs::path wrapper_path)
 {
