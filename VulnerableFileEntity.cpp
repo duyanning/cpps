@@ -54,7 +54,7 @@ void VulnerableFileEntity::update()
                    }
             );
     }
-    
+
     // execute action
     if (needExecute)
         executeActions(shared_from_this(), prerequisiteList, changed);
@@ -87,9 +87,9 @@ void VulnerableFileEntity::get_src_sigs_from_birthcert(vector<FileSig>& sig_vect
 
 void get_pre_file_paths_from_dep_file(fs::path dep_path, vector<fs::path>& pre_file_paths)
 {
-    ifstream f(dep_path.native());
+    ifstream f(dep_path.string());
     assert(f);
-    
+
     istream_iterator<string> i = istream_iterator<string>(f);
 
     // skip the first

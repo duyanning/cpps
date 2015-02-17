@@ -25,9 +25,11 @@
 #include <boost/program_options.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 
+#ifndef _WIN32
 #include <unistd.h>
 #include <sys/types.h>
 #include <pwd.h>
+#endif
 
 #include "MiniLogger.h"
 

@@ -3,7 +3,11 @@
 
 fs::path get_home()
 {
+    #ifdef _WIN32
+    return "c:\\_cpps";
+    #else
     return getpwuid(getuid())->pw_dir;
+    #endif // _WIN32
 }
 
 void move(const fs::path& old_p, const fs::path& new_p)
@@ -44,7 +48,7 @@ fs::path shadow(fs::path p)
 bool can_write_in(fs::path dir)
 {
     //fs::file_status s = status(dir);
-    
+
     //cout << "perm: " << s.permissions() << " " << dir << endl;
 
     fs::path test_file = dir;
@@ -83,7 +87,7 @@ bool is_a_c_src(fs::path f)
     if (suffix == ".c")
         return true;
     return false;
-    
+
 }
 
 void safe_remove(fs::path f)

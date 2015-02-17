@@ -17,7 +17,7 @@ void UpdateDependencyGraphAction::execute(EntityPtr target, vector<EntityPtr>&  
     FileEntityPtr dep = static_pointer_cast<FileEntity>(allPre[0]);
     fs::path dep_path = dep->path();
 
-    ifstream f(dep_path.native());
+    ifstream f(dep_path.string());
     istream_iterator<string> i = istream_iterator<string>(f);
 
     // skip the first and second

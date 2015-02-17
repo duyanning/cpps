@@ -60,7 +60,7 @@ po::variables_map vm;
 int main(int argc, char* argv[])
 try {
     // 处理命令行参数
-    po::options_description info_opts("Information options");    
+    po::options_description info_opts("Information options");
     info_opts.add_options()
         ("help,h", "produce help message")
         ("verbose,v", po::bool_switch(&verbose), "be verbose")
@@ -104,7 +104,7 @@ try {
     p.add("args", -1);
 
     po::store(po::command_line_parser(argc, argv).options(cmdline_options).positional(p).run(), vm);
-    po::notify(vm);    
+    po::notify(vm);
 
     if (vm.count("help")) {
         cout << usage << endl;
@@ -185,7 +185,7 @@ void build_exe()
     }
     exe->addAction(makeObj2ExeAction(lib_options));
 
-    PhonyEntityPtr update_dependency = makePhonyEntity("update dependency graph"); 
+    PhonyEntityPtr update_dependency = makePhonyEntity("update dependency graph");
 
     for (auto src_path : sources) {
 
@@ -193,7 +193,7 @@ void build_exe()
         fs::path obj_path = shadow(src_path);
         obj_path += ".o";
 
-        // 
+        //
         FileEntityPtr obj = makeVulnerableFileEntity(obj_path);
         obj->addAction(makeCpp2ObjAction());
 
@@ -260,7 +260,7 @@ void build_gch()
 {
     if (headers_to_pc.empty())
         return;
-			
+
     PhonyEntityPtr all_gch  = makePhonyEntity("generate all gch");
     PhonyEntityPtr update_dependency = makePhonyEntity("update dependency graph");
 
@@ -273,7 +273,7 @@ void build_gch()
         FileEntityPtr gch = makeVulnerableFileEntity(gch_path);
         gch->addAction(makeH2GchAction());
 
-        // 
+        //
         all_gch->addPrerequisite(gch);
 
         // .gch文件依赖.h文件
@@ -349,7 +349,7 @@ void build()
         }
     }
 
-    GchMagic gch_magic(headers_to_pc); 
+    GchMagic gch_magic(headers_to_pc);
     build_gch();
 
     ShebangMagic shebang_magic(script_file.string());
@@ -368,7 +368,7 @@ void scan(fs::path src_path)
 
     sources.push_back(src_path);
 
-    ifstream in(src_path.native());
+    ifstream in(src_path.string());
 
     string line;
     regex usingcpp_pat {R"(^\s*#include\s+"([\w\./]+)\.h"\s+//\s+usingcpp)"};
@@ -479,7 +479,7 @@ void run()
         }
         script_argc = 0;
 
-        strcpy(script_argv[0], script_file.c_str());
+        strcpy(script_argv[0], script_file.string().c_str());
         script_argc++;
 
         if (vm.count("args")) {
@@ -489,7 +489,9 @@ void run()
         }
         script_argv[script_argc] = 0;
 
+#ifndef _WIN32
         execv(exe_path.c_str(), script_argv);
+#endif
     }
     else if (run_by == 0) {
         MINILOG0("run using system()");
@@ -501,7 +503,7 @@ void run()
                 script_args += "'";
             }
         }
-        
+
         string cmd_line= exe_path.string();
         cmd_line += script_args;
         MINILOG0("final cmd line: " << cmd_line);
@@ -523,7 +525,7 @@ void generate_main_file(string main_file_name)
     f << main_sample;
     f.close();
 
-    
+
     if (fs::exists("std.h")) {
         cout << "std.h already exists." << endl;
         return;
@@ -537,7 +539,7 @@ void generate_class_files(string class_name)
 {
     string h_name = class_name + ".h";
     string cpp_name = class_name + ".cpp";
-        
+
     ofstream f;
     regex pat;
     string format;
@@ -549,7 +551,7 @@ void generate_class_files(string class_name)
     f.open(h_name);
     pat = "XXX_H";
     format = al::to_upper_copy(class_name) + "_H";
-    string h_content = regex_replace(class_h_sample, pat, format);
+    string h_content = regex_replace(string(class_h_sample), pat, format);
 
     pat = "XXX";
     format = class_name;
@@ -557,7 +559,7 @@ void generate_class_files(string class_name)
     f << h_content;
     f.close();
 
-    
+
     if (fs::exists(cpp_name)) {
         cout << cpp_name << " already exists." << endl;
         return;
@@ -565,7 +567,7 @@ void generate_class_files(string class_name)
     f.open(cpp_name);
     pat = "XXX";
     format = class_name;
-    string cpp_content = regex_replace(class_cpp_sample, pat, format);
+    string cpp_content = regex_replace(string(class_cpp_sample), pat, format);
     f << cpp_content;
     f.close();
 }
