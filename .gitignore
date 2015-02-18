@@ -4,3 +4,5 @@ build
 cscope.out
 cpps.depend
 cpps.layout
+obj
+bin
