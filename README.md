@@ -67,7 +67,7 @@ cpps内建了一个全透明的build system，当你第一次运行脚本之后�
     cpps hello.cpp
 
 ## 如果脚本由多个.cpp文件组成
-比如你的c++代码位于目录~/work/hello下，共有三个文件：
+比如你的c++代码位于目录`~/work/hello`下，共有三个文件：
 
 hello.cpp
 
@@ -87,7 +87,7 @@ foo.h
 
 ### 在cpps的解释环境下
 
-你只需要在上面这行#include后添加一条注释，如下：
+你只需要在上面这行`#include`后添加一条注释，如下：
 
     #include "foo.h" // usingcpp
     
@@ -105,7 +105,7 @@ foo.h
 
 ### 在gcc的编译环境下
 
-你需要在gcc的命令行写-lpthread才能将该库链接进来
+你需要在gcc的命令行写`-lpthread`才能将该库链接进来
 
 ### 在cpps的解释环境下
 
@@ -171,7 +171,7 @@ cpps认它，别的编译器却不认它。
 cpps就会把它生成的那个可执行文件给你拷贝一份
 
 ## Windows用户
-需要装了MingW，并确保C:\MinGW\bin在你的PATH环境变量中。
+需要装了MingW，并确保`C:\MinGW\bin`在你的PATH环境变量中。
 
 如果你想使用boost库，可以从此处
 
@@ -179,7 +179,7 @@ cpps就会把它生成的那个可执行文件给你拷贝一份
 
 下载别人编译好的(因为boost并没有提供对mingw的官方支持)。
 
-比如我们将下载的boost放在D:\libs4mingw下
+比如我们将下载的boost放在`D:\libs4mingw`下
 
 为了让cpps正常运行，你需要在PATH环境变量中添加
 
@@ -193,7 +193,7 @@ cpps就会把它生成的那个可执行文件给你拷贝一份
 
 每次都要指定太麻烦？
 
-你可以在C:\.cpps目录下创建一个名为config.txt的文件，在里面写上：
+你可以在`C:\.cpps`目录下创建一个名为`config.txt`的文件，在里面写上：
 
     include-dir = D:\libs4mingw\boost\include
     lib-dir = D:\libs4mingw\boost\lib
@@ -205,7 +205,7 @@ cpps就会把它生成的那个可执行文件给你拷贝一份
 即可。
 
 
-config.txt中的include-dir和lib-dir可以在多行中出现。
+config.txt中的`include-dir`和`lib-dir`可以在多行中出现。
 
 如果你在资源管理器中不好建立名字里带点的目录，你只要用cpps执行一次.cpp文件即可建立该目录。
 
