@@ -3,6 +3,7 @@
 #include "VulnerableFileEntity.h"
 #include "helpers.h"
 #include "Loggers.h"
+#include "global.h"
 
 H2GchActionPtr makeH2GchAction()
 {
@@ -29,7 +30,8 @@ void H2GchAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector<E
     if (exists(dep_path))
         remove(dep_path);
 
-    string cmd = "g++ -std=c++11 -fmax-errors=1 -Wall -o";
+    string cmd = gcc_compile_h_cmd;
+    cmd += " -o";
 
     cmd += " ";
     cmd += gch_path.string();

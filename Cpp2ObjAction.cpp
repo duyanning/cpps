@@ -3,6 +3,7 @@
 #include "VulnerableFileEntity.h"
 #include "Loggers.h"
 #include "helpers.h"
+#include "global.h"
 
 Cpp2ObjActionPtr makeCpp2ObjAction()
 {
@@ -24,7 +25,8 @@ void Cpp2ObjAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector
     fs::path birthcert_path = obj_path;
     birthcert_path += ".birthcert";
 
-    string cmd = "g++ -std=c++11 -fmax-errors=1 -Wall -c -o";
+    string cmd = gcc_compile_cpp_cmd;
+    cmd += " -o";
 
     cmd += " ";
     cmd += obj_path.string();

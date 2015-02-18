@@ -1,0 +1,4 @@
+# you can repeat include-dir and lib-dir many times
+
+include-dir = D:\libs4mingw\boost\include
+lib-dir = D:\libs4mingw\boost\lib

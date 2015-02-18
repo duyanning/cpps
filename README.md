@@ -169,3 +169,43 @@ cpps认它，别的编译器却不认它。
     cpps --build hello.cpp -o hello
     
 cpps就会把它生成的那个可执行文件给你拷贝一份
+
+## Windows用户
+需要装了MingW，并确保C:\MinGW\bin在你的PATH环境变量中。
+
+如果你想使用boost库，可以从此处
+
+    https://sourceforge.net/projects/boostmingw/
+
+下载别人编译好的(因为boost并没有提供对mingw的官方支持)。
+
+比如我们将下载的boost放在D:\libs4mingw下
+
+为了让cpps正常运行，你需要在PATH环境变量中添加
+
+    D:\libs4mingw\boost\lib
+
+这是为了让你的程序在运行时能够找到需要的动态链接库。
+
+然后，你还需要在命令行指定boost头文件(.h)所在目录和库文件(.a)所在目录，如下：
+
+    cpps hello.cpp -I D:\libs4mingw\boost\include -L D:\libs4mingw\boost\lib
+
+每次都要指定太麻烦？
+
+你可以在C:\.cpps目录下创建一个名为config.txt的文件，在里面写上：
+
+    include-dir = D:\libs4mingw\boost\include
+    lib-dir = D:\libs4mingw\boost\lib
+
+这样你以后只需要运行
+
+    cpps hello.cpp
+
+即可。
+
+
+config.txt中的include-dir和lib-dir可以在多行中出现。
+
+如果你在资源管理器中不好建立名字里带点的目录，你只要用cpps执行一次.cpp文件即可建立该目录。
+

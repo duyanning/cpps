@@ -37,6 +37,10 @@ using std::smatch;
 // xxx_dir_name 目录的相对路径或绝对路径，类型string
 // 如果xxx部分足够清晰，可省略file与dir后缀。
 
+string gcc_compile_cpp_cmd = "g++ -std=c++11 -fmax-errors=1 -Wall -c";
+string gcc_compile_h_cmd = "g++ -std=c++11 -fmax-errors=1 -Wall";
+string gcc_link_cmd = "g++ -std=c++11 -fmax-errors=1";
+
 
 // 搜集到的项目信息
 fs::path exe_path;              // 生成的可执行文件的绝对路径
@@ -98,6 +102,12 @@ try {
         ("class,c", po::value(&class_name), "generate .h/.cpp pair for a class")
         ;
 
+    po::options_description config_opts("Configuration options");
+    config_opts.add_options()
+        ("include-dir,I", po::value<vector<string>>(), "add a directory to be searched for header files")
+        ("lib-dir,L", po::value<vector<string>>(), "add a directory to be searched for libs")
+        ;
+
     po::options_description hidden_opts("Hidden options");
     hidden_opts.add_options()
         ("script", po::value(&script_file_name), ".cpp file including int main()")
@@ -105,10 +115,10 @@ try {
         ;
 
     po::options_description cmdline_options; // 用于解析命令的选项
-    cmdline_options.add(info_opts).add(build_opts).add(run_opts).add(generation_opts).add(hidden_opts);
+    cmdline_options.add(info_opts).add(build_opts).add(run_opts).add(generation_opts).add(config_opts).add(hidden_opts);
 
     po::options_description visible_options; // 呈现给用户的选项
-    visible_options.add(info_opts).add(build_opts).add(run_opts).add(generation_opts);
+    visible_options.add(info_opts).add(build_opts).add(run_opts).add(generation_opts).add(config_opts);
 
     po::positional_options_description p;
     p.add("script", 1);
@@ -116,6 +126,15 @@ try {
 
     po::store(po::command_line_parser(argc, argv).options(cmdline_options).positional(p).run(), vm);
     po::notify(vm);
+
+    // 加载配置文件
+    fs::path cfg_path = get_home();
+    cfg_path /= ".cpps/config.txt";
+    ifstream ifs(cfg_path.string());
+    if (ifs) {
+        po::store(parse_config_file(ifs, config_opts), vm);
+        po::notify(vm);
+    }
 
     if (vm.count("help")) {
         cout << usage << endl;
@@ -163,6 +182,22 @@ try {
     if (!is_a_cpp_src(script_file) && !is_a_c_src(script_file)) {
         cout << script_file << " should have a C/C++ suffix." << endl;
         return 1;
+    }
+
+    if (vm.count("include-dir")) {
+        for (auto dir : vm["include-dir"].as<vector<string>>()) {
+            gcc_compile_cpp_cmd += " -I";
+            gcc_compile_cpp_cmd += dir;
+            //cout << a << endl;
+        }
+    }
+
+    if (vm.count("lib-dir")) {
+        for (auto dir : vm["lib-dir"].as<vector<string>>()) {
+            gcc_link_cmd += " -L";
+            gcc_link_cmd += dir;
+            //cout << a << endl;
+        }
     }
 
     // 搜集信息
@@ -384,7 +419,7 @@ void scan(fs::path src_path)
     string line;
     regex usingcpp_pat {R"(^\s*#include\s+"([\w\./]+)\.h"\s+//\s+usingcpp)"};
     regex using_pat {R"(using\s+([\w\./]+\.(cpp|cxx|c\+\+|C|cc|cp|CPP)))"};
-    regex linklib_pat {R"(linklib\s+(\w+))"};
+    regex linklib_pat {R"(linklib\s+([\w\-\.]+))"};
     regex precompile_pat {R"***(^\s*#include\s+"([\w\./]+\.(h|hpp|H|hh))"\s+//\s+precompile)***"};
     int n = 0;
     while (getline(in,line)) {

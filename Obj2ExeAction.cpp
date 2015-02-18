@@ -2,6 +2,7 @@
 #include "Obj2ExeAction.h"
 #include "FileEntity.h"
 #include "Loggers.h"
+#include "global.h"
 
 Obj2ExeAction::Obj2ExeAction(string other_options)
     :
@@ -20,7 +21,10 @@ void Obj2ExeAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector
     FileEntityPtr exe = static_pointer_cast<FileEntity>(target);
     fs::path exe_path = exe->path();
 
-    string cmd = "g++ -std=c++11 -fmax-errors=1 -o ";
+    string cmd = gcc_link_cmd;
+    cmd += " -o";
+
+    cmd += " ";
 
     cmd += exe_path.string();
 
