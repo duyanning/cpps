@@ -8,12 +8,20 @@
 		<Build>
 			<Target title="Debug">
 				<Option output="bin/Debug/cpps" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="./test/multiple-srcs" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option parameters=" hello.cpp" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
+				<Linker>
+					<Add library="D:\libs4mingw\boost\lib\libboost_filesystem-mgw49-d-1_57.dll.a" />
+					<Add library="D:\libs4mingw\boost\lib\libboost_program_options-mgw49-d-1_57.dll.a" />
+					<Add library="D:\libs4mingw\boost\lib\libboost_system-mgw49-d-1_57.dll.a" />
+					<Add library="D:\libs4mingw\boost\lib\libboost_regex-mgw49-1_57.a" />
+				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option output="bin/Release/cpps" prefix_auto="1" extension_auto="1" />
@@ -29,15 +37,64 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-std=c++11" />
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
+			<Add directory="D:/libs4mingw/boost/include" />
 		</Compiler>
+		<Linker>
+			<Add directory="D:/libs4mingw/boost/lib" />
+		</Linker>
+		<Unit filename="Action.cpp" />
+		<Unit filename="Action.h" />
+		<Unit filename="Cpp2ObjAction.cpp" />
+		<Unit filename="Cpp2ObjAction.h" />
+		<Unit filename="DependencyGraphEntity.cpp" />
+		<Unit filename="DependencyGraphEntity.h" />
+		<Unit filename="FileEntity.cpp" />
+		<Unit filename="FileEntity.h" />
+		<Unit filename="FileSig.h" />
+		<Unit filename="GchMagic.cpp" />
+		<Unit filename="GchMagic.h" />
+		<Unit filename="H2GchAction.cpp" />
+		<Unit filename="H2GchAction.h" />
+		<Unit filename="Loggers.cpp" />
+		<Unit filename="Loggers.h" />
+		<Unit filename="MiniLogger.cpp" />
+		<Unit filename="MiniLogger.h" />
+		<Unit filename="MustExistFileEntity.cpp" />
+		<Unit filename="MustExistFileEntity.h" />
+		<Unit filename="Obj2ExeAction.cpp" />
+		<Unit filename="Obj2ExeAction.h" />
+		<Unit filename="PhonyEntity.cpp" />
+		<Unit filename="PhonyEntity.h" />
+		<Unit filename="ShebangMagic.cpp" />
+		<Unit filename="ShebangMagic.h" />
+		<Unit filename="UpdateDependencyGraphAction.cpp" />
+		<Unit filename="UpdateDependencyGraphAction.h" />
+		<Unit filename="VulnerableFileEntity.cpp" />
+		<Unit filename="VulnerableFileEntity.h" />
+		<Unit filename="global.h" />
+		<Unit filename="helpers.cpp" />
+		<Unit filename="helpers.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="samples.cpp" />
+		<Unit filename="samples.h" />
+		<Unit filename="std.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
 			<debugger />
 			<lib_finder disable_auto="1" />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

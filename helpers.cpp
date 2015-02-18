@@ -4,7 +4,7 @@
 fs::path get_home()
 {
     #ifdef _WIN32
-    return "c:\\_cpps";
+    return "c:\\";
     #else
     return getpwuid(getuid())->pw_dir;
     #endif // _WIN32

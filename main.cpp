@@ -1,4 +1,15 @@
-#include "std.h"                // precompile
+#include "std.h" // precompile
+#define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
+#if GCC_VERSION < 40900
+#include <boost/regex.hpp>
+using boost::regex;
+using boost::smatch;
+#else
+#include <regex>
+using std::regex;
+using std::smatch;
+#endif
+
 #include "FileEntity.h"         // usingcpp
 #include "VulnerableFileEntity.h" // usingcpp
 #include "PhonyEntity.h"          // usingcpp
@@ -469,6 +480,10 @@ void run()
     char script_arg_vector[max_num_of_args][max_len_of_arg];
     char* script_argv[max_num_of_args];
     int script_argc;
+
+#ifdef _WIN32
+    run_by = 0;
+#endif // _WIN32
 
     if (run_by == 1) {
         MINILOG0("run using execv()");
