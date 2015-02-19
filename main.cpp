@@ -10,6 +10,10 @@ using std::regex;
 using std::smatch;
 #endif
 
+#ifdef _WIN32
+#include <process.h>
+#endif // _WIN32
+
 #include "FileEntity.h"         // usingcpp
 #include "VulnerableFileEntity.h" // usingcpp
 #include "PhonyEntity.h"          // usingcpp
@@ -516,8 +520,9 @@ void run()
     char* script_argv[max_num_of_args];
     int script_argc;
 
+
 #ifdef _WIN32
-    run_by = 0;
+    //run_by = 0;
 #endif // _WIN32
 
     if (run_by == 1) {
@@ -539,7 +544,13 @@ void run()
         }
         script_argv[script_argc] = 0;
 
-#ifndef _WIN32
+#ifdef _WIN32
+        // Windows没有exec功能，但有个_exec函数来模拟exec。
+        // 可是_exec创建了一个子进程，往往子进程还没有结束，父进程就已经结束了。
+        // 导致命令行窗口的输出混乱。
+        //_execv(exe_path.string().c_str(), script_argv);
+        _spawnv(_P_WAIT, exe_path.string().c_str(), script_argv);
+#else
         execv(exe_path.c_str(), script_argv);
 #endif
     }
