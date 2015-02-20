@@ -130,7 +130,7 @@ try {
     p.add("script", 1);
     p.add("args", -1);
 
-    po::store(po::command_line_parser(argc, argv).options(cmdline_options).positional(p).run(), vm);
+    po::store(po::command_line_parser(argc, argv).options(cmdline_options).positional(p).allow_unregistered().run(), vm);
     po::notify(vm);
 
     // 加载配置文件
