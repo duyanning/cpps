@@ -43,7 +43,9 @@ using std::smatch;
 
 string gcc_compile_cpp_cmd = "g++ -std=c++11 -fmax-errors=1 -Wall -c";
 string gcc_compile_h_cmd = "g++ -std=c++11 -fmax-errors=1 -Wall";
-string gcc_link_cmd = "g++ -std=c++11 -fmax-errors=1";
+
+// 如果使用了<thread>或者<future>里的东西，就需要-pthread这个参数。注意，不是-lpthread，不过效果似乎是一样的。
+string gcc_link_cmd = "g++ -std=c++11 -fmax-errors=1 -pthread";
 
 
 // 搜集到的项目信息
