@@ -45,8 +45,11 @@ string gcc_compile_cpp_cmd = "g++ -std=c++11 -fmax-errors=1 -Wall -c";
 string gcc_compile_h_cmd = "g++ -std=c++11 -fmax-errors=1 -Wall";
 
 // 如果使用了<thread>或者<future>里的东西，就需要-pthread这个参数。注意，不是-lpthread，不过效果似乎是一样的。
+#if defined(__CYGWIN__) || defined(_WIN32)
+string gcc_link_cmd = "g++ -std=c++11 -fmax-errors=1";
+#else
 string gcc_link_cmd = "g++ -std=c++11 -fmax-errors=1 -pthread";
-
+#endif
 
 // 搜集到的项目信息
 fs::path exe_path;              // 生成的可执行文件的绝对路径
@@ -54,6 +57,8 @@ fs::path script_file;           // 命令行上指定的脚本路径（这是个
 vector<fs::path> sources; // 所有.cpp文件的绝对路径
 vector<string> libs; // 库的名称，即链接时命令行上-l之后的部分
 vector<fs::path> headers_to_pc; // 所有需要预编译的头文件的绝对路径
+string extra_compile_flags; // 编译时用的其他选项
+string extra_link_flags; // 链接时用的其他选项
 
 // 命令行参数对应的变量
 bool verbose = false;
@@ -210,6 +215,10 @@ try {
     collect_info();
     if (collect_only)
         return 0;
+
+    gcc_compile_cpp_cmd += extra_compile_flags;
+    gcc_compile_h_cmd += extra_compile_flags;
+    //gcc_link_cmd += extra_link_flags;
 
     // 构建
     build();
@@ -427,6 +436,8 @@ void scan(fs::path src_path)
     regex using_pat {R"(using\s+([\w\./]+\.(cpp|cxx|c\+\+|C|cc|cp|CPP)))"};
     regex linklib_pat {R"(linklib\s+([\w\-\.]+))"};
     regex precompile_pat {R"***(^\s*#include\s+"([\w\./]+\.(h|hpp|H|hh))"\s+//\s+precompile)***"};
+    regex extra_compile_flags_pat {R"(extra-compile-flags:\s+(.*)$)"};
+    regex extra_link_flags_pat {R"(extra-link-flags:\s+(.*)$)"};
     int n = 0;
     while (getline(in,line)) {
         smatch matches;
@@ -434,7 +445,7 @@ void scan(fs::path src_path)
         if (regex_search(line, matches, usingcpp_pat)) {
             string cpp_file_name = matches[1];
             cpp_file_name += ".cpp";
-            MINILOG(collect_info_logger, "found " << cpp_file_name);
+            MINILOG(collect_info_logger, "found: " << cpp_file_name);
             // 一个.cpp文件中引用的另一个.cpp文件，是以相对路径的形式指明的
             fs::path a = src_path;
             a.remove_filename();
@@ -449,7 +460,7 @@ void scan(fs::path src_path)
             }
         }
         else if (regex_search(line, matches, using_pat)) {
-            MINILOG(collect_info_logger, "found " << matches[1]);
+            MINILOG(collect_info_logger, "found: " << matches[1]);
             // 一个.cpp文件中引用的另一个.cpp文件，是以相对路径的形式指明的
             fs::path a = src_path;
             a.remove_filename();
@@ -466,13 +477,25 @@ void scan(fs::path src_path)
 
         // 搜集使用的库名字
         if (regex_search(line, matches, linklib_pat)) {
-            MINILOG(collect_info_logger, "found lib " << matches[1]);
+            MINILOG(collect_info_logger, "found lib: " << matches[1]);
             libs.push_back(matches[1]);
+        }
+
+        if (regex_search(line, matches, extra_compile_flags_pat)) {
+            MINILOG(collect_info_logger, "found extra compile flags: " << matches[1]);
+            extra_compile_flags += " ";
+            extra_compile_flags += matches[1];
+        }
+
+        if (regex_search(line, matches, extra_link_flags_pat)) {
+            MINILOG(collect_info_logger, "found extra link flags: " << matches[1]);
+            extra_link_flags += " ";
+            extra_link_flags += matches[1];
         }
 
         // 搜集需要预编译的头文件
         if (regex_search(line, matches, precompile_pat)) {
-            MINILOG(collect_info_logger, "found pch " << matches[1]);
+            MINILOG(collect_info_logger, "found pch: " << matches[1]);
             // 一个.cpp文件要求预编译某个头文件，是以相对路径的形式指明的
             fs::path a = src_path;
             a.remove_filename();

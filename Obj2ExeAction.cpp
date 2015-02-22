@@ -36,6 +36,9 @@ void Obj2ExeAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector
     cmd += " ";
     cmd += m_other_options;
 
+    // -l 选项的位置很重要，必须放在使用它的.o文件之后
+    cmd += extra_link_flags;
+
     MINILOG(build_exe_summay_logger, "linking " << exe_path.filename().string());
     MINILOG(build_exe_detail_logger, cmd);
 
