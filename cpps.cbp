@@ -8,31 +8,34 @@
 		<Build>
 			<Target title="Debug">
 				<Option output="bin/Debug/cpps" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="./windows-test/hello" />
+				<Option working_dir="./mingw-test/hello" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="main.cpp" />
+				<Option parameters="--collect main.cpp" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
 				<Linker>
-					<Add library="D:\libs4mingw\boost\lib\libboost_filesystem-mgw49-d-1_57.dll.a" />
-					<Add library="D:\libs4mingw\boost\lib\libboost_program_options-mgw49-d-1_57.dll.a" />
-					<Add library="D:\libs4mingw\boost\lib\libboost_system-mgw49-d-1_57.dll.a" />
-					<Add library="D:\libs4mingw\boost\lib\libboost_regex-mgw49-1_57.a" />
+					<Add library="D:\libs4mingw\boost\lib\libboost_filesystem-mgw48-d-1_57.dll.a" />
+					<Add library="D:\libs4mingw\boost\lib\libboost_program_options-mgw48-d-1_57.dll.a" />
+					<Add library="D:\libs4mingw\boost\lib\libboost_system-mgw48-d-1_57.dll.a" />
+					<Add library="D:\libs4mingw\boost\lib\libboost_regex-mgw48-d-1_57.dll.a" />
 				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option output="bin/Release/cpps" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="./mingw-test/hello" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Compiler>
-					<Add option="-O2" />
-				</Compiler>
+				<Option parameters="--collect main.cpp" />
 				<Linker>
 					<Add option="-s" />
+					<Add library="D:\libs4mingw\boost\lib\libboost_filesystem-mgw48-1_57.dll.a" />
+					<Add library="D:\libs4mingw\boost\lib\libboost_program_options-mgw48-1_57.dll.a" />
+					<Add library="D:\libs4mingw\boost\lib\libboost_system-mgw48-1_57.dll.a" />
+					<Add library="D:\libs4mingw\boost\lib\libboost_regex-mgw48-1_57.dll.a" />
 				</Linker>
 			</Target>
 		</Build>
