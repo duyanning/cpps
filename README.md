@@ -34,11 +34,19 @@
 * 支持shebang
 
 ## 这一切是怎么做到的？
-因为C++代码编译的时间也不短，所以cpps会缓存前一次运行所产生的.o文件、exe文件。
+因为C++代码编译的时间也不短，每次“解释”之前都先编译一遍肯定不能接受，所以cpps会缓存前一次运行所产生的.o文件、exe文件。
 
 cpps内建了一个全透明的build system，当你第一次运行脚本之后，如果你对代码又做了修改，再次运行脚本时，只有变动的.cpp文件才会被重新编译。当然，前提是你的脚本是由多个.cpp文件组成的。
 
-所以说，cpps与其说是一个解释器，不如说是一个高级make+Makefile自动生成工具。
+任何build system都包括两个部分：
+- 一个build system engine
+- 一些由用户编写的文件
+
+例如：make和Makefile，cmake和CMakeLists.txt。
+
+一般来说，engine做的事情越多，需要用户编写的部分就越少。
+
+所以，cpps与其说是一个解释器，不如说是一个高级的build system engine，它只需要用户在.cpp中以解释器指令的形式提供少许信息就可以构建一个完整的build system。
 
 ## 编译安装
 
@@ -234,3 +242,16 @@ config.txt中的`include-dir`和`lib-dir`可以在多行中出现。
     // extra-compile-flags: -DWIN32
     // extra-link-flags: -mwindows -lole32 -luuid -lcomctl32
 
+## 命令行选项
+请运行以下命令来查看：
+
+    cpps --help
+
+特别注意：所有不认识的选项都会被原样传递给gcc。
+
+## 配置文件
+`config.txt`
+
+对于GNU/Linux来说，它位于`~\.cpps`
+
+对于Windows来说，它位于`C:\.cpps`
