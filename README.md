@@ -185,7 +185,7 @@ cpps就会把它生成的那个可执行文件给你拷贝一份
 
 然后，你还需要在命令行指定boost头文件(.h)所在目录和库文件(.a)所在目录，如下：
 
-    cpps hello.cpp -I D:\libs4mingw\boost\include -L D:\libs4mingw\boost\lib
+    cpps hello.cpp -ID:\libs4mingw\boost\include -LD:\libs4mingw\boost\lib
 
 每次都要指定太麻烦？
 
