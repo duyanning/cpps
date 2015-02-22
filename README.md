@@ -1,11 +1,11 @@
 # cpps - C++脚本的(伪)解释器
 
 ## 脚本 vs. 程序
-*程序*是独立于你要处理的资料的：程序有自己的目录，可以处理位于不同位置的不同资料。
+**程序**是独立于你要处理的资料的：程序有自己的目录，可以处理位于不同位置的不同资料。
 
-*脚本*是依附于它所处理的资料的：脚本就扔在资料所在的目录中，脚本里会直接提及资料中的特定文件、特定目录，脱离了这个环境它就运行不了。
+**脚本**是依附于它所处理的资料的：脚本就扔在资料所在的目录中，脚本里会直接提及资料中的特定文件、特定目录，脱离了这个环境它就运行不了。
 
-一句话，*脚本*的特点就是：*就地编写，就地运行*。
+一句话，**脚本**的特点就是：_就地编写，就地运行_。
 
 ## 为什么需要C++脚本
 因为你C++用得最顺手，因为你不会/不熟/不想学其他脚本语言。
@@ -203,3 +203,34 @@ cpps就会把它生成的那个可执行文件给你拷贝一份
 config.txt中的`include-dir`和`lib-dir`可以在多行中出现。
 
 如果你在资源管理器中不好建立名字里带点的目录，你只要用cpps执行一次.cpp文件即可建立该目录。
+
+## 解释器指令汇总
+### using
+例子：
+
+    #include "foo.h" // using foo.cpp
+
+### usingcpp
+例子：
+
+    #inlcude "foo.h" // usingcpp
+
+等价于
+
+    #include "foo.h" // using foo.cpp
+
+### linklib
+例子：
+
+    #include <FL/Fl.H> // linklib fltk
+
+### extra-compile-flags和extra-link-flags
+例子：如果你在Windows下用MinGW编译使用FLTK的程序，除了
+
+    // linklib fltk
+
+你还需要在.cpp文件中加上以下指令
+
+    // extra-compile-flags: -DWIN32
+    // extra-link-flags: -mwindows -lole32 -luuid -lcomctl32
+
