@@ -41,8 +41,8 @@ using std::smatch;
 // xxx_dir_name 目录的相对路径或绝对路径，类型string
 // 如果xxx部分足够清晰，可省略file与dir后缀。
 
-string gcc_compile_cpp_cmd = "g++ -std=c++11 -fmax-errors=1 -Wall -c";
-string gcc_compile_h_cmd = "g++ -std=c++11 -fmax-errors=1 -Wall";
+string gcc_compile_cpp_cmd = "g++ -std=c++11 -fmax-errors=2 -Wall -c"; // -fmax-errors=2是因为某些错误需要两条错误信息
+string gcc_compile_h_cmd = "g++ -std=c++11 -fmax-errors=2 -Wall";
 
 // 如果使用了<thread>或者<future>里的东西，就需要-pthread这个参数。注意，不是-lpthread，不过效果似乎是一样的。
 #if defined(__CYGWIN__) || defined(_WIN32)
