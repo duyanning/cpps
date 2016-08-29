@@ -28,6 +28,11 @@ find_library (BOOST_PROGRAM_OPTIONS
   PATHS /usr/lib /usr/local/lib
   )
 
+find_library (BOOST_REGEX
+  NAMES boost_regex
+  PATHS /usr/lib /usr/local/lib
+  )
+
 if (BOOST_SYSTEM)
   target_link_libraries (cpps ${BOOST_SYSTEM})
 endif ()
@@ -38,6 +43,10 @@ endif ()
 
 if (BOOST_PROGRAM_OPTIONS)
   target_link_libraries (cpps ${BOOST_PROGRAM_OPTIONS})
+endif ()
+
+if (BOOST_REGEX)
+  target_link_libraries (cpps ${BOOST_REGEX})
 endif ()
 
 install (TARGETS cpps DESTINATION bin)
