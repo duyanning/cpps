@@ -591,11 +591,11 @@ void run(int argc, char* argv[])
         // 可是_exec创建了一个子进程，往往子进程还没有结束，父进程就已经结束了。
         // 导致命令行窗口的输出混乱。
         //_execv(exe_path.string().c_str(), script_argv);
-        _spawnv(_P_WAIT, exe_path.string().c_str(), script_argv);
-        //cout << "fuck" << endl;
-        _spawnv(_P_WAIT, exe_path.string().c_str(), argv + 2);
+        //_spawnv(_P_WAIT, exe_path.string().c_str(), script_argv);
+        _spawnv(_P_WAIT, exe_path.string().c_str(), argv + script_pos);
 #else
-        execv(exe_path.c_str(), script_argv);
+        //execv(exe_path.c_str(), script_argv);
+        execv(exe_path.c_str(), argv + script_pos);
 #endif
     }
     else if (run_by == 0) {
