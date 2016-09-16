@@ -76,7 +76,8 @@ bool is_a_cpp_src(fs::path f)
         || suffix == ".CPP"
         || suffix == ".c++"
         || suffix == ".cp"
-        || suffix == ".cxx")
+        || suffix == ".cxx"
+        || suffix == ".c")
         return true;
     return false;
 }

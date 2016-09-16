@@ -77,7 +77,7 @@ string output_name;
 
 void collect_info();
 void build();
-void run();
+void run(int argc, char* argv[]);
 void generate_main_file(string main_file__name);
 void generate_class_files(string class_name);
 fs::path resolve_shebang_wrapper(fs::path wrapper_path);
@@ -85,8 +85,23 @@ fs::path resolve_shebang_wrapper(fs::path wrapper_path);
 char usage[] = "Usage: cpps [options] <script.cpp> [args]";
 po::variables_map vm;
 
+int script_pos;
+//int argc_script;
+
 int main(int argc, char* argv[])
 try {
+    // 确定脚本在命令行上的位置script_pos
+    // 调整cpps的argc，不让其看到脚本的命令行选项与参数
+    for (int i = 0; i < argc; i++) {
+        if (is_a_cpp_src(argv[i])) {
+            script_pos = i;
+            //argc_script =  argc - i;
+            argc = i + 1;
+            //cout << "script_pos:" << script_pos << endl;
+            break;
+        }
+    }
+
     // 处理命令行参数
     po::options_description info_opts("Information options");
     info_opts.add_options()
@@ -228,7 +243,7 @@ try {
         return 0;
 
     // 运行
-    run();
+    run(argc, argv);
 
     return 0;
 }
@@ -539,7 +554,7 @@ void collect_info()
     scan(canonical(script_path));
 }
 
-void run()
+void run(int argc, char* argv[])
 {
     const int max_num_of_args = 100;
     const int max_len_of_arg = 100;
@@ -577,6 +592,8 @@ void run()
         // 导致命令行窗口的输出混乱。
         //_execv(exe_path.string().c_str(), script_argv);
         _spawnv(_P_WAIT, exe_path.string().c_str(), script_argv);
+        //cout << "fuck" << endl;
+        _spawnv(_P_WAIT, exe_path.string().c_str(), argv + 2);
 #else
         execv(exe_path.c_str(), script_argv);
 #endif
