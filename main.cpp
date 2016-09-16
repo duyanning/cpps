@@ -85,8 +85,8 @@ fs::path resolve_shebang_wrapper(fs::path wrapper_path);
 char usage[] = "Usage: cpps [options] <script.cpp> [args]";
 po::variables_map vm;
 
-int script_pos;
-//int argc_script;
+int script_pos; // 脚本在cpps命令行参数中的位置
+int argc_script; // 脚本的参数个数
 
 int main(int argc, char* argv[])
 try {
@@ -95,9 +95,10 @@ try {
     for (int i = 0; i < argc; i++) {
         if (is_a_cpp_src(argv[i])) {
             script_pos = i;
-            //argc_script =  argc - i;
+            argc_script =  argc - i;
             argc = i + 1;
-            //cout << "script_pos:" << script_pos << endl;
+            cout << "script_pos:" << script_pos << endl;
+            cout << "argc_script:" << argc_script << endl;
             break;
         }
     }
@@ -556,11 +557,11 @@ void collect_info()
 
 void run(int argc, char* argv[])
 {
-    const int max_num_of_args = 100;
-    const int max_len_of_arg = 100;
-    char script_arg_vector[max_num_of_args][max_len_of_arg];
-    char* script_argv[max_num_of_args];
-    int script_argc;
+//    const int max_num_of_args = 100;
+//    const int max_len_of_arg = 100;
+//    char script_arg_vector[max_num_of_args][max_len_of_arg];
+//    char* script_argv[max_num_of_args];
+//    int script_argc;
 
 
 #ifdef _WIN32
@@ -570,21 +571,21 @@ void run(int argc, char* argv[])
     if (run_by == 1) {
         MINILOG0("run using execv()");
 
-        for (int i = 0; i < max_num_of_args; i++) {
-            script_argv[i] = script_arg_vector[i];
-            script_arg_vector[i][0] = '\0';
-        }
-        script_argc = 0;
+//        for (int i = 0; i < max_num_of_args; i++) {
+//            script_argv[i] = script_arg_vector[i];
+//            script_arg_vector[i][0] = '\0';
+//        }
+//        script_argc = 0;
+//
+//        strcpy(script_argv[0], script_file.string().c_str());
+//        script_argc++;
 
-        strcpy(script_argv[0], script_file.string().c_str());
-        script_argc++;
-
-        if (vm.count("args")) {
-            for (auto a : vm["args"].as<vector<string>>()) {
-                strcpy(script_arg_vector[script_argc++], a.c_str());
-            }
-        }
-        script_argv[script_argc] = 0;
+//        if (vm.count("args")) {
+//            for (auto a : vm["args"].as<vector<string>>()) {
+//                strcpy(script_arg_vector[script_argc++], a.c_str());
+//            }
+//        }
+//        script_argv[script_argc] = 0;
 
 #ifdef _WIN32
         // Windows没有exec功能，但有个_exec函数来模拟exec。
@@ -601,12 +602,19 @@ void run(int argc, char* argv[])
     else if (run_by == 0) {
         MINILOG0("run using system()");
         string script_args;
-        if (vm.count("args")) {
-            for (auto a : vm["args"].as<vector<string>>()) {
+
+//        if (vm.count("args")) {
+//            for (auto a : vm["args"].as<vector<string>>()) {
+//                script_args += " '"; // 把脚本的参数用单引号括起来，避免通配符展开。该展开的通配符在解释器执行时已经展开过了
+//                script_args += a;
+//                script_args += "'";
+//            }
+//        }
+
+        for (int i = 1; i < argc_script; i++) {
                 script_args += " '"; // 把脚本的参数用单引号括起来，避免通配符展开。该展开的通配符在解释器执行时已经展开过了
-                script_args += a;
+                script_args += argv[script_pos + i];
                 script_args += "'";
-            }
         }
 
         string cmd_line= exe_path.string();
