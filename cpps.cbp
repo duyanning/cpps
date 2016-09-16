@@ -17,10 +17,10 @@
 					<Add option="-g" />
 				</Compiler>
 				<Linker>
-					<Add library="$(libs4mingw)\boost\lib\libboost_filesystem-mgw48-d-1_57.dll.a" />
-					<Add library="$(libs4mingw)\boost\lib\libboost_program_options-mgw48-d-1_57.dll.a" />
-					<Add library="$(libs4mingw)\boost\lib\libboost_system-mgw48-d-1_57.dll.a" />
-					<Add library="$(libs4mingw)\boost\lib\libboost_regex-mgw48-d-1_57.dll.a" />
+					<Add library="$(libs4mingw)/boost/lib/libboost_filesystem-mgw48-d-1_57.dll.a" />
+					<Add library="$(libs4mingw)/boost/lib/libboost_program_options-mgw48-d-1_57.dll.a" />
+					<Add library="$(libs4mingw)/boost/lib/libboost_system-mgw48-d-1_57.dll.a" />
+					<Add library="$(libs4mingw)/boost/lib/libboost_regex-mgw48-d-1_57.dll.a" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -32,21 +32,21 @@
 				<Option parameters="--collect main.cpp" />
 				<Linker>
 					<Add option="-s" />
-					<Add library="$(libs4mingw)\boost\lib\libboost_filesystem-mgw48-1_57.dll.a" />
-					<Add library="$(libs4mingw)\boost\lib\libboost_program_options-mgw48-1_57.dll.a" />
-					<Add library="$(libs4mingw)\boost\lib\libboost_system-mgw48-1_57.dll.a" />
-					<Add library="$(libs4mingw)\boost\lib\libboost_regex-mgw48-1_57.dll.a" />
+					<Add library="$(libs4mingw)/boost/lib/libboost_filesystem-mgw48-1_57.dll.a" />
+					<Add library="$(libs4mingw)/boost/lib/libboost_program_options-mgw48-1_57.dll.a" />
+					<Add library="$(libs4mingw)/boost/lib/libboost_system-mgw48-1_57.dll.a" />
+					<Add library="$(libs4mingw)/boost/lib/libboost_regex-mgw48-1_57.dll.a" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-std=c++11" />
 			<Add option="-Wall" />
+			<Add option="-std=c++11" />
 			<Add option="-fexceptions" />
 			<Add directory="$(libs4mingw)/boost/include" />
 		</Compiler>
 		<Linker>
-			<Add directory="D:/libs4mingw/boost/lib" />
+			<Add directory="$(libs4mingw)/boost/lib" />
 		</Linker>
 		<Unit filename="Action.cpp" />
 		<Unit filename="Action.h" />

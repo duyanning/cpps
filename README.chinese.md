@@ -60,12 +60,13 @@ cpps内建了一个全透明的build system，当你第一次运行脚本之后�
 
     sudo make install
     
-特别注意：
 
-我自己编译时用的是
+我自己编译时用的是(注意版本号)：
 
 * gcc 4.9.1
 * boost 1.57.0 （只用到了filesystem、program_options两个子库）
+
+用较低版本可能会遇到编译或链接问题。
 
 ## 如果脚本由一个.cpp文件组成
 比如hello.cpp
