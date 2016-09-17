@@ -97,8 +97,8 @@ try {
             script_pos = i;
             argc_script =  argc - i;
             argc = i + 1;
-            cout << "script_pos:" << script_pos << endl;
-            cout << "argc_script:" << argc_script << endl;
+//            cout << "script_pos:" << script_pos << endl;
+//            cout << "argc_script:" << argc_script << endl;
             break;
         }
     }
