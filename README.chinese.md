@@ -198,7 +198,7 @@ cpps就会把它生成的那个可执行文件给你拷贝一份
 
 每次都要指定太麻烦？
 
-你可以在`C:\.cpps`目录下创建一个名为`config.txt`的文件，在里面写上：
+你可以在`c:\Users\<Your Name>\.cpps`目录下创建一个名为`config.txt`的文件，在里面写上：
 
     include-dir = D:\libs4mingw\boost\include
     lib-dir = D:\libs4mingw\boost\lib
@@ -258,4 +258,4 @@ config.txt中的`include-dir`和`lib-dir`可以在多行中出现。
 
 对于GNU/Linux来说，它位于`~\.cpps`
 
-对于Windows来说，它位于`C:\.cpps`
+对于Windows来说，它位于`c:\Users\<Your Name>\.cpps`

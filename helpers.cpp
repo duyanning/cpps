@@ -1,10 +1,17 @@
 #include "std.h"
 #include "helpers.h"
 
+#ifdef _WIN32
+#include <Shlobj.h>
+#endif // _WIN32
+
 fs::path get_home()
 {
     #ifdef _WIN32
-    return "c:\\";
+    //return "c:\\";
+    char buf[MAX_PATH];
+    SHGetFolderPath(NULL, CSIDL_PROFILE, NULL, 0, buf);
+    return buf;
     #else
     return getpwuid(getuid())->pw_dir;
     #endif // _WIN32
