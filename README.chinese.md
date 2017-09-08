@@ -164,6 +164,8 @@ cpps认它，别的编译器却不认它。
 咦？
 好像在个shell脚本中调用cpps hello.cpp即可达到相同效果？！
 
+也不完全是，用shell脚本的话会多执行一次shell，而且也无法通过扩展名提醒你这是一个C++脚本。
+
 ## 干干净净运行
 
     cpps --clear hello.cpp
