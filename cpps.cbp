@@ -38,6 +38,21 @@
 					<Add library="$(libs4mingw)/boost/lib/libboost_regex-mgw48-1_57.dll.a" />
 				</Linker>
 			</Target>
+			<Target title="ReleaseStatic">
+				<Option output="bin/ReleaseStatic/cpps" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="./mingw-test/hello" />
+				<Option object_output="obj/ReleaseStatic/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="--collect main.cpp" />
+				<Linker>
+					<Add option="-s" />
+					<Add library="$(libs4mingw)/boost/lib/libboost_filesystem-mgw48-1_57.a" />
+					<Add library="$(libs4mingw)/boost/lib/libboost_program_options-mgw48-1_57.a" />
+					<Add library="$(libs4mingw)/boost/lib/libboost_system-mgw48-1_57.a" />
+					<Add library="$(libs4mingw)/boost/lib/libboost_regex-mgw48-1_57.a" />
+				</Linker>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
