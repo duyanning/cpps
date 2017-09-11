@@ -547,12 +547,16 @@ void scan(fs::path src_path)
 void collect_info()
 {
     // 确定可执行文件的路径
-    fs::path script_path = canonical(script_file);
+    fs::path script_path = canonical(script_file).make_preferred();
     exe_path = shadow(script_path);
     exe_path += ".exe";
 
     // 确定所有.cpp文件的路径；确定所有库的名字；确定所有的预编译头文件的路径
-    scan(canonical(script_path));
+    scan(canonical(script_path).make_preferred());
+//    cout << "***" << script_file << endl;
+//    cout << "***" << script_path.make_preferred() << endl;
+//    cout << "***" << canonical(script_path) << endl;
+
 }
 
 void run(int argc, char* argv[])

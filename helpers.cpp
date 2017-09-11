@@ -49,7 +49,7 @@ fs::path shadow(fs::path p)
 
     //cout << "made:" << shadow_path << endl;
 
-    return shadow_path;
+    return shadow_path.make_preferred();
 }
 
 bool can_write_in(fs::path dir)
