@@ -451,7 +451,7 @@ void scan(fs::path src_path)
 
     string line;
     regex usingcpp_pat {R"(^\s*#include\s+"([\w\./]+)\.h"\s+//\s+usingcpp)"};
-    regex using_pat {R"(using\s+([\w\./]+\.(cpp|cxx|c\+\+|C|cc|cp|CPP)))"};
+    regex using_pat {R"(using\s+([\w\./]+\.(c|cpp|cxx|c\+\+|C|cc|cp|CPP)))"};
     regex linklib_pat {R"(linklib\s+([\w\-\.]+))"};
     regex precompile_pat {R"***(^\s*#include\s+"([\w\./]+\.(h|hpp|H|hh))"\s+//\s+precompile)***"};
     regex extra_compile_flags_pat {R"(extra-compile-flags:\s+(.*)$)"};
