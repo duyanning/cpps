@@ -1,6 +1,6 @@
 #include "bar.h"
 
-double div(double a, double b)
+double ddiv(double a, double b)
 {
 	return a / b;
 }
