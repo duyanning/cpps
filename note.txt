@@ -1,3 +1,4 @@
+// -*- mode: org; -*-
 * 用了boost
 ** filesystem
 下载boost_1_57_0.7z（从源里直接安装老版本的boost，在编译用户程序时，会遇到问题）
