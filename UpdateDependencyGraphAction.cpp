@@ -1,4 +1,4 @@
-#include "std.h"
+#include "config.h"
 #include "UpdateDependencyGraphAction.h"
 
 UpdateDependencyGraphAction::UpdateDependencyGraphAction(FileEntityPtr obj)

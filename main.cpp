@@ -1,14 +1,23 @@
-#include "std.h"
-#define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
-#if GCC_VERSION < 40900
-#include <boost/regex.hpp>
-using boost::regex;
-using boost::smatch;
-#else
-#include <regex>
+#include "config.h"
+
+#ifdef HAVE_REGEX
 using std::regex;
 using std::smatch;
+#else
+using boost::regex;
+using boost::smatch;
 #endif
+
+// #define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
+// #if GCC_VERSION < 40900
+// #include <boost/regex.hpp>
+// using boost::regex;
+// using boost::smatch;
+// #else
+// #include <regex>
+// using std::regex;
+// using std::smatch;
+// #endif
 
 #ifdef _WIN32
 #include <process.h>
@@ -638,11 +647,11 @@ void generate_main_file(string main_file_name)
     f.close();
 
 
-    if (fs::exists("std.h")) {
-        cout << "std.h already exists." << endl;
+    if (fs::exists("config.h")) {
+        cout << "config.h already exists." << endl;
         return;
     }
-    f.open("std.h");
+    f.open("config.h");
     f << std_header_sample;
     f.close();
 }

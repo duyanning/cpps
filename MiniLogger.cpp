@@ -1,4 +1,4 @@
-#include "std.h"
+#include "config.h"
 #include "MiniLogger.h"
 
 using namespace std;
