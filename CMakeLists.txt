@@ -9,7 +9,7 @@ ADD_DEFINITIONS(
 
 # set (CPPS_SRCS Action.cpp H2GchAction.cpp Obj2ExeAction.cpp Cpp2ObjAction.cpp helpers.cpp PhonyEntity.cpp DependencyGraphEntity.cpp Loggers.cpp ShebangMagic.cpp FileEntity.cpp main.cpp UpdateDependencyGraphAction.cpp GchMagic.cpp MiniLogger.cpp VulnerableFileEntity.cpp samples.cpp)
 
-file(GLOB CPPS_SRCS "*.cpp")
+file(GLOB CPPS_SRCS "src/*.cpp")
  
 add_executable (cpps ${CPPS_SRCS})
 
@@ -27,11 +27,11 @@ endif ()
 target_link_libraries(cpps ${Boost_LIBRARIES})
 
 configure_file (
-  ${PROJECT_SOURCE_DIR}/config.h.in
-  ${PROJECT_BINARY_DIR}/config.h
+  ${PROJECT_SOURCE_DIR}/src/config.h.in
+  ${PROJECT_BINARY_DIR}/src/config.h
   )
 
-include_directories (${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR})
+include_directories (${PROJECT_BINARY_DIR}/src ${PROJECT_SOURCE_DIR}/src)
 
 install (TARGETS cpps DESTINATION bin)
 
