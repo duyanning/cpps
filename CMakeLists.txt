@@ -14,6 +14,8 @@ add_executable (cpps ${CPPS_SRCS})
 
 find_package(Boost REQUIRED COMPONENTS system filesystem program_options)
 
+target_link_libraries(cpps ${Boost_LIBRARIES})
+
 include (CheckIncludeFileCXX)
 CHECK_INCLUDE_FILE_CXX(regex HAVE_REGEX)
 
