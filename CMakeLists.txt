@@ -33,21 +33,21 @@ find_library (BOOST_REGEX
   PATHS /usr/lib /usr/local/lib
   )
 
-if (BOOST_SYSTEM)
+# if (BOOST_SYSTEM)
   target_link_libraries (cpps ${BOOST_SYSTEM})
-endif ()
+# endif ()
 
-if (BOOST_FILESYSTEM)
+# if (BOOST_FILESYSTEM)
   target_link_libraries (cpps ${BOOST_FILESYSTEM})
-endif ()
+# endif ()
 
-if (BOOST_PROGRAM_OPTIONS)
+# if (BOOST_PROGRAM_OPTIONS)
   target_link_libraries (cpps ${BOOST_PROGRAM_OPTIONS})
-endif ()
+# endif ()
 
-if (BOOST_REGEX)
+# if (BOOST_REGEX)
   target_link_libraries (cpps ${BOOST_REGEX})
-endif ()
+# endif ()
 
 install (TARGETS cpps DESTINATION bin)
 
