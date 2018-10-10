@@ -1,4 +1,4 @@
-#include "std.h" // precompile
+#include "config.h" // precompile
 #include "GchMagic.h"
 #include "helpers.h"
 #include "Loggers.h"

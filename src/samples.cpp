@@ -1,7 +1,7 @@
 #include "samples.h"
 
 char main_sample[] =
-    R"(#include "std.h" // precompile std.h
+    R"(#include "config.h" // precompile config.h
 
 using namespace std;
 
@@ -58,7 +58,7 @@ private:
 
 
 char class_cpp_sample[] =
-    R"(#include "std.h"
+    R"(#include "config.h"
 #include "XXX.h"
 
 XXX::XXX()

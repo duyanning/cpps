@@ -19,11 +19,20 @@
 #include <iomanip>
 #include <unordered_map>
 #include <unordered_set>
-//#include <regex>
 
 #include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
+
+
+#cmakedefine HAVE_REGEX
+
+#ifdef HAVE_REGEX
+#include <regex>
+#else
+#include <boost/regex.hpp>
+#endif
+
 
 #ifndef _WIN32
 #include <unistd.h>
@@ -34,7 +43,6 @@
 #include "MiniLogger.h"
 
 using namespace std;
-//using namespace boost;
 namespace fs = boost::filesystem;
 namespace po = boost::program_options;
 namespace al = boost::algorithm;

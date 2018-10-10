@@ -1,4 +1,4 @@
-#include "std.h"
+#include "config.h"
 #include "ShebangMagic.h"
 
 ShebangMagic::ShebangMagic(string script_name)

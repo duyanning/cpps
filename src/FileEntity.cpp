@@ -1,4 +1,4 @@
-#include "std.h"
+#include "config.h"
 #include "FileEntity.h" // using DependencyGraphEntity.cpp
 
 FileEntity::FileEntity(fs::path path)

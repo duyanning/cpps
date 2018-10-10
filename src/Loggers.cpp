@@ -1,4 +1,4 @@
-#include "std.h"
+#include "config.h"
 #include "Loggers.h"
 
 MiniLogger gch_magic_logger(cout, false);

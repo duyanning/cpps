@@ -1,3 +1,4 @@
+// -*- mode: org; -*-
 * 用了boost
 ** filesystem
 下载boost_1_57_0.7z（从源里直接安装老版本的boost，在编译用户程序时，会遇到问题）
@@ -33,6 +34,11 @@ Ctrl-D
 
 执行
 sudo ldconfig
+
 * shebang magic与时间戳
 用last_write_time只能调整modify time，却调整不了change time
 用//抹掉#!会导致两者都改变
+
+* config.h
+这个文件也就开发时用，发布后要从config.h.in生成config.h
+

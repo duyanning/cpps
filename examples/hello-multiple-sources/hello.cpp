@@ -10,6 +10,6 @@
 int main()
 {
     std::cout << add(1, 2) << std::endl;
-    std::cout << div(9, 2) << std::endl;
+    std::cout << ddiv(9, 2) << std::endl;
     return 0;
 }

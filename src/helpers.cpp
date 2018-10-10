@@ -1,4 +1,4 @@
-#include "std.h"
+#include "config.h"
 #include "helpers.h"
 
 #ifdef _WIN32

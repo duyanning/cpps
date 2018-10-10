@@ -1,4 +1,4 @@
-#include "std.h"
+#include "config.h"
 #include "Obj2ExeAction.h"
 #include "FileEntity.h"
 #include "Loggers.h"

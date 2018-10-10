@@ -1,36 +1,40 @@
-#include "std.h" // precompile
-#define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
-#if GCC_VERSION < 40900
-#include <boost/regex.hpp>
-using boost::regex;
-using boost::smatch;
-#else
-#include <regex>
+#include "config.h"
+
+#ifdef HAVE_REGEX
 using std::regex;
 using std::smatch;
+#else
+using boost::regex;
+using boost::smatch;
 #endif
+
+// #define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
+// #if GCC_VERSION < 40900
+// #include <boost/regex.hpp>
+// using boost::regex;
+// using boost::smatch;
+// #else
+// #include <regex>
+// using std::regex;
+// using std::smatch;
+// #endif
 
 #ifdef _WIN32
 #include <process.h>
 #endif // _WIN32
 
-#include "FileEntity.h"         // usingcpp
-#include "VulnerableFileEntity.h" // usingcpp
-#include "PhonyEntity.h"          // usingcpp
-#include "Obj2ExeAction.h"        // usingcpp
-#include "Cpp2ObjAction.h"        // usingcpp
-#include "H2GchAction.h"          // usingcpp
-#include "UpdateDependencyGraphAction.h" // usingcpp
-#include "ShebangMagic.h"                // usingcpp
-#include "GchMagic.h"                    // usingcpp
-#include "helpers.h"                     // usingcpp
-#include "Loggers.h"                     // usingcpp
-#include "samples.h"                     // usingcpp
-// using MiniLogger.cpp
-
-// linklib boost_filesystem
-// linklib boost_program_options
-// linklib boost_system
+#include "FileEntity.h"         
+#include "VulnerableFileEntity.h" 
+#include "PhonyEntity.h"          
+#include "Obj2ExeAction.h"        
+#include "Cpp2ObjAction.h"        
+#include "H2GchAction.h"          
+#include "UpdateDependencyGraphAction.h" 
+#include "ShebangMagic.h"                
+#include "GchMagic.h"                    
+#include "helpers.h"                     
+#include "Loggers.h"                     
+#include "samples.h"                     
 
 // 路径相关的变量命名约定：
 // xxx_file 文件的相对路径，类型fs::path
@@ -643,11 +647,11 @@ void generate_main_file(string main_file_name)
     f.close();
 
 
-    if (fs::exists("std.h")) {
-        cout << "std.h already exists." << endl;
+    if (fs::exists("config.h")) {
+        cout << "config.h already exists." << endl;
         return;
     }
-    f.open("std.h");
+    f.open("config.h");
     f << std_header_sample;
     f.close();
 }
