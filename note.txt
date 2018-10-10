@@ -33,3 +33,6 @@ Ctrl-D
 
 执行
 sudo ldconfig
+* shebang magic与时间戳
+用last_write_time只能调整modify time，却调整不了change time
+用//抹掉#!会导致两者都改变
