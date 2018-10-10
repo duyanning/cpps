@@ -1,5 +1,6 @@
-#ifndef STD_H
-#define STD_H
+// 该文件仅供开发时使用，对于从源码安装的用户，需要从config.h.in来生成该文件
+#ifndef CONFIG_H
+#define CONFIG_H
 
 
 #include <vector>
@@ -48,4 +49,4 @@ namespace po = boost::program_options;
 namespace al = boost::algorithm;
 
 
-#endif // STD_H
+#endif // CONFIG_H
