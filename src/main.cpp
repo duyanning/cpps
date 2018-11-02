@@ -647,11 +647,11 @@ void generate_main_file(string main_file_name)
     f.close();
 
 
-    if (fs::exists("config.h")) {
-        cout << "config.h already exists." << endl;
+    if (fs::exists("std.h")) {
+        cout << "std.h already exists." << endl;
         return;
     }
-    f.open("config.h");
+    f.open("std.h");
     f << std_header_sample;
     f.close();
 }
