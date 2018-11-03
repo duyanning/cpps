@@ -1,7 +1,7 @@
 #include "samples.h"
 
 char main_sample[] =
-    R"(#include "config.h" // precompile config.h
+    R"(#include "std.h" // precompile std.h
 
 using namespace std;
 

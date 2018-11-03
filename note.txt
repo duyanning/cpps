@@ -42,3 +42,4 @@ sudo ldconfig
 * config.h
 这个文件也就开发时用，发布后要从config.h.in生成config.h
 
+* 潜在问题
