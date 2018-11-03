@@ -6,7 +6,7 @@
 class PhonyEntity : public DependencyGraphEntity {
 public:
     PhonyEntity(string name);
-    void update() override;
+    bool update() override;
     time_t timestamp() override;
     string name() override;
 private:

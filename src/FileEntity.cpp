@@ -23,35 +23,38 @@ fs::path FileEntity::path()
     return m_path;
 }
 
-void FileEntity::update()
+bool FileEntity::update()
 {
-    // make all prerequisites
-    vector<EntityPtr> changed;
-    updatePrerequisites(changed);
-
-    // check to see if execution is needed
-    bool needExecute = false;
-    for (auto p : prerequisiteList) {
-        if (p->timestamp() == 0) {
-            string errMsg = name()  + ": cannot make `" + p->name() + "'";
-            cout << errMsg << endl;
-            throw 1;
-        }
-
-        if (this->timestamp() < p->timestamp()) { // todo: if two phonyentities compare? <=
-            needExecute = true;
-            break;
-        }
+    // 如果一个文件节点是个叶子节点
+    if (prerequisiteList.empty()) {
+        return exists(m_path);  // 存在就好，不存在那就真没办法了
     }
 
-    // execute action
-    if (needExecute)
-        executeActions(shared_from_this(), prerequisiteList, changed);
+    // 不是叶子节点的话，先把所有的下级节点更新一下
+    vector<EntityPtr> changed;
+    vector<EntityPtr> failed;
+    updatePrerequisites(changed, failed);
+
+
+    // 然后再判断是否要执行本节点关联的动作
+    if (needExecuteActions(prerequisiteList, changed, failed))
+        return executeActions(shared_from_this(), prerequisiteList, changed, failed);
+
+    return true;
+}
+
+
+bool FileEntity::needExecuteActions(vector<EntityPtr>& allPre,
+                                    vector<EntityPtr>& changedPre,
+                                    vector<EntityPtr>& failedPre)
+{
+    return !changedPre.empty();
 }
 
 // 若文件不存在，就认为它的生日为0
 // 若它作为目标文件，生日为0意味着这是一个最古老的文件，它比任何依赖文件都要老，所以必须重新生成
 // 若它作为依赖文件，生日0意味着文件不存在，没法用它生成目标文件
+// todo：如果一个文件不存在，让这个函数抛出异常。
 time_t FileEntity::timestamp()
 {
     time_t timestamp;

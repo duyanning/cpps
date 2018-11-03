@@ -22,9 +22,12 @@
 class VulnerableFileEntity : public FileEntity {
 public:
     VulnerableFileEntity(fs::path path);
-    void update() override;
     void get_src_sigs_from_birthcert(vector<FileSig>& sig_vector);
     void generate_birth_cert(fs::path dep_path);
+protected:
+    bool needExecuteActions(vector<EntityPtr>& allPre,
+                            vector<EntityPtr>& changedPre,
+                            vector<EntityPtr>& failedPre) override;
 };
 
 using VulnerableFileEntityPtr = shared_ptr<VulnerableFileEntity>;

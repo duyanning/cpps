@@ -6,7 +6,7 @@
 class MustExistFileEntity : public FileEntity {
 public:
     MustExistFileEntity(fs::path path);
-    void update() override;
+    bool update() override;
     FileSig src_sig();
 };
 

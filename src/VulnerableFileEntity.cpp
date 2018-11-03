@@ -13,36 +13,35 @@ VulnerableFileEntityPtr makeVulnerableFileEntity(fs::path path)
     return VulnerableFileEntityPtr(new VulnerableFileEntity(path));
 }
 
-void VulnerableFileEntity::update()
+bool VulnerableFileEntity::needExecuteActions(vector<EntityPtr>& allPre,
+                                    vector<EntityPtr>& changedPre,
+                                    vector<EntityPtr>& failedPre)
 {
-    // make all prerequisites
-    vector<EntityPtr> changed;
-    updatePrerequisites(changed);
+    // 对于这种根据其他文件生成的文件
 
+    // 如果有下级节点更新没成功，也去更新本节点，因为动作未必在乎
+    if (!failedPre.empty())
+        return true;
+
+    // 如果下级节点有变，它要重新生成
+    if (!changedPre.empty())
+        return true;
+
+    // 如果本身还不存在，要重新生成
+    if (!exists(path()))
+        return true;
+
+    // 光如此还不够，还要看一下下级结点(即父母)跟自己出身证明上记录的是否一致
     vector<FileSig> old_sig_vector;
     this->get_src_sigs_from_birthcert(old_sig_vector);
 
     vector<FileSig> new_sig_vector;
-    // check to see if execution is needed
-    bool needExecute = false;
-    if (this->timestamp() == 0) {  // 如果目标文件不存在，那必须生成
-        needExecute = true;
-    }
-    else {                      // 如果目标存在，根据依赖关系判断是否需要重新生成
-        for (auto p : prerequisiteList) {
-            if (p->timestamp() == 0) {
-                string errMsg = name()  + ": cannot make `" + p->name() + "'";
-                cout << errMsg << endl;
-                throw 1;
-            }
-            FileEntityPtr fp = static_pointer_cast<FileEntity>(p);
-            new_sig_vector.push_back(fp->sig());
-        }
+    for (auto p : prerequisiteList) {
+        FileEntityPtr fp = static_pointer_cast<FileEntity>(p);
+        new_sig_vector.push_back(fp->sig());
     }
 
     if (old_sig_vector != new_sig_vector) {
-        needExecute = true;
-
         MINILOGBLK(birthcert_logger,
                    os << "old sig vector:\n";
                    for (auto old_sig : old_sig_vector) {
@@ -53,11 +52,10 @@ void VulnerableFileEntity::update()
                        os << new_sig;
                    }
             );
+        return true;
     }
 
-    // execute action
-    if (needExecute)
-        executeActions(shared_from_this(), prerequisiteList, changed);
+    return false;
 }
 
 // 从自己的出生证明文件中读取生成自己的源文件的签名

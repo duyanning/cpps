@@ -10,7 +10,11 @@ H2GchActionPtr makeH2GchAction()
     return H2GchActionPtr(new H2GchAction);
 }
 
-void H2GchAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector<EntityPtr>& changedPre)
+bool H2GchAction::execute(EntityPtr target, 
+                          vector<EntityPtr>& allPre, 
+                          vector<EntityPtr>& changedPre,
+                          vector<EntityPtr>& failedPre
+    )
 {
     // 构造命令行
     FileEntityPtr h = static_pointer_cast<FileEntity>(allPre[0]);
@@ -47,7 +51,7 @@ void H2GchAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector<E
     // 因为预编译头文件要生成在.h文件所在目录，你不一定能有权限
     if (!can_write_in(gch_path.parent_path())) {
         MINILOG(perm_logger, "permissin prevent from generating " << gch_path);
-        return;
+        return true;
     }
 
     // 确保目录存在
@@ -61,5 +65,7 @@ void H2GchAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector<E
 
     // 产生出生证明文件（gcc编译时，如果遇到#include的头文件不存在，就算fatal error，也不会生成.d文件）
     gch->generate_birth_cert(dep_path);
+
+    return true;
 }
 

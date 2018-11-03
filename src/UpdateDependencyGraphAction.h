@@ -7,7 +7,11 @@
 class UpdateDependencyGraphAction : public Action {
 public:
     UpdateDependencyGraphAction(FileEntityPtr obj);
-    void execute(EntityPtr target, vector<EntityPtr>&  allPre, vector<EntityPtr>& changedPre) override;
+    bool execute(EntityPtr target,
+                 vector<EntityPtr>& allPre,
+                 vector<EntityPtr>& changedPre,
+                 vector<EntityPtr>& failedPre
+        ) override;
 private:
     FileEntityPtr m_obj;
 };

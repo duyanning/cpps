@@ -1,9 +1,9 @@
-#ifndef CPP2OBJACTION_H
-#define CPP2OBJACTION_H
+#ifndef CPP2DEPACTION_H
+#define CPP2DEPACTION_H
 
 #include "Action.h"
 
-class Cpp2ObjAction : public Action {
+class Cpp2DepAction : public Action {
 public:
     bool execute(EntityPtr target, 
                  vector<EntityPtr>& allPre, 
@@ -11,7 +11,7 @@ public:
                  vector<EntityPtr>& failedPre) override;
 };
 
-using Cpp2ObjActionPtr = shared_ptr<Cpp2ObjAction>;
-Cpp2ObjActionPtr makeCpp2ObjAction();
+using Cpp2DepActionPtr = shared_ptr<Cpp2DepAction>;
+Cpp2DepActionPtr makeCpp2DepAction();
 
-#endif // CPP2OBJACTION_H
+#endif // CPP2DEPACTION_H

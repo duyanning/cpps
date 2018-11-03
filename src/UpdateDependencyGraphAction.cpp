@@ -12,7 +12,11 @@ UpdateDependencyGraphActionPtr makeUpdateDependencyGraphAction(FileEntityPtr obj
     return UpdateDependencyGraphActionPtr(new UpdateDependencyGraphAction(obj));
 }
 
-void UpdateDependencyGraphAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector<EntityPtr>& changedPre)
+bool UpdateDependencyGraphAction::execute(EntityPtr target, 
+                                          vector<EntityPtr>& allPre, 
+                                          vector<EntityPtr>& changedPre,
+                                          vector<EntityPtr>& failedPre
+    )
 {
     FileEntityPtr dep = static_pointer_cast<FileEntity>(allPre[0]);
     fs::path dep_path = dep->path();
@@ -35,6 +39,6 @@ void UpdateDependencyGraphAction::execute(EntityPtr target, vector<EntityPtr>&  
             m_obj->addPrerequisite(makeFileEntity(p));
         }
     }
-
+    return true;
 }
 

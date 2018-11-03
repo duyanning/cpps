@@ -5,7 +5,11 @@
 
 class H2GchAction : public Action {
 public:
-    void execute(EntityPtr target, vector<EntityPtr>&  allPre, vector<EntityPtr>& changedPre) override;
+    bool execute(EntityPtr target, 
+                 vector<EntityPtr>& allPre, 
+                 vector<EntityPtr>& changedPre,
+                 vector<EntityPtr>& failedPre
+        ) override;
 };
 
 using H2GchActionPtr = shared_ptr<H2GchAction>;

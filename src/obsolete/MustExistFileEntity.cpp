@@ -12,11 +12,13 @@ MustExistFileEntityPtr makeMustExistFileEntity(fs::path path)
     return MustExistFileEntityPtr(new MustExistFileEntity(path));
 }
 
-void MustExistFileEntity::update()
+bool MustExistFileEntity::update()
 {
     if (!exists(this->path())) {
-        string errMsg = name()  + ": cannot make `" + this->name() + "'";
-        cout << errMsg << endl; 
-        throw 1;
+        // string errMsg = name()  + ": cannot make `" + this->name() + "'";
+        // cout << errMsg << endl; 
+        // throw 1;
+        return false;
     }
+    return true;
 }

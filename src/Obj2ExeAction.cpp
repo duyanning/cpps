@@ -15,7 +15,10 @@ Obj2ExeActionPtr makeObj2ExeAction(string other_options)
     return Obj2ExeActionPtr(new Obj2ExeAction(other_options));
 }
 
-void Obj2ExeAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector<EntityPtr>& changedPre)
+bool Obj2ExeAction::execute(EntityPtr target, 
+                            vector<EntityPtr>& allPre, 
+                            vector<EntityPtr>& changedPre,
+                            vector<EntityPtr>& failedPre)
 {
     // 构造命令行
     FileEntityPtr exe = static_pointer_cast<FileEntity>(target);
@@ -50,4 +53,6 @@ void Obj2ExeAction::execute(EntityPtr target, vector<EntityPtr>&  allPre, vector
     gcc_status = system(cmd.c_str());
     if (gcc_status)
         throw gcc_status;
+
+    return true;
 }

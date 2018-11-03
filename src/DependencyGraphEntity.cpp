@@ -20,21 +20,35 @@ void DependencyGraphEntity::addPrerequisite(EntityPtr p)
 }
 
 
-void DependencyGraphEntity::updatePrerequisites(vector<EntityPtr>& changed)
+void DependencyGraphEntity::updatePrerequisites(vector<EntityPtr>& changed, vector<EntityPtr>& failed)
 {
     for (auto p : prerequisiteList) {
         time_t oldStamp = p->timestamp();
-        p->update();
-        if (p->timestamp() > oldStamp)
-            changed.push_back(p);
+        bool success = p->update();
+        if (success) {
+            if (p->timestamp() > oldStamp)
+                changed.push_back(p);
+        }
+        else {
+            failed.push_back(p);
+        }
+         
     }
             
 }
 
-void DependencyGraphEntity::executeActions(EntityPtr target, vector<EntityPtr>&  allPre, vector<EntityPtr>& changedPre)
+bool DependencyGraphEntity::executeActions(EntityPtr target,
+                                           vector<EntityPtr>& allPre, 
+                                           vector<EntityPtr>& changedPre,
+                                           vector<EntityPtr>& failedPre
+    )
 {
-    for (auto a : actions)
-        a->execute(target, allPre, changedPre);
+    for (auto a : actions) {
+        bool success = a->execute(target, allPre, changedPre, failedPre);
+        if (!success)
+            return false;
+    }
+    return true;
 }
 
 void DependencyGraphEntity::show(ostream& os, int level, string indent)

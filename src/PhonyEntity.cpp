@@ -18,11 +18,12 @@ PhonyEntityPtr makePhonyEntity(string name)
     return PhonyEntityPtr(new PhonyEntity(name));
 }
 
-void PhonyEntity::update()
+bool PhonyEntity::update()
 {
     vector<EntityPtr> changed;
-    updatePrerequisites(changed);
-    executeActions(shared_from_this(), prerequisiteList, changed);
+    vector<EntityPtr> failed;
+    updatePrerequisites(changed, failed);
+    return executeActions(shared_from_this(), prerequisiteList, changed, failed);
 }
 
 

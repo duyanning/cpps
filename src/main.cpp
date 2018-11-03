@@ -28,6 +28,7 @@ using boost::smatch;
 #include "PhonyEntity.h"          
 #include "Obj2ExeAction.h"        
 #include "Cpp2ObjAction.h"        
+//#include "Cpp2DepAction.h"        
 #include "H2GchAction.h"          
 #include "UpdateDependencyGraphAction.h" 
 #include "ShebangMagic.h"                
@@ -298,6 +299,10 @@ void build_exe()
 
             FileEntityPtr dep = makeFileEntity(dep_path);
             obj_update->addPrerequisite(dep);
+
+            // 其实dep文件也是易变的，但我们这会为简便起见，就当它不会变
+            // dep->addPrerequisite(src);
+            // dep->addAction(makeCpp2DepAction());
         }
 
 
