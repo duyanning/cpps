@@ -7,7 +7,7 @@
 class UpdateGraphAction : public Action {
 public:
     UpdateGraphAction(FileEntityPtr obj);
-    bool execute(DepInfo& info) override;
+    bool execute(const DepInfo& info) override;
 private:
     FileEntityPtr m_obj;
 };

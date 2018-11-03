@@ -39,7 +39,7 @@ void Entity::updatePrerequisites(DepInfo& info)
             
 }
 
-bool Entity::executeActions(DepInfo& info)
+bool Entity::executeActions(const DepInfo& info)
 {
     for (auto a : actions) {
         bool success = a->execute(info);

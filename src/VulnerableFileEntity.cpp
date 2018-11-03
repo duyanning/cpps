@@ -14,7 +14,7 @@ VulnerableFileEntityPtr makeVulnerableFileEntity(fs::path path)
     return VulnerableFileEntityPtr(new VulnerableFileEntity(path));
 }
 
-bool VulnerableFileEntity::needExecuteActions(DepInfo& info)
+bool VulnerableFileEntity::needExecuteActions(const DepInfo& info)
 {
     // 对于这种根据其他文件生成的文件
 

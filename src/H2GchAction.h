@@ -6,7 +6,7 @@
 
 class H2GchAction : public Action {
 public:
-    bool execute(DepInfo& info) override;
+    bool execute(const DepInfo& info) override;
 };
 
 using H2GchActionPtr = shared_ptr<H2GchAction>;

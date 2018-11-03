@@ -12,7 +12,7 @@ UpdateGraphActionPtr makeUpdateGraphAction(FileEntityPtr obj)
     return UpdateGraphActionPtr(new UpdateGraphAction(obj));
 }
 
-bool UpdateGraphAction::execute(DepInfo& info)
+bool UpdateGraphAction::execute(const DepInfo& info)
 {
     FileEntityPtr dep = static_pointer_cast<FileEntity>(info.all[0]);
     fs::path dep_path = dep->path();

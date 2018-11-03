@@ -25,7 +25,7 @@ public:
     void get_src_sigs_from_birthcert(vector<FileSig>& sig_vector);
     void generate_birth_cert(fs::path dep_path);
 protected:
-    bool needExecuteActions(DepInfo& info) override;
+    bool needExecuteActions(const DepInfo& info) override;
 };
 
 using VulnerableFileEntityPtr = shared_ptr<VulnerableFileEntity>;

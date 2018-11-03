@@ -6,7 +6,7 @@
 class Obj2ExeAction : public Action {
 public:
     Obj2ExeAction(string other_options);
-    bool execute(DepInfo& info) override;
+    bool execute(const DepInfo& info) override;
 private:
     string m_other_options;
 };

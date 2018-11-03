@@ -45,7 +45,7 @@ bool FileEntity::update()
     return true;
 }
 
-bool FileEntity::needExecuteActions(DepInfo& info)
+bool FileEntity::needExecuteActions(const DepInfo& info)
 {
     return !info.changed.empty();
 }

@@ -5,10 +5,16 @@
 
 class Cpp2ObjAction : public Action {
 public:
-    bool execute(DepInfo& info) override;
+    bool execute(const DepInfo& info) override;
 };
 
 using Cpp2ObjActionPtr = shared_ptr<Cpp2ObjAction>;
-Cpp2ObjActionPtr makeCpp2ObjAction();
+
+
+inline
+Cpp2ObjActionPtr makeCpp2ObjAction()
+{
+    return Cpp2ObjActionPtr(new Cpp2ObjAction);
+}
 
 #endif // CPP2OBJACTION_H

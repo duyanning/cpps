@@ -10,7 +10,7 @@ H2GchActionPtr makeH2GchAction()
     return H2GchActionPtr(new H2GchAction);
 }
 
-bool H2GchAction::execute(DepInfo& info)
+bool H2GchAction::execute(const DepInfo& info)
 {
     // 构造命令行
     FileEntityPtr h = static_pointer_cast<FileEntity>(info.all[0]);

@@ -14,7 +14,7 @@ public:
     time_t actualFileTimestamp();
     fs::path path();
     FileSig sig();
-    virtual bool needExecuteActions(DepInfo& info);
+    virtual bool needExecuteActions(const DepInfo& info);
 private:
     fs::path m_path;
 };

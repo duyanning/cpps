@@ -1,24 +1,22 @@
 #include "config.h"
-#include "Cpp2ObjAction.h"      // using Action.cpp
+#include "Cpp2ObjAction.h"
 #include "VulnerableFileEntity.h"
 #include "Loggers.h"
 #include "helpers.h"
 #include "global.h"
 
-Cpp2ObjActionPtr makeCpp2ObjAction()
+bool Cpp2ObjAction::execute(const DepInfo& info)
 {
-    return Cpp2ObjActionPtr(new Cpp2ObjAction);
-}
-
-bool Cpp2ObjAction::execute(DepInfo& info)
-{
+    // 一个.o依赖于一个.cpp跟若干个.h
+    // .h更新失败(比如.h不存在)无所谓，因为有可能目前已经不依赖该.h
+    // 但.cpp不存在将无法产生.o
     if (!info.failed.empty()) {
-        //cout << "!failedPre.empty()";
         for (auto pre : info.failed) {
             FileEntityPtr fe = static_pointer_cast<FileEntity>(pre);
             if (is_a_cpp_src(fe->path())) return false;
         }
     }
+
     // 构造命令行
     FileEntityPtr cpp = static_pointer_cast<FileEntity>(info.all[0]);
     fs::path cpp_path = cpp->path();

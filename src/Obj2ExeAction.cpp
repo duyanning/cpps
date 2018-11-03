@@ -15,7 +15,7 @@ Obj2ExeActionPtr makeObj2ExeAction(string other_options)
     return Obj2ExeActionPtr(new Obj2ExeAction(other_options));
 }
 
-bool Obj2ExeAction::execute(DepInfo& info)
+bool Obj2ExeAction::execute(const DepInfo& info)
 {
     // 构造命令行
     FileEntityPtr exe = static_pointer_cast<FileEntity>(info.target);
