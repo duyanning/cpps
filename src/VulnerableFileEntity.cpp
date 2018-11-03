@@ -9,10 +9,6 @@ VulnerableFileEntity::VulnerableFileEntity(fs::path path)
 {
 }
 
-VulnerableFileEntityPtr makeVulnerableFileEntity(fs::path path)
-{
-    return VulnerableFileEntityPtr(new VulnerableFileEntity(path));
-}
 
 bool VulnerableFileEntity::needExecuteActions(const DepInfo& info)
 {

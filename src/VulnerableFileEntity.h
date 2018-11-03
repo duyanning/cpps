@@ -29,6 +29,11 @@ protected:
 };
 
 using VulnerableFileEntityPtr = shared_ptr<VulnerableFileEntity>;
-VulnerableFileEntityPtr makeVulnerableFileEntity(fs::path path);
+
+inline
+VulnerableFileEntityPtr makeVulnerableFileEntity(fs::path path)
+{
+    return VulnerableFileEntityPtr(new VulnerableFileEntity(path));
+}
 
 #endif // VULNERABLEFILEENTITY_H

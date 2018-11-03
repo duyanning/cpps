@@ -5,10 +5,6 @@
 #include "Loggers.h"
 #include "global.h"
 
-H2GchActionPtr makeH2GchAction()
-{
-    return H2GchActionPtr(new H2GchAction);
-}
 
 bool H2GchAction::execute(const DepInfo& info)
 {

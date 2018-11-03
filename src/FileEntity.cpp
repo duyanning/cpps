@@ -13,11 +13,6 @@ string FileEntity::name()
 }
 
 
-FileEntityPtr makeFileEntity(fs::path path)
-{
-    return FileEntityPtr(new FileEntity(path));
-}
-
 fs::path FileEntity::path()
 {
     return m_path;
@@ -74,4 +69,3 @@ FileSig FileEntity::sig()
     sig.size = file_size(m_path);
     return sig;
 }
-

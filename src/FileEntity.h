@@ -21,6 +21,10 @@ private:
 
 using FileEntityPtr = shared_ptr<FileEntity>;
 
-FileEntityPtr makeFileEntity(fs::path path);
+inline
+FileEntityPtr makeFileEntity(fs::path path)
+{
+    return FileEntityPtr(new FileEntity(path));
+}
 
 #endif // FILEENTITY_H

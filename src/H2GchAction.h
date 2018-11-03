@@ -11,8 +11,11 @@ public:
 
 using H2GchActionPtr = shared_ptr<H2GchAction>;
 
-H2GchActionPtr makeH2GchAction();
-
+inline
+H2GchActionPtr makeH2GchAction()
+{
+    return H2GchActionPtr(new H2GchAction);
+}
 
 
 #endif // H2GCHACTION_H
