@@ -2,14 +2,11 @@
 #define H2GCHACTION_H
 
 #include "Action.h"
+#include "DepInfo.h"
 
 class H2GchAction : public Action {
 public:
-    bool execute(EntityPtr target, 
-                 vector<EntityPtr>& allPre, 
-                 vector<EntityPtr>& changedPre,
-                 vector<EntityPtr>& failedPre
-        ) override;
+    bool execute(DepInfo& info) override;
 };
 
 using H2GchActionPtr = shared_ptr<H2GchAction>;

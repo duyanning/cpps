@@ -13,18 +13,19 @@ VulnerableFileEntityPtr makeVulnerableFileEntity(fs::path path)
     return VulnerableFileEntityPtr(new VulnerableFileEntity(path));
 }
 
-bool VulnerableFileEntity::needExecuteActions(vector<EntityPtr>& allPre,
-                                    vector<EntityPtr>& changedPre,
-                                    vector<EntityPtr>& failedPre)
+// bool VulnerableFileEntity::needExecuteActions(vector<EntityPtr>& allPre,
+//                                     vector<EntityPtr>& changedPre,
+//                                     vector<EntityPtr>& failedPre)
+bool VulnerableFileEntity::needExecuteActions(DepInfo& info)
 {
     // 对于这种根据其他文件生成的文件
 
     // 如果有下级节点更新没成功，也去更新本节点，因为动作未必在乎
-    if (!failedPre.empty())
+    if (!info.failed.empty())
         return true;
 
     // 如果下级节点有变，它要重新生成
-    if (!changedPre.empty())
+    if (!info.changed.empty())
         return true;
 
     // 如果本身还不存在，要重新生成

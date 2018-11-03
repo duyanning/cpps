@@ -1,10 +1,11 @@
 #ifndef FILEENTITY_H
 #define FILEENTITY_H
 
-#include "DependencyGraphEntity.h"
+#include "Entity.h"
 #include "FileSig.h"
+#include "DepInfo.h"
 
-class FileEntity : public DependencyGraphEntity {
+class FileEntity : public Entity {
 public:
     FileEntity(fs::path path);
     string name() override;
@@ -13,9 +14,10 @@ public:
     time_t actualFileTimestamp();
     fs::path path();
     FileSig sig();
-    virtual bool needExecuteActions(vector<EntityPtr>& allPre,
-                            vector<EntityPtr>& changedPre,
-                            vector<EntityPtr>& failedPre);
+    virtual bool needExecuteActions(DepInfo& info);
+    // virtual bool needExecuteActions(vector<EntityPtr>& allPre,
+    //                         vector<EntityPtr>& changedPre,
+    //                         vector<EntityPtr>& failedPre);
 
 private:
     fs::path m_path;

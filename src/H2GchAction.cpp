@@ -10,17 +10,13 @@ H2GchActionPtr makeH2GchAction()
     return H2GchActionPtr(new H2GchAction);
 }
 
-bool H2GchAction::execute(EntityPtr target, 
-                          vector<EntityPtr>& allPre, 
-                          vector<EntityPtr>& changedPre,
-                          vector<EntityPtr>& failedPre
-    )
+bool H2GchAction::execute(DepInfo& info)
 {
     // 构造命令行
-    FileEntityPtr h = static_pointer_cast<FileEntity>(allPre[0]);
+    FileEntityPtr h = static_pointer_cast<FileEntity>(info.all[0]);
     fs::path h_path = h->path();
 
-    VulnerableFileEntityPtr gch = static_pointer_cast<VulnerableFileEntity>(target);
+    VulnerableFileEntityPtr gch = static_pointer_cast<VulnerableFileEntity>(info.target);
     fs::path gch_path = gch->path();
 
     fs::path dep_path = shadow(gch_path);

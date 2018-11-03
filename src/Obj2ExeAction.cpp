@@ -15,13 +15,10 @@ Obj2ExeActionPtr makeObj2ExeAction(string other_options)
     return Obj2ExeActionPtr(new Obj2ExeAction(other_options));
 }
 
-bool Obj2ExeAction::execute(EntityPtr target, 
-                            vector<EntityPtr>& allPre, 
-                            vector<EntityPtr>& changedPre,
-                            vector<EntityPtr>& failedPre)
+bool Obj2ExeAction::execute(DepInfo& info)
 {
     // 构造命令行
-    FileEntityPtr exe = static_pointer_cast<FileEntity>(target);
+    FileEntityPtr exe = static_pointer_cast<FileEntity>(info.target);
     fs::path exe_path = exe->path();
 
     string cmd = gcc_link_cmd;
@@ -31,7 +28,7 @@ bool Obj2ExeAction::execute(EntityPtr target,
 
     cmd += exe_path.string();
 
-    for (auto p : allPre) {
+    for (auto p : info.all) {
         FileEntityPtr f = static_pointer_cast<FileEntity>(p);
         cmd = cmd + " " + f->path().string();
     }

@@ -30,7 +30,7 @@ using boost::smatch;
 #include "Cpp2ObjAction.h"        
 //#include "Cpp2DepAction.h"        
 #include "H2GchAction.h"          
-#include "UpdateDependencyGraphAction.h" 
+#include "UpdateGraphAction.h" 
 #include "ShebangMagic.h"                
 #include "GchMagic.h"                    
 #include "helpers.h"                     
@@ -294,7 +294,7 @@ void build_exe()
 
         if (exists(dep_path)) {
             PhonyEntityPtr obj_update = makePhonyEntity("update for " + obj_path.string());
-            obj_update->addAction(makeUpdateDependencyGraphAction(obj));
+            obj_update->addAction(makeUpdateGraphAction(obj));
             update_dependency->addPrerequisite(obj_update);
 
             FileEntityPtr dep = makeFileEntity(dep_path);
@@ -374,7 +374,7 @@ void build_gch()
 
         if (exists(dep_path)) {
             PhonyEntityPtr gch_update = makePhonyEntity("update for " + gch_path.string());
-            gch_update->addAction(makeUpdateDependencyGraphAction(gch));
+            gch_update->addAction(makeUpdateGraphAction(gch));
             update_dependency->addPrerequisite(gch_update);
 
             FileEntityPtr dep = makeFileEntity(dep_path);

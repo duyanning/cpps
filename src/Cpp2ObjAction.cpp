@@ -10,23 +10,20 @@ Cpp2ObjActionPtr makeCpp2ObjAction()
     return Cpp2ObjActionPtr(new Cpp2ObjAction);
 }
 
-bool Cpp2ObjAction::execute(EntityPtr target, 
-                            vector<EntityPtr>& allPre, 
-                            vector<EntityPtr>& changedPre,
-                            vector<EntityPtr>& failedPre)
+bool Cpp2ObjAction::execute(DepInfo& info)
 {
-    if (!failedPre.empty()) {
+    if (!info.failed.empty()) {
         //cout << "!failedPre.empty()";
-        for (auto pre : failedPre) {
+        for (auto pre : info.failed) {
             FileEntityPtr fe = static_pointer_cast<FileEntity>(pre);
             if (is_a_cpp_src(fe->path())) return false;
         }
     }
     // 构造命令行
-    FileEntityPtr cpp = static_pointer_cast<FileEntity>(allPre[0]);
+    FileEntityPtr cpp = static_pointer_cast<FileEntity>(info.all[0]);
     fs::path cpp_path = cpp->path();
 
-    VulnerableFileEntityPtr obj = static_pointer_cast<VulnerableFileEntity>(target);
+    VulnerableFileEntityPtr obj = static_pointer_cast<VulnerableFileEntity>(info.target);
     fs::path obj_path = obj->path();
 
     fs::path dep_path = obj_path;

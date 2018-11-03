@@ -12,13 +12,9 @@ UpdateGraphActionPtr makeUpdateGraphAction(FileEntityPtr obj)
     return UpdateGraphActionPtr(new UpdateGraphAction(obj));
 }
 
-bool UpdateGraphAction::execute(EntityPtr target, 
-                                          vector<EntityPtr>& allPre, 
-                                          vector<EntityPtr>& changedPre,
-                                          vector<EntityPtr>& failedPre
-    )
+bool UpdateGraphAction::execute(DepInfo& info)
 {
-    FileEntityPtr dep = static_pointer_cast<FileEntity>(allPre[0]);
+    FileEntityPtr dep = static_pointer_cast<FileEntity>(info.all[0]);
     fs::path dep_path = dep->path();
 
     ifstream f(dep_path.string());

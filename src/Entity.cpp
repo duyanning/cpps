@@ -20,31 +20,27 @@ void Entity::addPrerequisite(EntityPtr p)
 }
 
 
-void Entity::updatePrerequisites(vector<EntityPtr>& changed, vector<EntityPtr>& failed)
+void Entity::updatePrerequisites(DepInfo& info)
 {
     for (auto p : prerequisiteList) {
         time_t oldStamp = p->timestamp();
         bool success = p->update();
         if (success) {
             if (p->timestamp() > oldStamp)
-                changed.push_back(p);
+                info.changed.push_back(p);
         }
         else {
-            failed.push_back(p);
+            info.failed.push_back(p);
         }
          
     }
             
 }
 
-bool Entity::executeActions(EntityPtr target,
-                                           vector<EntityPtr>& allPre, 
-                                           vector<EntityPtr>& changedPre,
-                                           vector<EntityPtr>& failedPre
-    )
+bool Entity::executeActions(DepInfo& info)
 {
     for (auto a : actions) {
-        bool success = a->execute(target, allPre, changedPre, failedPre);
+        bool success = a->execute(info);
         if (!success)
             return false;
     }

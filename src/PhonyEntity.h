@@ -1,9 +1,9 @@
 #ifndef PHONYENTITY_H
 #define PHONYENTITY_H
 
-#include "DependencyGraphEntity.h"
+#include "Entity.h"
 
-class PhonyEntity : public DependencyGraphEntity {
+class PhonyEntity : public Entity {
 public:
     PhonyEntity(string name);
     bool update() override;

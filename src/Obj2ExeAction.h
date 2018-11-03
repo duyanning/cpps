@@ -6,11 +6,7 @@
 class Obj2ExeAction : public Action {
 public:
     Obj2ExeAction(string other_options);
-    bool execute(EntityPtr target, 
-                 vector<EntityPtr>& allPre, 
-                 vector<EntityPtr>& changedPre,
-                 vector<EntityPtr>& failedPre
-        ) override;
+    bool execute(DepInfo& info) override;
 private:
     string m_other_options;
 };

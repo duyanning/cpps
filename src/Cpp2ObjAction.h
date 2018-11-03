@@ -5,10 +5,7 @@
 
 class Cpp2ObjAction : public Action {
 public:
-    bool execute(EntityPtr target, 
-                 vector<EntityPtr>& allPre, 
-                 vector<EntityPtr>& changedPre,
-                 vector<EntityPtr>& failedPre) override;
+    bool execute(DepInfo& info) override;
 };
 
 using Cpp2ObjActionPtr = shared_ptr<Cpp2ObjAction>;
