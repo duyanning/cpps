@@ -26,9 +26,6 @@ public:
     void generate_birth_cert(fs::path dep_path);
 protected:
     bool needExecuteActions(DepInfo& info) override;
-    // bool needExecuteActions(vector<EntityPtr>& allPre,
-    //                         vector<EntityPtr>& changedPre,
-    //                         vector<EntityPtr>& failedPre) override;
 };
 
 using VulnerableFileEntityPtr = shared_ptr<VulnerableFileEntity>;

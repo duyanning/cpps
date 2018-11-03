@@ -1,6 +1,7 @@
 #include "config.h"
 #include "VulnerableFileEntity.h"
 #include "Loggers.h"
+#include "DepInfo.h"
 
 VulnerableFileEntity::VulnerableFileEntity(fs::path path)
 :
@@ -13,9 +14,6 @@ VulnerableFileEntityPtr makeVulnerableFileEntity(fs::path path)
     return VulnerableFileEntityPtr(new VulnerableFileEntity(path));
 }
 
-// bool VulnerableFileEntity::needExecuteActions(vector<EntityPtr>& allPre,
-//                                     vector<EntityPtr>& changedPre,
-//                                     vector<EntityPtr>& failedPre)
 bool VulnerableFileEntity::needExecuteActions(DepInfo& info)
 {
     // 对于这种根据其他文件生成的文件

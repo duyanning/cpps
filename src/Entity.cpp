@@ -1,5 +1,7 @@
 #include "config.h"
 #include "Entity.h"
+#include "DepInfo.h"
+#include "Action.h"
 
 Entity::Entity()
 {

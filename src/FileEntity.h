@@ -15,10 +15,6 @@ public:
     fs::path path();
     FileSig sig();
     virtual bool needExecuteActions(DepInfo& info);
-    // virtual bool needExecuteActions(vector<EntityPtr>& allPre,
-    //                         vector<EntityPtr>& changedPre,
-    //                         vector<EntityPtr>& failedPre);
-
 private:
     fs::path m_path;
 };

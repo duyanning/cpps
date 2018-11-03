@@ -1,6 +1,6 @@
 #include "config.h"
 #include "PhonyEntity.h"
-
+#include "DepInfo.h"
 
 PhonyEntity::PhonyEntity(string name)
     :
