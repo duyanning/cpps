@@ -20,8 +20,6 @@ PhonyEntityPtr makePhonyEntity(string name)
 
 bool PhonyEntity::update()
 {
-    // vector<EntityPtr> changed;
-    // vector<EntityPtr> failed;
     DepInfo info;
     info.target = shared_from_this();
     info.all = prerequisiteList;

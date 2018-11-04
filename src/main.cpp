@@ -81,7 +81,7 @@ int max_line_scan = -1;              // 最多扫描这么多行，-1代表全�
 string output_name;
 
 void collect_info();
-void build();
+bool build();
 void run(int argc, char* argv[]);
 void generate_main_file(string main_file__name);
 void generate_class_files(string class_name);
@@ -244,12 +244,15 @@ try {
     //gcc_link_cmd += extra_link_flags;
 
     // 构建
-    build();
+    bool success = build();
     if (build_only)
         return 0;
 
-    // 运行
-    run(argc, argv);
+    if (success) {
+        // 运行
+        run(argc, argv);
+    }
+
 
     return 0;
 }
@@ -258,7 +261,7 @@ catch (int exit_code) {
 }
 
 
-void build_exe()
+bool build_exe()
 {
     // 构建依赖关系图
     FileEntityPtr exe = makeFileEntity(exe_path);
@@ -325,7 +328,9 @@ void build_exe()
         os << endl;
         );
 
-    exe->update();
+    bool success = exe->update();
+    if (!success)
+        return false;
 
     if (vm.count("output")) {
         fs::path output_path = output_name;
@@ -341,13 +346,13 @@ void build_exe()
         }
 
     }
-
+    return true;
 }
 
-void build_gch()
+bool build_gch()
 {
     if (headers_to_pc.empty())
-        return;
+        return true;
 
     PhonyEntityPtr all_gch  = makePhonyEntity("generate all gch");
     PhonyEntityPtr update_dependency = makePhonyEntity("update dependency graph");
@@ -398,11 +403,15 @@ void build_gch()
         os << endl;
         );
 
-    all_gch->update();
+    bool success;
+    success = all_gch->update();
+    if (!success)
+        return false;
 
+    return true;
 }
 
-void build()
+bool build()
 {
     if (clear_run) {
         // 在build前删除所有的产生的文件
@@ -437,11 +446,19 @@ void build()
         }
     }
 
+    bool success;
+    
     GchMagic gch_magic(headers_to_pc);
-    build_gch();
+    success = build_gch();
+    if (!success)
+        return false;
 
     ShebangMagic shebang_magic(script_file.string());
-    build_exe();
+    success = build_exe();
+    if (!success)
+        return false;
+
+    return true;
 }
 
 void scan(fs::path src_path)

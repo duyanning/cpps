@@ -17,6 +17,12 @@ Obj2ExeActionPtr makeObj2ExeAction(string other_options)
 
 bool Obj2ExeAction::execute(const DepInfo& info)
 {
+    // 如果exe依赖的某个.o更新失败，那就无法生成exe
+    if (!info.failed.empty()) {
+        //cout << "Obj2ExeAction failed" << endl;
+        return false;
+    }
+    
     // 构造命令行
     FileEntityPtr exe = static_pointer_cast<FileEntity>(info.target);
     fs::path exe_path = exe->path();
@@ -49,7 +55,7 @@ bool Obj2ExeAction::execute(const DepInfo& info)
     int gcc_status;
     gcc_status = system(cmd.c_str());
     if (gcc_status)
-        throw gcc_status;
+        return false;
 
     return true;
 }

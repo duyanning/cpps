@@ -13,3 +13,5 @@ MiniLogger collect_info_logger(cout, false);
 MiniLogger shebang_logger(cout, false);
 MiniLogger perm_logger(cout, false);
 MiniLogger birthcert_logger(cout, false);
+MiniLogger update_logger(cout, false);
+//MiniLogger action_logger(cout, true);

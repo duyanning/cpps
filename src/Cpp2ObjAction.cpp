@@ -50,8 +50,9 @@ bool Cpp2ObjAction::execute(const DepInfo& info)
     // 产生.o文件和.d文件
     int gcc_status;
     gcc_status = system(cmd.c_str());
+    //cout << "cpp2obj:" << gcc_status << endl;
     if (gcc_status)
-        throw gcc_status;
+        return false;
 
     // 产生出生证明文件（gcc编译时，如果遇到#include的头文件不存在，就算fatal error，也不会生成.d文件）
     obj->generate_birth_cert(dep_path);

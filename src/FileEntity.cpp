@@ -1,5 +1,6 @@
 #include "config.h"
 #include "FileEntity.h" // using Entity.cpp
+#include "Loggers.h"
 
 FileEntity::FileEntity(fs::path path)
 :
@@ -20,6 +21,7 @@ fs::path FileEntity::path()
 
 bool FileEntity::update()
 {
+    MINILOG(update_logger, "Entity::update: " << name());
     // 如果一个文件节点是个叶子节点
     if (prerequisiteList.empty()) {
         return exists(m_path);  // 存在就好，不存在那就真没办法了
@@ -32,7 +34,6 @@ bool FileEntity::update()
 
     updatePrerequisites(info);
 
-
     // 然后再判断是否要执行本节点关联的动作
     if (needExecuteActions(info))
         return executeActions(info);
@@ -42,7 +43,16 @@ bool FileEntity::update()
 
 bool FileEntity::needExecuteActions(const DepInfo& info)
 {
-    return !info.changed.empty();
+    // 如果下级更新节点失败了，让本节点的动作决定如何处理
+    if (!info.failed.empty())
+        return true;
+
+    // 如果下级节点有改变，也要去执行动作
+    if (!info.changed.empty())
+        return true;
+
+    // 如果下级节点更新成功，并且无变化，就不需要执行本节点的动作
+    return false;
 }
 
 // 若文件不存在，就认为它的生日为0

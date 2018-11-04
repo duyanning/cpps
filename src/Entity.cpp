@@ -2,6 +2,7 @@
 #include "Entity.h"
 #include "DepInfo.h"
 #include "Action.h"
+#include "Loggers.h"
 
 Entity::Entity()
 {
@@ -41,11 +42,21 @@ void Entity::updatePrerequisites(DepInfo& info)
 
 bool Entity::executeActions(const DepInfo& info)
 {
-    for (auto a : actions) {
-        bool success = a->execute(info);
-        if (!success)
+    // 如果就没关联什么动作，下级的更新失败，就是自己的失败
+    if (actions.empty()) {
+        if (!info.failed.empty())
             return false;
     }
+
+    // 如果关联有动作，就让动作决定是否失败
+    for (auto a : actions) {
+        bool success = a->execute(info);
+        if (!success) {
+            MINILOG(update_logger, "Entity::executeActions FAILED: " << name());
+            return false;
+        }
+    }
+    MINILOG(update_logger, "Entity::executeActions OK: " << name());
     return true;
 }
 

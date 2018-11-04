@@ -13,5 +13,7 @@ extern MiniLogger collect_info_logger;
 extern MiniLogger shebang_logger;
 extern MiniLogger perm_logger;
 extern MiniLogger birthcert_logger;
+extern MiniLogger update_logger;
+//extern MiniLogger action_logger;
 
 #endif // LOGGERS_H
