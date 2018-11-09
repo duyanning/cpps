@@ -24,7 +24,7 @@ using boost::smatch;
 #endif // _WIN32
 
 #include "FileEntity.h"         
-#include "VulnerableFileEntity.h" 
+//#include "VulnerableFileEntity.h" 
 #include "PhonyEntity.h"          
 #include "Obj2ExeAction.h"        
 #include "Cpp2ObjAction.h"        
@@ -281,7 +281,8 @@ bool build_exe()
         obj_path += ".o";
 
         //
-        FileEntityPtr obj = makeVulnerableFileEntity(obj_path);
+        //FileEntityPtr obj = makeVulnerableFileEntity(obj_path);
+        FileEntityPtr obj = makeFileEntity(obj_path);
         obj->addAction(makeCpp2ObjAction());
 
         // 可执行文件依赖.o文件
@@ -363,7 +364,8 @@ bool build_gch()
 
 
 
-        FileEntityPtr gch = makeVulnerableFileEntity(gch_path);
+        //FileEntityPtr gch = makeVulnerableFileEntity(gch_path);
+        FileEntityPtr gch = makeFileEntity(gch_path);
         gch->addAction(makeH2GchAction());
 
         //

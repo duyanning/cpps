@@ -19,13 +19,15 @@ public:
 
     virtual time_t timestamp() = 0; // 相当于文件的生日，数字越小，文件越老。
     virtual string name() = 0;
+    virtual bool isFile() = 0;
 
     // 执行所有关联的动作
     bool executeActions(const DepInfo& info);
 
     void show(ostream& os, int level = 0, string indent = "  ");
 protected:
-    // 更新下级节点
+    // 更新所有下级节点，并根据更新的结果填充info：确定哪些下级节点更
+    // 新后变年轻了，哪些下级节点更新失败了
     void updatePrerequisites(DepInfo& info);
     vector<EntityPtr> prerequisiteList; // 所有下级节点
     vector<ActionPtr> actions;  // 所有关联的动作

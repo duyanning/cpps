@@ -25,8 +25,10 @@ void move(const fs::path& old_p, const fs::path& new_p)
     // rename失败，说明原来的位置跟目标位置不在同一个设备上，只好用copy&remove模拟
     if (ec) {
         // 复制会改变文件的时间戳，所以要调整
+        cout << "aaaaaaaaaaaaaaaa\n";
         time_t old_time = last_write_time(old_p);
         copy(old_p, new_p);
+        cout << "bbbbbbbbbbbbbbb\n";
         last_write_time(new_p, old_time);
 
         remove(old_p);
@@ -36,9 +38,18 @@ void move(const fs::path& old_p, const fs::path& new_p)
 // 获得路径p的影子路径（即其在cache中的对应路径），p为绝对路径
 fs::path shadow(fs::path p)
 {
+
+    
     //cout << "orig:" << p << endl;
     // 获取cache的位置
     fs::path cache_dir_name(".cpps/cache");
+
+    // 如果p已经位于cache之中，直接返回
+    if (p.string().find(cache_dir_name.string()) != std::string::npos) {
+        return p;
+    }
+
+
     fs::path cache_dir = get_home();
     cache_dir /= cache_dir_name;
 

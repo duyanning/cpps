@@ -6,6 +6,14 @@ struct FileSig {
     fs::path path;              // 文件的路径（这个字段其实是非必须的）
     time_t timestamp {0};       // 文件的日期
     uintmax_t size {0};         // 文件的大小
+
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version)
+    {
+        ar & timestamp;
+        ar & size;
+    }
 };
 
 inline

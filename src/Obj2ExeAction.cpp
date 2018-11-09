@@ -27,6 +27,12 @@ bool Obj2ExeAction::execute(const DepInfo& info)
     FileEntityPtr exe = static_pointer_cast<FileEntity>(info.target);
     fs::path exe_path = exe->path();
 
+    fs::path dep_path = exe_path;
+    dep_path += ".d";
+
+    // fs::path birthcert_path = exe_path;
+    // birthcert_path += ".birthcert";
+
     string cmd = gcc_link_cmd;
     cmd += " -o";
 
@@ -56,6 +62,8 @@ bool Obj2ExeAction::execute(const DepInfo& info)
     gcc_status = system(cmd.c_str());
     if (gcc_status)
         return false;
+
+    exe->generate_birth_cert();
 
     return true;
 }

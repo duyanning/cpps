@@ -1,6 +1,7 @@
 #include "config.h"
 #include "H2GchAction.h"
-#include "VulnerableFileEntity.h"
+//#include "VulnerableFileEntity.h"
+#include "FileEntity.h"
 #include "helpers.h"
 #include "Loggers.h"
 #include "global.h"
@@ -12,14 +13,15 @@ bool H2GchAction::execute(const DepInfo& info)
     FileEntityPtr h = static_pointer_cast<FileEntity>(info.all[0]);
     fs::path h_path = h->path();
 
-    VulnerableFileEntityPtr gch = static_pointer_cast<VulnerableFileEntity>(info.target);
+    //VulnerableFileEntityPtr gch = static_pointer_cast<VulnerableFileEntity>(info.target);
+    FileEntityPtr gch = static_pointer_cast<FileEntity>(info.target);
     fs::path gch_path = gch->path();
 
     fs::path dep_path = shadow(gch_path);
     dep_path += ".d";
 
-    fs::path birthcert_path = gch_path;
-    birthcert_path += ".birthcert";
+    // fs::path birthcert_path = gch_path;
+    // birthcert_path += ".birthcert";
 
     // we should remove old .d before generate new one
     // otherwise, we will get a warning message
@@ -57,7 +59,8 @@ bool H2GchAction::execute(const DepInfo& info)
         return false;
 
     // 产生出生证明文件（gcc编译时，如果遇到#include的头文件不存在，就算fatal error，也不会生成.d文件）
-    gch->generate_birth_cert(dep_path);
+    //gch->generate_birth_cert(dep_path);
+    gch->generate_birth_cert();
 
     return true;
 }

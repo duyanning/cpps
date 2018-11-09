@@ -9,6 +9,7 @@ public:
     bool update() override;
     time_t timestamp() override;
     string name() override;
+    virtual bool isFile() override {  return false;  }
 private:
     string m_name;
 };

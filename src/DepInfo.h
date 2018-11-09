@@ -5,10 +5,10 @@
 //class EntityPtr;
 
 struct DepInfo {
-    EntityPtr target;
-    vector<EntityPtr> all;
-    vector<EntityPtr> changed;
-    vector<EntityPtr> failed;
+    EntityPtr target;           // 目标
+    vector<EntityPtr> all;      // 所有下级节点
+    //vector<EntityPtr> changed;  // 改变的下级节点(是否改变，要跟当前节点上次生成时所使用的进行比较)
+    vector<EntityPtr> failed;   // 失败的下级节点
 };
 
 
