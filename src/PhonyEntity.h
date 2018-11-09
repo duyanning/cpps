@@ -7,7 +7,7 @@ class PhonyEntity : public Entity {
 public:
     PhonyEntity(string name);
     bool update() override;
-    time_t timestamp() override;
+    //time_t timestamp() override;
     string name() override;
     virtual bool isFile() override {  return false;  }
 private:

@@ -10,7 +10,7 @@ public:
     FileEntity(fs::path path);
     string name() override;
     bool update() override;
-    time_t timestamp() override;
+    //time_t timestamp() override;
     time_t actualFileTimestamp();
     fs::path path();
     FileSig sig();

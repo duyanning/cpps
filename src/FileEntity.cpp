@@ -64,17 +64,17 @@ bool FileEntity::update()
 // 若它作为目标文件，生日为0意味着这是一个最古老的文件，它比任何依赖文件都要老，所以必须重新生成
 // 若它作为依赖文件，生日0意味着文件不存在，没法用它生成目标文件
 // todo：如果一个文件不存在，让这个函数抛出异常。
-time_t FileEntity::timestamp()
-{
-    time_t timestamp;
-    if (!exists(m_path))
-        timestamp = 0;
-    else {
-        // timestamp is the modification time of file
-        timestamp = last_write_time(m_path);
-    }
-    return timestamp;
-}
+// time_t FileEntity::timestamp()
+// {
+//     time_t timestamp;
+//     if (!exists(m_path))
+//         timestamp = 0;
+//     else {
+//         // timestamp is the modification time of file
+//         timestamp = last_write_time(m_path);
+//     }
+//     return timestamp;
+// }
 
 FileSig FileEntity::sig()
 {

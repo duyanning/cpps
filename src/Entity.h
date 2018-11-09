@@ -17,7 +17,7 @@ public:
     // 更新当前节点。返回值true/false表示更新成功/失败
     virtual bool update() = 0;
 
-    virtual time_t timestamp() = 0; // 相当于文件的生日，数字越小，文件越老。
+    //virtual time_t timestamp() = 0; // 相当于文件的生日，数字越小，文件越老。
     virtual string name() = 0;
     virtual bool isFile() = 0;
 
