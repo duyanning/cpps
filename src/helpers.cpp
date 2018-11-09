@@ -25,10 +25,10 @@ void move(const fs::path& old_p, const fs::path& new_p)
     // rename失败，说明原来的位置跟目标位置不在同一个设备上，只好用copy&remove模拟
     if (ec) {
         // 复制会改变文件的时间戳，所以要调整
-        cout << "aaaaaaaaaaaaaaaa\n";
+        //cout << "aaaaaaaaaaaaaaaa\n";
         time_t old_time = last_write_time(old_p);
         copy(old_p, new_p);
-        cout << "bbbbbbbbbbbbbbb\n";
+        //cout << "bbbbbbbbbbbbbbb\n";
         last_write_time(new_p, old_time);
 
         remove(old_p);
