@@ -60,22 +60,23 @@ sudo apt-get install libboost-serialization-dev
 ```
 
 ## 编译安装
-
-    mkdir build-cpps
-    cd build-cpps
-    cmake ../cpps
-    make
-    make test
+```
+mkdir build-cpps
+cd build-cpps
+cmake ../cpps
+make
+make test
+```
 
 如果没有问题的话
-
-    sudo make install
-    
+```
+sudo make install
+``` 
 
 我自己编译时用的是(注意版本号)：
 
 * gcc 4.9.1
-* boost 1.57.0 （只用到了filesystem、program_options两个子库）
+* boost 1.57.0
 
 用较低版本可能会遇到编译或链接问题。
 
@@ -100,25 +101,25 @@ foo.h
 ### 在gcc的编译环境下
 
 你需要在hello.cpp中写
-
-    #include "foo.h"
-    
+```c++
+#include "foo.h"
+```
 然后将foo.cpp也加进你的Makefile中。
 
 ### 在cpps的解释环境下
 
 你只需要在上面这行`#include`后添加一条注释，如下：
-
-    #include "foo.h" // usingcpp
-    
+```c++
+#include "foo.h" // usingcpp
+```    
 然后执行下边这行即可
 
     cpps hello.cpp
 
 如果你的.cpp文件与.h文件不同名的话，那就要这样写：
-
-    #include "foo.h" // using fooandbar.cpp
-
+```c++
+#include "foo.h" // using fooandbar.cpp
+```
 
 ## 如果你在hello.cpp中使用了某个库
 比如pthread
@@ -130,18 +131,18 @@ foo.h
 ### 在cpps的解释环境下
 
 你只要在任何一个.cpp文件中加上这样的注释即可：
-
-    // linklib pthread
-    
+```c++
+// linklib pthread
+```    
 ## 预编译头文件
 你还可以通过预编译头文件来加速cpps的编译过程
 
 比如你打算将std.h搞成预编译头文件
 
 那么只要在包含std.h的某个.cpp文件中加上这样的注释即可
-
-    #include "std.h" // precompile
-    
+```c++
+#include "std.h" // precompile
+```
 ## 还支持shebang
 在你的hello.cpp文件第一行写上：
 
