@@ -53,7 +53,7 @@ git clone https://github.com/duyanning/cpps.git
 
 ## 安装前准备工作
 以ubuntu为例
-```shell
+```Shell Session
 sudo apt-get install libboost-filesystem-dev
 sudo apt-get install libboost-program-options-dev
 sudo apt-get install libboost-serialization-dev
@@ -236,7 +236,7 @@ config.txt中的`include-dir`和`lib-dir`可以在多行中出现。
 ### usingcpp
 例子：
 ```c++
-#inlcude "foo.h" // usingcpp
+#include "foo.h" // usingcpp
 ```
 等价于
 ```c++
