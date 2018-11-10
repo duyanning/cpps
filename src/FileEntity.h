@@ -14,8 +14,6 @@ public:
     time_t actualFileTimestamp();
     fs::path path();
     FileSig sig();
-    // bool loadSig(FileSig& sig);  // 从.sig文件中加载sig。返回值false表示.sig文件并不存在
-    // void saveSig(const FileSig& sig); // 将sig保存到.sig文件中
     virtual bool needExecuteActions(const DepInfo& info);
     virtual bool isFile() override {  return true;  }
 

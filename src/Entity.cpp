@@ -32,30 +32,10 @@ void Entity::addPrerequisite(EntityPtr p)
 void Entity::updatePrerequisites(DepInfo& info)
 {
     for (auto p : prerequisiteList) {
-        //time_t oldStamp = p->timestamp();
-        // FileSig oldSig;
-        // FileEntityPtr pFile;
-        // bool hasSigFile;
-        // if (p->isFile()) {
-        //     pFile = static_pointer_cast<FileEntity>(p);
-        //     hasSigFile = pFile->loadSig(oldSig);
-        // }
         
         bool success = p->update();
         
         if (success) {
-            // if (p->isFile()) {
-            //     cout << "dddddddddddd\n";
-            //     cout << p->name() << endl;
-            //     FileSig newSig = pFile->sig();
-            //     if (!hasSigFile || newSig != oldSig) //bug：导致第二次执行也要编译
-            //     //if (hasSigFile && newSig != oldSig)
-            //         info.changed.push_back(p);
-            //     pFile->saveSig(newSig);
-            // }
-            // if (p->timestamp() > oldStamp) {
-            //     info.changed.push_back(p);
-            // }
         }
         else {
             info.failed.push_back(p);

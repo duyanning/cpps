@@ -4,7 +4,7 @@
 
 for i in $DIRS
 do
-    echo in $i
+    echo running $i
     cd $i
     ./test.sh | FileCheck test.sh
     cd ..

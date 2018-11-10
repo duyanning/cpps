@@ -3,6 +3,7 @@
 #include "FileEntity.h" // using Entity.cpp
 #include "Loggers.h"
 #include "Birthcert.h"
+#include "sha1.hpp"
 
 FileEntity::FileEntity(fs::path path)
 :
@@ -81,38 +82,11 @@ FileSig FileEntity::sig()
     FileSig sig;
     sig.path = m_path;
     //cout << "cccccccccccccc\n";
-    sig.timestamp = last_write_time(m_path);
-    sig.size = file_size(m_path);
+    // sig.timestamp = last_write_time(m_path);
+    // sig.size = file_size(m_path);
+    sig.sha1 = SHA1::from_file(m_path.string());
     return sig;
 }
-
-// bool FileEntity::loadSig(FileSig& sig)
-// {
-//     fs::path sig_path = shadow(path());
-//     sig_path += ".sig";
-
-//     if (!exists(sig_path))
-//         return false;
-
-//     ifstream ifs(sig_path.string());
-//     assert(ifs);
-
-//     ifs >> sig;
-
-//     return true;
-// }
-
-// void FileEntity::saveSig(const FileSig& sig)
-// {
-//     fs::path sig_path = shadow(path());
-//     sig_path += ".sig";
-//     cout << "haha: " << sig_path << endl;
-
-//     ofstream ofs(sig_path.string());
-//     assert(ofs);
-
-//     ofs << sig;
-// }
 
 
 bool FileEntity::needExecuteActions(const DepInfo& info)
@@ -147,7 +121,6 @@ bool FileEntity::needExecuteActions(const DepInfo& info)
     Birthcert birthcert;
     ia >> birthcert;
         
-    vector<FileSig> new_sig_vector;
     for (auto p : prerequisiteList) {
         FileEntityPtr fp = static_pointer_cast<FileEntity>(p);
 
@@ -158,30 +131,6 @@ bool FileEntity::needExecuteActions(const DepInfo& info)
     return false;
 }
 
-// // 从自己的出生证明文件中读取生成自己的源文件的签名
-// void FileEntity::get_src_sigs_from_birthcert(vector<FileSig>& sig_vector)
-// {
-//     // 自己的出生证明文件总是跟自己在一起
-//     if (!exists(path()))
-//         return;
-
-//     // 获取自己的出生证明文件的路径
-//     fs::path birthcert_path = path();
-//     birthcert_path += ".birthcert";
-
-//     ifstream ifs(birthcert_path.string());
-//     assert(ifs);
-
-//     int total;
-//     ifs >> total;
-
-//     FileSig sig;
-//     for (int i = 0; i < total; i++) {
-//         ifs >> sig;
-//         sig_vector.push_back(sig);
-//     }
-
-// }
 
 void get_pre_file_paths_from_dep_file(fs::path dep_path, vector<fs::path>& pre_file_paths)
 {

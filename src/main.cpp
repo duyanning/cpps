@@ -501,7 +501,7 @@ void scan(fs::path src_path)
                 scan(a);
             }
             else {
-                cout << a << "referenced by " << src_path << " does NOT exsit!"<< endl;
+                cout << a << " referenced by " << src_path << " does NOT exsit!"<< endl;
                 throw 1;
             }
         }
@@ -516,7 +516,7 @@ void scan(fs::path src_path)
                 scan(a);
             }
             else {
-                cout << a << "referenced by " << src_path << " does NOT exsit!"<< endl;
+                cout << a << " referenced by " << src_path << " does NOT exsit!"<< endl;
                 throw 1;
             }
         }
@@ -554,7 +554,7 @@ void scan(fs::path src_path)
                 headers_to_pc.push_back(a);
             }
             else {
-                cout << a << "referenced by " << src_path << " does NOT exsit!"<< endl;
+                cout << a << " referenced by " << src_path << " does NOT exsit!"<< endl;
                 throw 1;
             }
         }
