@@ -1,6 +1,8 @@
 # cpps - C++脚本的(伪)解释器
 
 ## 脚本 vs. 程序
+我们先来说一下(在我们看来)程序与脚本的区别：
+
 **程序**是独立于你要处理的资料的：程序有自己的目录，可以处理位于不同位置的不同资料。
 
 **脚本**是依附于它所处理的资料的：脚本就扔在资料所在的目录中，脚本里会直接提及资料中的特定文件、特定目录，脱离了这个环境它就运行不了。
@@ -34,7 +36,7 @@
 * 支持shebang
 
 ## 这一切是怎么做到的？
-因为C++代码编译的时间也不短，每次“解释”之前都先编译一遍肯定不能接受，所以cpps会缓存前一次运行所产生的.o文件、exe文件。
+因为C++代码编译的时间也不短，每次“解释”之前都先编译一遍肯定不能接受，所以cpps会缓存前一次运行所产生的.o文件、exe文件。(缓存位于`~/.cpps/cache`中)
 
 cpps内建了一个全透明的build system，当你第一次运行脚本之后，如果你对代码又做了修改，再次运行脚本时，只有变动的.cpp文件才会被重新编译。当然，前提是你的脚本是由多个.cpp文件组成的。
 
@@ -49,14 +51,16 @@ cpps内建了一个全透明的build system，当你第一次运行脚本之后�
 所以，cpps与其说是一个解释器，不如说是一个高级的build system engine，它只需要用户在.cpp中以解释器指令的形式提供少许信息就可以构建一个完整的build system。
 
 ## 获取
+```
 git clone https://github.com/duyanning/cpps.git
+```
 
 ## 安装前准备工作
 以ubuntu为例
 ```ShellSession
-$ sudo apt-get install libboost-filesystem-dev
-$ sudo apt-get install libboost-program-options-dev
-$ sudo apt-get install libboost-serialization-dev
+sudo apt-get install libboost-filesystem-dev
+sudo apt-get install libboost-program-options-dev
+sudo apt-get install libboost-serialization-dev
 ```
 
 ## 编译安装
