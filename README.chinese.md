@@ -48,6 +48,17 @@ cpps内建了一个全透明的build system，当你第一次运行脚本之后�
 
 所以，cpps与其说是一个解释器，不如说是一个高级的build system engine，它只需要用户在.cpp中以解释器指令的形式提供少许信息就可以构建一个完整的build system。
 
+## 获取
+git clone https://github.com/duyanning/cpps.git
+
+## 安装前准备工作
+以ubuntu为例
+```shell
+sudo apt-get install libboost-filesystem-dev
+sudo apt-get install libboost-program-options-dev
+sudo apt-get install libboost-serialization-dev
+```
+
 ## 编译安装
 
     mkdir build-cpps
