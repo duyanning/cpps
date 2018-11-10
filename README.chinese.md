@@ -54,9 +54,9 @@ git clone https://github.com/duyanning/cpps.git
 ## 安装前准备工作
 以ubuntu为例
 ```Shell Session
-sudo apt-get install libboost-filesystem-dev
-sudo apt-get install libboost-program-options-dev
-sudo apt-get install libboost-serialization-dev
+$ sudo apt-get install libboost-filesystem-dev
+$ sudo apt-get install libboost-program-options-dev
+$ sudo apt-get install libboost-serialization-dev
 ```
 
 ## 编译安装
