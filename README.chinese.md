@@ -230,33 +230,33 @@ config.txt中的`include-dir`和`lib-dir`可以在多行中出现。
 ## 解释器指令汇总
 ### using
 例子：
-
-    #include "foo.h" // using foo.cpp
-
+```c++
+#include "foo.h" // using foo.cpp
+```
 ### usingcpp
 例子：
-
-    #inlcude "foo.h" // usingcpp
-
+```c++
+#inlcude "foo.h" // usingcpp
+```
 等价于
-
-    #include "foo.h" // using foo.cpp
-
+```c++
+#include "foo.h" // using foo.cpp
+```
 ### linklib
 例子：
-
-    #include <FL/Fl.H> // linklib fltk
-
+```c++
+#include <FL/Fl.H> // linklib fltk
+```
 ### extra-compile-flags和extra-link-flags
 例子：如果你在Windows下用MinGW编译使用FLTK的程序，除了
-
-    // linklib fltk
-
+```c++
+// linklib fltk
+```
 你还需要在.cpp文件中加上以下指令
-
-    // extra-compile-flags: -DWIN32
-    // extra-link-flags: -mwindows -lole32 -luuid -lcomctl32
-
+```c++
+// extra-compile-flags: -DWIN32
+// extra-link-flags: -mwindows -lole32 -luuid -lcomctl32
+```
 ## 命令行选项
 请运行以下命令来查看：
 
