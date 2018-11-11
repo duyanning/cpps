@@ -47,20 +47,6 @@ bool FileEntity::update()
     return true;
 }
 
-// bool FileEntity::needExecuteActions(const DepInfo& info)
-// {
-//     // 如果下级更新节点失败了，让本节点的动作决定如何处理
-//     if (!info.failed.empty())
-//         return true;
-
-//     // 如果下级节点有改变，也要去执行动作
-//     if (!info.changed.empty())
-//         return true;
-
-//     // 如果下级节点更新成功，并且无变化，就不需要执行本节点的动作
-//     return false;
-// }
-
 // 若文件不存在，就认为它的生日为0
 // 若它作为目标文件，生日为0意味着这是一个最古老的文件，它比任何依赖文件都要老，所以必须重新生成
 // 若它作为依赖文件，生日0意味着文件不存在，没法用它生成目标文件
