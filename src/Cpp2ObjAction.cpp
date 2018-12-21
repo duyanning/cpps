@@ -52,8 +52,12 @@ bool Cpp2ObjAction::execute(const DepInfo& info)
     // 产生.o文件和.d文件
     int gcc_status;
     gcc_status = system(cmd.c_str());
+    // 函数system给出的就是gcc的返回值
+    // 在shell下执行gcc后，可用echo $?来查看该返回值
+    // 有编译错误时，该返回值为1，无错误时为0
+    // 即便有警告，仍旧是0。
     //cout << "cpp2obj:" << gcc_status << endl;
-    if (gcc_status)
+    if (gcc_status)             // 非0就是代表失败了
         return false;
 
     // 产生出生证明文件（gcc编译时，如果遇到#include的头文件不存在，就算fatal error，也不会生成.d文件）
