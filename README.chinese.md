@@ -1,6 +1,8 @@
 # cpps - C++脚本的(伪)解释器
 
 ## 脚本 vs. 程序
+我们先来说一下(在我们看来)程序与脚本的区别：
+
 **程序**是独立于你要处理的资料的：程序有自己的目录，可以处理位于不同位置的不同资料。
 
 **脚本**是依附于它所处理的资料的：脚本就扔在资料所在的目录中，脚本里会直接提及资料中的特定文件、特定目录，脱离了这个环境它就运行不了。
@@ -34,7 +36,7 @@
 * 支持shebang
 
 ## 这一切是怎么做到的？
-因为C++代码编译的时间也不短，每次“解释”之前都先编译一遍肯定不能接受，所以cpps会缓存前一次运行所产生的.o文件、exe文件。
+因为C++代码编译的时间也不短，每次“解释”之前都先编译一遍肯定不能接受，所以cpps会缓存前一次运行所产生的.o文件、exe文件。(缓存位于`~/.cpps/cache`中)
 
 cpps内建了一个全透明的build system，当你第一次运行脚本之后，如果你对代码又做了修改，再次运行脚本时，只有变动的.cpp文件才会被重新编译。当然，前提是你的脚本是由多个.cpp文件组成的。
 
@@ -48,23 +50,37 @@ cpps内建了一个全透明的build system，当你第一次运行脚本之后�
 
 所以，cpps与其说是一个解释器，不如说是一个高级的build system engine，它只需要用户在.cpp中以解释器指令的形式提供少许信息就可以构建一个完整的build system。
 
-## 编译安装
+## 获取
+```
+git clone https://github.com/duyanning/cpps.git
+```
 
-    mkdir build-cpps
-    cd build-cpps
-    cmake ../cpps
-    make
-    make test
+## 安装前准备工作
+以ubuntu为例
+```ShellSession
+sudo apt-get install libboost-filesystem-dev
+sudo apt-get install libboost-program-options-dev
+sudo apt-get install libboost-serialization-dev
+```
+
+## 编译安装
+```
+mkdir build-cpps
+cd build-cpps
+cmake ../cpps
+make
+make test
+```
 
 如果没有问题的话
-
-    sudo make install
-    
+```
+sudo make install
+``` 
 
 我自己编译时用的是(注意版本号)：
 
 * gcc 4.9.1
-* boost 1.57.0 （只用到了filesystem、program_options两个子库）
+* boost 1.57.0
 
 用较低版本可能会遇到编译或链接问题。
 
@@ -89,25 +105,25 @@ foo.h
 ### 在gcc的编译环境下
 
 你需要在hello.cpp中写
-
-    #include "foo.h"
-    
+```c++
+#include "foo.h"
+```
 然后将foo.cpp也加进你的Makefile中。
 
 ### 在cpps的解释环境下
 
 你只需要在上面这行`#include`后添加一条注释，如下：
-
-    #include "foo.h" // usingcpp
-    
+```c++
+#include "foo.h" // usingcpp
+```    
 然后执行下边这行即可
 
     cpps hello.cpp
 
 如果你的.cpp文件与.h文件不同名的话，那就要这样写：
-
-    #include "foo.h" // using fooandbar.cpp
-
+```c++
+#include "foo.h" // using fooandbar.cpp
+```
 
 ## 如果你在hello.cpp中使用了某个库
 比如pthread
@@ -119,18 +135,18 @@ foo.h
 ### 在cpps的解释环境下
 
 你只要在任何一个.cpp文件中加上这样的注释即可：
-
-    // linklib pthread
-    
+```c++
+// linklib pthread
+```    
 ## 预编译头文件
 你还可以通过预编译头文件来加速cpps的编译过程
 
 比如你打算将std.h搞成预编译头文件
 
 那么只要在包含std.h的某个.cpp文件中加上这样的注释即可
-
-    #include "std.h" // precompile
-    
+```c++
+#include "std.h" // precompile
+```
 ## 还支持shebang
 在你的hello.cpp文件第一行写上：
 
@@ -218,33 +234,33 @@ config.txt中的`include-dir`和`lib-dir`可以在多行中出现。
 ## 解释器指令汇总
 ### using
 例子：
-
-    #include "foo.h" // using foo.cpp
-
+```c++
+#include "foo.h" // using foo.cpp
+```
 ### usingcpp
 例子：
-
-    #inlcude "foo.h" // usingcpp
-
+```c++
+#include "foo.h" // usingcpp
+```
 等价于
-
-    #include "foo.h" // using foo.cpp
-
+```c++
+#include "foo.h" // using foo.cpp
+```
 ### linklib
 例子：
-
-    #include <FL/Fl.H> // linklib fltk
-
+```c++
+#include <FL/Fl.H> // linklib fltk
+```
 ### extra-compile-flags和extra-link-flags
 例子：如果你在Windows下用MinGW编译使用FLTK的程序，除了
-
-    // linklib fltk
-
+```c++
+// linklib fltk
+```
 你还需要在.cpp文件中加上以下指令
-
-    // extra-compile-flags: -DWIN32
-    // extra-link-flags: -mwindows -lole32 -luuid -lcomctl32
-
+```c++
+// extra-compile-flags: -DWIN32
+// extra-link-flags: -mwindows -lole32 -luuid -lcomctl32
+```
 ## 命令行选项
 请运行以下命令来查看：
 

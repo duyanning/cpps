@@ -1,5 +1,6 @@
 -lboost_filesystem
 -lboost_program_options
 -lboost_system
--lboost_regex
+#-lboost_regex
+-lboost_serialization
 
