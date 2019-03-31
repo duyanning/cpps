@@ -21,6 +21,7 @@
 					<Add library="$(libs4mingw)/boost/lib/libboost_program_options-mgw48-d-1_57.dll.a" />
 					<Add library="$(libs4mingw)/boost/lib/libboost_system-mgw48-d-1_57.dll.a" />
 					<Add library="$(libs4mingw)/boost/lib/libboost_regex-mgw48-d-1_57.dll.a" />
+					<Add library="$(libs4mingw)/boost/lib/libboost_serialization-mgw48-d-1_57.dll.a" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -51,6 +52,7 @@
 					<Add library="$(libs4mingw)/boost/lib/libboost_program_options-mgw48-1_57.a" />
 					<Add library="$(libs4mingw)/boost/lib/libboost_system-mgw48-1_57.a" />
 					<Add library="$(libs4mingw)/boost/lib/libboost_regex-mgw48-1_57.a" />
+					<Add library="$(libs4mingw)/boost/lib/libboost_serialization-mgw48-1_57.a" />
 				</Linker>
 			</Target>
 		</Build>
@@ -63,42 +65,44 @@
 		<Linker>
 			<Add directory="$(libs4mingw)/boost/lib" />
 		</Linker>
-		<Unit filename="Action.cpp" />
-		<Unit filename="Action.h" />
-		<Unit filename="Cpp2ObjAction.cpp" />
-		<Unit filename="Cpp2ObjAction.h" />
-		<Unit filename="DependencyGraphEntity.cpp" />
-		<Unit filename="DependencyGraphEntity.h" />
-		<Unit filename="FileEntity.cpp" />
-		<Unit filename="FileEntity.h" />
-		<Unit filename="FileSig.h" />
-		<Unit filename="GchMagic.cpp" />
-		<Unit filename="GchMagic.h" />
-		<Unit filename="H2GchAction.cpp" />
-		<Unit filename="H2GchAction.h" />
-		<Unit filename="Loggers.cpp" />
-		<Unit filename="Loggers.h" />
-		<Unit filename="MiniLogger.cpp" />
-		<Unit filename="MiniLogger.h" />
-		<Unit filename="MustExistFileEntity.cpp" />
-		<Unit filename="MustExistFileEntity.h" />
-		<Unit filename="Obj2ExeAction.cpp" />
-		<Unit filename="Obj2ExeAction.h" />
-		<Unit filename="PhonyEntity.cpp" />
-		<Unit filename="PhonyEntity.h" />
-		<Unit filename="ShebangMagic.cpp" />
-		<Unit filename="ShebangMagic.h" />
-		<Unit filename="UpdateDependencyGraphAction.cpp" />
-		<Unit filename="UpdateDependencyGraphAction.h" />
-		<Unit filename="VulnerableFileEntity.cpp" />
-		<Unit filename="VulnerableFileEntity.h" />
-		<Unit filename="global.h" />
-		<Unit filename="helpers.cpp" />
-		<Unit filename="helpers.h" />
-		<Unit filename="main.cpp" />
-		<Unit filename="samples.cpp" />
-		<Unit filename="samples.h" />
-		<Unit filename="std.h" />
+		<Unit filename="src/Action.cpp" />
+		<Unit filename="src/Action.h" />
+		<Unit filename="src/Birthcert.cpp" />
+		<Unit filename="src/Birthcert.h" />
+		<Unit filename="src/Cpp2ObjAction.cpp" />
+		<Unit filename="src/Cpp2ObjAction.h" />
+		<Unit filename="src/DepInfo.h" />
+		<Unit filename="src/Entity.cpp" />
+		<Unit filename="src/Entity.h" />
+		<Unit filename="src/FileEntity.cpp" />
+		<Unit filename="src/FileEntity.h" />
+		<Unit filename="src/FileSig.h" />
+		<Unit filename="src/GchMagic.cpp" />
+		<Unit filename="src/GchMagic.h" />
+		<Unit filename="src/H2GchAction.cpp" />
+		<Unit filename="src/H2GchAction.h" />
+		<Unit filename="src/Loggers.cpp" />
+		<Unit filename="src/Loggers.h" />
+		<Unit filename="src/MiniLogger.cpp" />
+		<Unit filename="src/MiniLogger.h" />
+		<Unit filename="src/Obj2ExeAction.cpp" />
+		<Unit filename="src/Obj2ExeAction.h" />
+		<Unit filename="src/PhonyEntity.cpp" />
+		<Unit filename="src/PhonyEntity.h" />
+		<Unit filename="src/ShebangMagic.cpp" />
+		<Unit filename="src/ShebangMagic.h" />
+		<Unit filename="src/UpdateGraphAction.cpp" />
+		<Unit filename="src/UpdateGraphAction.h" />
+		<Unit filename="src/config.h" />
+		<Unit filename="src/fwd.h" />
+		<Unit filename="src/global.h" />
+		<Unit filename="src/helpers.cpp" />
+		<Unit filename="src/helpers.h" />
+		<Unit filename="src/main.cpp" />
+		<Unit filename="src/samples.cpp" />
+		<Unit filename="src/samples.h" />
+		<Unit filename="src/sha1.cpp" />
+		<Unit filename="src/sha1.hpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />
