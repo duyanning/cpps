@@ -48,11 +48,11 @@
 				<Option parameters="--collect main.cpp" />
 				<Linker>
 					<Add option="-s" />
-					<Add library="$(libs4mingw)/boost/lib/libboost_filesystem-mgw48-1_57.a" />
-					<Add library="$(libs4mingw)/boost/lib/libboost_program_options-mgw48-1_57.a" />
-					<Add library="$(libs4mingw)/boost/lib/libboost_system-mgw48-1_57.a" />
-					<Add library="$(libs4mingw)/boost/lib/libboost_regex-mgw48-1_57.a" />
-					<Add library="$(libs4mingw)/boost/lib/libboost_serialization-mgw48-1_57.a" />
+					<Add library="$(libs4mingw)/boost/lib/libboost_filesystem-mgw63-mt-x32-1_66.a" />
+					<Add library="$(libs4mingw)/boost/lib/libboost_program_options-mgw63-mt-x32-1_66.a" />
+					<Add library="$(libs4mingw)/boost/lib/libboost_system-mgw63-mt-x32-1_66.a" />
+					<Add library="$(libs4mingw)/boost/lib/libboost_regex-mgw63-mt-x32-1_66.a" />
+					<Add library="$(libs4mingw)/boost/lib/libboost_serialization-mgw63-mt-x32-1_66.a" />
 				</Linker>
 			</Target>
 		</Build>
