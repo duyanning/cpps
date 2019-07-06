@@ -15,7 +15,7 @@ Note: There is also [a Chinese version](https://github.com/duyanning/cpps/blob/m
 
     cpps hello.cpp
 
-## Script consisting of multiple one .cpp files
+## Script consisting of multiple .cpp files
 
 Such as:
 * hello.cpp
