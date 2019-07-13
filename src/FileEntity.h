@@ -17,7 +17,7 @@ public:
     virtual bool needExecuteActions(const DepInfo& info);
     virtual bool isFile() override {  return true;  }
 
-    //void generate_birth_cert(fs::path dep_path);
+    void generate_birth_cert(fs::path dep_path);
     void generate_birth_cert();
 private:
     void generate_birth_cert(const vector<fs::path>& pre_file_paths);

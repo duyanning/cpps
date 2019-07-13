@@ -7,3 +7,6 @@ cpps.layout
 obj
 bin
 cpps.cscope_file_list
+.vs
+*.vcxproj.filters
+*.vcxproj.user

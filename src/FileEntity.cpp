@@ -122,6 +122,8 @@ void get_pre_file_paths_from_dep_file(fs::path dep_path, vector<fs::path>& pre_f
 {
     ifstream f(dep_path.string());
     assert(f);
+	if (!f)
+		return;
 
     istream_iterator<string> i = istream_iterator<string>(f);
 
@@ -143,14 +145,14 @@ void get_pre_file_paths_from_dep_file(fs::path dep_path, vector<fs::path>& pre_f
 }
 
 
-// // （根据.d文件中指出的依赖关系）生成出生证明文件
-// void FileEntity::generate_birth_cert(fs::path dep_path)
-// {
-//     vector<fs::path> pre_file_paths;
-//     get_pre_file_paths_from_dep_file(dep_path, pre_file_paths);
+ // （根据.d文件中指出的依赖关系）生成出生证明文件
+ void FileEntity::generate_birth_cert(fs::path dep_path)
+ {
+     vector<fs::path> pre_file_paths;
+     get_pre_file_paths_from_dep_file(dep_path, pre_file_paths);
 
-//     generate_birth_cert(pre_file_paths);
-// }
+     generate_birth_cert(pre_file_paths);
+ }
 
 void FileEntity::generate_birth_cert()
 {
@@ -161,6 +163,7 @@ void FileEntity::generate_birth_cert()
             pre_file_paths.push_back(f->path());
         }
     }
+
 
     generate_birth_cert(pre_file_paths);
 }

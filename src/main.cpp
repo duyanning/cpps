@@ -26,8 +26,10 @@ using boost::smatch;
 #include "FileEntity.h"         
 //#include "VulnerableFileEntity.h" 
 #include "PhonyEntity.h"          
-#include "Obj2ExeAction.h"        
-#include "Cpp2ObjAction.h"        
+#include "Obj2ExeAction.h"
+#include "Cpp2ObjAction.h"
+#include "VcObj2ExeAction.h"        
+#include "VcCpp2ObjAction.h"
 //#include "Cpp2DepAction.h"        
 #include "H2GchAction.h"          
 #include "UpdateGraphAction.h" 
@@ -49,7 +51,9 @@ using boost::smatch;
 //string gcc_compile_cpp_cmd = "g++ -std=c++11 -fmax-errors=2 -Wall -c"; // -fmax-errors=2是因为某些错误需要两条错误信息
 //string gcc_compile_h_cmd = "g++ -std=c++11 -fmax-errors=2 -Wall";
 string gcc_compile_cpp_cmd = "g++ -std=c++11 -Wall -c"; // -fmax-errors=2是因为某些错误需要两条错误信息
+string vc_compile_cpp_cmd = "cl /nologo /EHsc /c";
 string gcc_compile_h_cmd = "g++ -std=c++11 -Wall";
+//string vc_compile_h_cmd = ""; // vc的头文件不能编译
 
 // 如果使用了<thread>或者<future>里的东西，就需要-pthread这个参数。注意，不是-lpthread，不过效果似乎是一样的。
 #if defined(__CYGWIN__) || defined(_WIN32)
@@ -57,6 +61,7 @@ string gcc_link_cmd = "g++ -std=c++11 -fmax-errors=1";
 #else
 string gcc_link_cmd = "g++ -std=c++11 -fmax-errors=1 -pthread";
 #endif
+string vc_link_cmd = "cl /nologo";
 
 // 搜集到的项目信息
 fs::path exe_path;              // 生成的可执行文件的绝对路径
@@ -64,6 +69,8 @@ fs::path script_file;           // 命令行上指定的脚本路径（这是个
 vector<fs::path> sources; // 所有.cpp文件的绝对路径
 vector<string> libs; // 库的名称，即链接时命令行上-l之后的部分
 vector<fs::path> headers_to_pc; // 所有需要预编译的头文件的绝对路径
+vector<fs::path> sources_to_pc; // 所有需要预编译的.cpp文件的绝对路径(vc的头文件不能直接编译，必须被#include在一个.cpp文件中编译。)
+map<fs::path, fs::path> source2header_to_pc; // 预编译头文件跟对应的.cpp的对应关系
 string extra_compile_flags; // 编译时用的其他选项
 string extra_link_flags; // 链接时用的其他选项
 
@@ -81,6 +88,7 @@ int max_line_scan = -1;              // 最多扫描这么多行，-1代表全�
 string output_name;
 
 void collect_info();
+bool build_exe();
 bool build();
 void run(int argc, char* argv[]);
 void generate_main_file(string main_file__name);
@@ -92,6 +100,28 @@ po::variables_map vm;
 
 int script_pos; // 脚本在cpps命令行参数中的位置
 int argc_script; // 脚本的参数个数
+
+// 目前支持的底层编译器
+enum CC {
+	GCC,
+	VC
+};
+
+CC cc = GCC;
+
+struct {
+	const char* obj_ext;
+	const char* pch_ext;
+} cc_info[] = {
+	{
+		".o", 
+		".gch"
+	}, 
+	{
+		".obj",
+		".pch"
+	}
+};
 
 int main(int argc, char* argv[])
 try {
@@ -163,7 +193,17 @@ try {
 
     // 加载配置文件
     fs::path cfg_path = get_home();
-    cfg_path /= ".cpps/config.txt";
+	
+	if (cc == CC::GCC) {
+		cfg_path /= ".cpps/config.txt";
+	}
+	else if (cc == CC::VC) {
+		cfg_path /= ".cpps/vconfig.txt";
+	}
+	else {
+		assert(false);
+	}
+	
     ifstream ifs(cfg_path.string());
     if (ifs) {
         po::store(parse_config_file(ifs, config_opts), vm);
@@ -260,6 +300,28 @@ catch (int exit_code) {
     return exit_code;
 }
 
+bool is_one_of(fs::path file, const vector<fs::path>& file_set)
+{
+	if (std::find(std::begin(file_set), std::end(file_set), file) == std::end(file_set)) {
+		return false;
+	}
+
+	return true;
+}
+
+void make_sure_these_at_the_head(vector<fs::path>& sources_to_pc, vector<fs::path>& sources)
+{
+	vector<fs::path> original_sources{ sources };
+	sources.clear();
+	sources = sources_to_pc;
+
+	for (auto src : original_sources) {
+		if (!is_one_of(src, sources_to_pc)) {
+			sources.push_back(src);
+		}
+		
+	}
+}
 
 bool build_exe()
 {
@@ -270,7 +332,20 @@ bool build_exe()
         lib_options += " -l";
         lib_options += l;
     }
-    exe->addAction(makeObj2ExeAction(lib_options));
+
+	if (cc == CC::GCC) {
+	    exe->addAction(makeObj2ExeAction(lib_options));
+	}
+	else if (cc == CC::VC) {
+	    exe->addAction(makeVcObj2ExeAction(lib_options));
+		// 将sources中跟预编译头文件相关的.cpp提到到最前边，以便先行编译。
+		make_sure_these_at_the_head(sources_to_pc, sources);
+		assert(sources_to_pc.size() <= 1);
+	}
+	else {
+		assert(false);
+	}
+
 
     PhonyEntityPtr update_dependency = makePhonyEntity("update dependency graph");
 
@@ -278,12 +353,43 @@ bool build_exe()
 
         // 根据.cpp文件的名字，确定.o文件的名字
         fs::path obj_path = shadow(src_path);
-        obj_path += ".o";
+        obj_path += cc_info[cc].obj_ext;
 
         //
         //FileEntityPtr obj = makeVulnerableFileEntity(obj_path);
-        FileEntityPtr obj = makeFileEntity(obj_path);
-        obj->addAction(makeCpp2ObjAction());
+		FileEntityPtr obj = makeFileEntity(obj_path);
+		if (cc == CC::GCC) {
+	        obj->addAction(makeCpp2ObjAction());
+		}
+		else if (cc == CC::VC) {
+			string additional_options = "";
+			fs::path h_path = headers_to_pc[0];
+			if (headers_to_pc.empty()) { // 如果压根没有预编译头文件
+	
+			}
+			else {
+				//fs::path h_path = source2header_to_pc[src_path];
+				//fs::path h_path = headers_to_pc[0];
+				fs::path pch_path = shadow(h_path);
+				pch_path += ".pch";
+	
+				additional_options += "/Fp: ";
+				additional_options += pch_path.string();
+				if (is_one_of(src_path, sources_to_pc)) { // 用于生成预编译头文件的
+					additional_options += " /Yc";
+				}
+				else { // 使用预编译头文件的
+					additional_options += " /Yu";
+				}
+				additional_options += h_path.filename().string();
+			}
+	
+			obj->addAction(makeVcCpp2ObjAction(additional_options, h_path));
+
+		}
+		else {
+			assert(false);
+		}
 
         // 可执行文件依赖.o文件
         exe->addPrerequisite(obj);
@@ -421,7 +527,7 @@ bool build()
 
         for (auto src : sources) {
             fs::path obj_path = shadow(src);
-            obj_path += ".o";
+            obj_path += cc_info[cc].obj_ext;
             safe_remove(obj_path);
 
             fs::path dep_path = obj_path;
@@ -435,7 +541,7 @@ bool build()
 
         for (auto h : headers_to_pc) {
             fs::path gch_path = shadow(h);
-            gch_path += ".gch";
+            gch_path += cc_info[cc].pch_ext;
             safe_remove(gch_path);
 
             fs::path dep_path = gch_path;
@@ -450,10 +556,20 @@ bool build()
 
     bool success;
     
-    GchMagic gch_magic(headers_to_pc);
-    success = build_gch();
-    if (!success)
-        return false;
+	if (cc == CC::GCC) {
+	    GchMagic gch_magic(headers_to_pc);
+	    success = build_gch();
+	    if (!success)
+	        return false;
+	}
+	else if (cc == CC::VC) {
+		// vc没有专门的编译头文件的过程
+	}
+	else {
+		assert(false);
+	}
+
+
 
     ShebangMagic shebang_magic(script_file.string());
     success = build_exe();
@@ -552,6 +668,25 @@ void scan(fs::path src_path)
                     return;
                 }
                 headers_to_pc.push_back(a);
+
+				if (cc == CC::GCC) {
+				}
+				else if (cc == CC::VC) {
+					sources_to_pc.push_back(src_path);
+					source2header_to_pc[src_path] = a;
+					if (headers_to_pc.size() >= 2) {
+						cout << "at the moment, vcpps supports only one precompiled header, but many found:" << endl;
+						for (auto h : headers_to_pc) {
+							cout << h.filename() << endl;
+						}
+						throw 1;
+					}
+
+				}
+				else {
+					assert(false);
+				}
+
             }
             else {
                 cout << a << " referenced by " << src_path << " does NOT exsit!"<< endl;
