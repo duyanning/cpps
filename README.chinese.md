@@ -231,6 +231,17 @@ config.txt中的`include-dir`和`lib-dir`可以在多行中出现。
 
 如果你在资源管理器中不好建立名字里带点的目录，你只要用cpps执行一次.cpp文件即可建立该目录。
 
+## 使用Visual C++而不是GCC作为底层编译器
+
+cpps -c vc main.cpp
+
+像上面这样，使用-c参数指定使用vc。
+
+因为vc提供的选项没有gcc那么丰富，cpps对vc的控制无法通过现成的选项来进行，还需要分析vc的输出。
+在分析过程中，cpps会调用sed，所以你得保证机子上有sed。
+
+使用vc的话，配置文件就不叫config.txt了，而叫vconfig.txt。将来，很可能前者就把后者吸收了，但现在还没有。
+
 ## 解释器指令汇总
 ### using
 例子：
