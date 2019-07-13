@@ -26,8 +26,8 @@ using boost::smatch;
 #include "FileEntity.h"         
 //#include "VulnerableFileEntity.h" 
 #include "PhonyEntity.h"          
-#include "Obj2ExeAction.h"
-#include "Cpp2ObjAction.h"
+#include "GccObj2ExeAction.h"
+#include "GccCpp2ObjAction.h"
 #include "VcObj2ExeAction.h"        
 #include "VcCpp2ObjAction.h"
 //#include "Cpp2DepAction.h"        
@@ -161,8 +161,8 @@ try {
 
     po::options_description run_opts("Run options");
     run_opts.add_options()
-        ("run-by,r", po::value<int>(&run_by)->default_value(1), "run by: 0 - system, 1 - execv")
-		("compile-by,c", po::value<string>(&compile_by)->default_value("gcc"), "run by: gcc, vc")
+        ("run-by,r", po::value<int>(&run_by)->default_value(1), "run using: 0 - system(), 1 - execv()")
+		("compile-by,c", po::value<string>(&compile_by)->default_value("gcc"), "compile using: gcc, vc")
         ;
 
 	//("compile-by,c", po::value<int>(&compile_by)->default_value(0), "run by: 0 - gcc, 1 - vc")
@@ -354,7 +354,7 @@ bool build_exe()
     }
 
 	if (cc == CC::GCC) {
-	    exe->addAction(makeObj2ExeAction(lib_options));
+	    exe->addAction(makeGccObj2ExeAction(lib_options));
 	}
 	else if (cc == CC::VC) {
 	    exe->addAction(makeVcObj2ExeAction(lib_options));
@@ -379,7 +379,7 @@ bool build_exe()
         //FileEntityPtr obj = makeVulnerableFileEntity(obj_path);
 		FileEntityPtr obj = makeFileEntity(obj_path);
 		if (cc == CC::GCC) {
-	        obj->addAction(makeCpp2ObjAction());
+	        obj->addAction(makeGccCpp2ObjAction());
 		}
 		else if (cc == CC::VC) {
 			string additional_options = "";

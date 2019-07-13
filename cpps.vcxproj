@@ -144,7 +144,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">config.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\Cpp2ObjAction.cpp">
+    <ClCompile Include="src\GccCpp2ObjAction.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">config.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
@@ -198,7 +198,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">config.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="src\Obj2ExeAction.cpp">
+    <ClCompile Include="src\GccObj2ExeAction.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">config.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
@@ -243,7 +243,7 @@
     <ClInclude Include="src\Action.h" />
     <ClInclude Include="src\Birthcert.h" />
     <ClInclude Include="src\config.h" />
-    <ClInclude Include="src\Cpp2ObjAction.h" />
+    <ClInclude Include="src\GccCpp2ObjAction.h" />
     <ClInclude Include="src\DepInfo.h" />
     <ClInclude Include="src\Entity.h" />
     <ClInclude Include="src\FileEntity.h" />
@@ -255,7 +255,7 @@
     <ClInclude Include="src\helpers.h" />
     <ClInclude Include="src\Loggers.h" />
     <ClInclude Include="src\MiniLogger.h" />
-    <ClInclude Include="src\Obj2ExeAction.h" />
+    <ClInclude Include="src\GccObj2ExeAction.h" />
     <ClInclude Include="src\PhonyEntity.h" />
     <ClInclude Include="src\samples.h" />
     <ClInclude Include="src\sha1.hpp" />

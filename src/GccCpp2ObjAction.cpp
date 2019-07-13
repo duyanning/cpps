@@ -1,12 +1,12 @@
 #include "config.h"
-#include "Cpp2ObjAction.h"
+#include "GccCpp2ObjAction.h"
 //#include "VulnerableFileEntity.h"
 #include "FileEntity.h"
 #include "Loggers.h"
 #include "helpers.h"
 #include "global.h"
 
-bool Cpp2ObjAction::execute(const DepInfo& info)
+bool GccCpp2ObjAction::execute(const DepInfo& info)
 {
     // 一个.o依赖于一个.cpp跟若干个.h
     // .h更新失败(比如.h不存在)无所谓，因为有可能目前已经不依赖该.h
