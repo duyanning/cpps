@@ -84,6 +84,8 @@ string main_file_name;
 string class_name;
 bool clear_run = false;
 int run_by = 1; // 0 - system(); 1 - execv()
+//int compile_by = 0; // 0 - gcc; 1 - vc
+string compile_by = "gcc"; // gcc; vc
 int max_line_scan = -1;              // 最多扫描这么多行，-1代表全部扫描
 string output_name;
 
@@ -125,6 +127,8 @@ struct {
 
 int main(int argc, char* argv[])
 try {
+	//cout << argv[0] << endl;
+
     // 确定脚本在命令行上的位置script_pos
     // 调整cpps的argc，不让其看到脚本的命令行选项与参数
     for (int i = 0; i < argc; i++) {
@@ -158,12 +162,15 @@ try {
     po::options_description run_opts("Run options");
     run_opts.add_options()
         ("run-by,r", po::value<int>(&run_by)->default_value(1), "run by: 0 - system, 1 - execv")
+		("compile-by,c", po::value<string>(&compile_by)->default_value("gcc"), "run by: gcc, vc")
         ;
+
+	//("compile-by,c", po::value<int>(&compile_by)->default_value(0), "run by: 0 - gcc, 1 - vc")
 
     po::options_description generation_opts("Generation options");
     generation_opts.add_options()
         ("generate,g", po::value(&main_file_name), "generate a script skeleton")
-        ("class,c", po::value(&class_name), "generate .h/.cpp pair for a class")
+        ("class", po::value(&class_name), "generate .h/.cpp pair for a class")
         ;
 
     po::options_description config_opts("Configuration options");
@@ -193,6 +200,19 @@ try {
 
     // 加载配置文件
     fs::path cfg_path = get_home();
+
+	//cc = (CC)compile_by;
+	if (compile_by == "gcc") {
+		//cout << "gcc" << endl;
+		cc = GCC;
+	}
+	else if (compile_by == "vc") {
+		cc = VC;
+		//cout << "vc" << endl;
+	}
+	else {
+		assert(false);
+	}
 	
 	if (cc == CC::GCC) {
 		cfg_path /= ".cpps/config.txt";
