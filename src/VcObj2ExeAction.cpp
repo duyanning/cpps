@@ -34,7 +34,7 @@ bool VcObj2ExeAction::execute(const DepInfo& info)
     // birthcert_path += ".birthcert";
 
     string cmd = vc_link_cmd;
-    //cmd += " -o";
+
 	cmd += " /Fe:";
 
     cmd += " ";
@@ -46,10 +46,17 @@ bool VcObj2ExeAction::execute(const DepInfo& info)
         cmd = cmd + " " + f->path().string();
     }
 
+    // 下面这些东西必须放在文件名之后
     cmd += " ";
     cmd += m_other_options;
 
+
+    cmd += " /link";
+    cmd += " ";
+    cmd += cc_info[cc].cmd_line_lib_dirs;
+
     // -l 选项的位置很重要，必须放在使用它的.o文件之后
+    cmd += " ";
     cmd += extra_link_flags;
 
     MINILOG(build_exe_summay_logger, "linking " << exe_path.filename().string());

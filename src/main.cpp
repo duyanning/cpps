@@ -23,21 +23,22 @@ using boost::smatch;
 #include <process.h>
 #endif // _WIN32
 
+#include "CompilerInfo.h"
 #include "FileEntity.h"         
-//#include "VulnerableFileEntity.h" 
 #include "PhonyEntity.h"          
 #include "GccObj2ExeAction.h"
 #include "GccCpp2ObjAction.h"
 #include "VcObj2ExeAction.h"        
 #include "VcCpp2ObjAction.h"
-//#include "Cpp2DepAction.h"        
 #include "H2GchAction.h"          
 #include "UpdateGraphAction.h" 
 #include "ShebangMagic.h"                
 #include "GchMagic.h"                    
 #include "helpers.h"                     
 #include "Loggers.h"                     
-#include "samples.h"                     
+#include "samples.h"
+#include "GccCmdLineBuilder.h"
+#include "VcCmdLineBuilder.h"
 
 // 路径相关的变量命名约定：
 // xxx_file 文件的相对路径，类型fs::path
@@ -84,7 +85,6 @@ string main_file_name;
 string class_name;
 bool clear_run = false;
 int run_by = 1; // 0 - system(); 1 - execv()
-//int compile_by = 0; // 0 - gcc; 1 - vc
 string compile_by = "gcc"; // gcc; vc
 int max_line_scan = -1;              // 最多扫描这么多行，-1代表全部扫描
 string output_name;
@@ -103,28 +103,6 @@ po::variables_map vm;
 int script_pos; // 脚本在cpps命令行参数中的位置
 int argc_script; // 脚本的参数个数
 
-// 目前支持的底层编译器
-enum CC {
-	GCC,
-	VC
-};
-
-CC cc = GCC;
-
-struct {
-	const char* obj_ext;
-	const char* pch_ext;
-} cc_info[] = {
-	{
-		".o", 
-		".gch"
-	}, 
-	{
-		".obj",
-		".pch"
-	}
-};
-
 int main(int argc, char* argv[])
 try {
 	//cout << argv[0] << endl;
@@ -142,7 +120,8 @@ try {
         }
     }
 
-    // 处理命令行参数
+
+    // 命令行与配置文件中各种选项的定义
     po::options_description info_opts("Information options");
     info_opts.add_options()
         ("help,h", "produce help message")
@@ -165,8 +144,6 @@ try {
 		("compile-by,c", po::value<string>(&compile_by)->default_value("gcc"), "compile using: gcc, vc")
         ;
 
-	//("compile-by,c", po::value<int>(&compile_by)->default_value(0), "run by: 0 - gcc, 1 - vc")
-
     po::options_description generation_opts("Generation options");
     generation_opts.add_options()
         ("generate,g", po::value(&main_file_name), "generate a script skeleton")
@@ -185,52 +162,54 @@ try {
         ("args", po::value<vector<string>>(), "args being passed to the script")
         ;
 
-    po::options_description cmdline_options; // 用于解析命令的选项
-    cmdline_options.add(info_opts).add(build_opts).add(run_opts).add(generation_opts).add(config_opts).add(hidden_opts);
+	po::options_description cmdline_options; // 用于解析命令的选项
+	cmdline_options.add(info_opts).add(build_opts).add(run_opts).add(generation_opts).add(config_opts).add(hidden_opts);
 
     po::options_description visible_options; // 呈现给用户的选项
     visible_options.add(info_opts).add(build_opts).add(run_opts).add(generation_opts).add(config_opts);
 
-    po::positional_options_description p;
-    p.add("script", 1);
-    p.add("args", -1);
+	po::options_description config_file_opts("config.txt options"); // 配置文件中的选项
+	config_file_opts.add_options()
+		("general.run-by,r", po::value<int>(&run_by)->default_value(1), "run using: 0 - system(), 1 - execv()")
+		("general.compile-by,c", po::value<string>(&compile_by)->default_value("gcc"), "compile using: gcc, vc")
+		("gcc.include-dir,I", po::value<vector<string>>(), "add a directory to be searched for header files")
+		("gcc.lib-dir,L", po::value<vector<string>>(), "add a directory to be searched for libs")
+		("vc.include-dir,I", po::value<vector<string>>(), "add a directory to be searched for header files")
+		("vc.lib-dir,L", po::value<vector<string>>(), "add a directory to be searched for libs")
+		;
 
-    po::store(po::command_line_parser(argc, argv).options(cmdline_options).positional(p).allow_unregistered().run(), vm);
-    po::notify(vm);
 
-    // 加载配置文件
-    fs::path cfg_path = get_home();
+	// 先读取配置文件(因为命令行的优先级高于配置文件)
+	fs::path cfg_path = get_home();
+	cfg_path /= ".cpps/config.txt";
+	ifstream ifs(cfg_path.string());
+    if (ifs) {
+        po::store(parse_config_file(ifs, config_file_opts), vm);
+        po::notify(vm);
+    }
 
-	//cc = (CC)compile_by;
+	// 再解析命令行
+	po::positional_options_description p;
+	p.add("script", 1);
+	p.add("args", -1);
+
+	po::store(po::command_line_parser(argc, argv).options(cmdline_options).positional(p).allow_unregistered().run(), vm);
+	po::notify(vm);
+
+	// 处理命令行上和配置文件中的选项
 	if (compile_by == "gcc") {
 		//cout << "gcc" << endl;
 		cc = GCC;
 	}
 	else if (compile_by == "vc") {
-		cc = VC;
 		//cout << "vc" << endl;
+		cc = VC;
 	}
 	else {
 		assert(false);
 	}
 	
-	if (cc == CC::GCC) {
-		cfg_path /= ".cpps/config.txt";
-	}
-	else if (cc == CC::VC) {
-		cfg_path /= ".cpps/vconfig.txt";
-	}
-	else {
-		assert(false);
-	}
-	
-    ifstream ifs(cfg_path.string());
-    if (ifs) {
-        po::store(parse_config_file(ifs, config_opts), vm);
-        po::notify(vm);
-    }
-
-    if (vm.count("help")) {
+	if (vm.count("help")) {
         cout << usage << endl;
         cout << visible_options << "\n";
         return 0;
@@ -278,21 +257,35 @@ try {
         return 1;
     }
 
+    CmdLineBuilderPtr cmd_line_builder;
+	if (cc == GCC) {
+        cmd_line_builder = makeGccCmdLineBuilder();
+	}
+	else if (cc == VC) {
+        cmd_line_builder = makeVcCmdLineBuilder();
+	}
+
+    // 命令行上指定的头文件目录
     if (vm.count("include-dir")) {
-        for (auto dir : vm["include-dir"].as<vector<string>>()) {
-            gcc_compile_cpp_cmd += " -I";
-            gcc_compile_cpp_cmd += dir;
-            //cout << a << endl;
-        }
+        cmd_line_builder->add_include_dirs(cc_info[cc].cmd_line_include_dirs, vm["include-dir"].as<vector<string>>());
+    }
+    // 配置文件中指定的头文件目录
+    string config_file_include_dir = cc_info[cc].compiler_name + ".include-dir";
+    if (vm.count(config_file_include_dir)) {
+        cmd_line_builder->add_include_dirs(cc_info[cc].cmd_line_include_dirs, vm[config_file_include_dir].as<vector<string>>());
+    }
+    
+    // 命令行上指定的库文件目录
+    if (vm.count("lib-dir")) {
+        cmd_line_builder->add_lib_dirs(cc_info[cc].cmd_line_lib_dirs, vm["lib-dir"].as<vector<string>>());
+    }
+    // 配置文件中指定的库文件目录
+    string config_file_lib_dir = cc_info[cc].compiler_name + ".lib-dir";
+    if (vm.count(config_file_lib_dir)) {
+        cmd_line_builder->add_lib_dirs(cc_info[cc].cmd_line_lib_dirs, vm[config_file_lib_dir].as<vector<string>>());
     }
 
-    if (vm.count("lib-dir")) {
-        for (auto dir : vm["lib-dir"].as<vector<string>>()) {
-            gcc_link_cmd += " -L";
-            gcc_link_cmd += dir;
-            //cout << a << endl;
-        }
-    }
+
 
     // 搜集信息
     collect_info();
@@ -308,8 +301,8 @@ try {
     if (build_only)
         return 0;
 
+	// 运行
     if (success) {
-        // 运行
         run(argc, argv);
     }
 

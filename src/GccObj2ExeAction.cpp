@@ -34,6 +34,10 @@ bool GccObj2ExeAction::execute(const DepInfo& info)
     // birthcert_path += ".birthcert";
 
     string cmd = gcc_link_cmd;
+
+    cmd += " ";
+    cmd += cc_info[cc].cmd_line_lib_dirs;
+
     cmd += " -o";
 
     cmd += " ";

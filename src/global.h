@@ -1,6 +1,8 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
+#include "CompilerInfo.h"
+
 extern string gcc_compile_cpp_cmd;
 extern string vc_compile_cpp_cmd;
 extern string gcc_compile_h_cmd;

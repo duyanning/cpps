@@ -38,7 +38,9 @@ bool VcCpp2ObjAction::execute(const DepInfo& info)
 
     string cmd = vc_compile_cpp_cmd;
 
-	cmd += " ";
+    cmd += " ";
+    cmd += cc_info[cc].cmd_line_include_dirs;
+        
 	cmd += m_additional_options;
 
     cmd += " /Fo:";
@@ -77,8 +79,9 @@ bool VcCpp2ObjAction::execute(const DepInfo& info)
     // 有编译错误时，该返回值为1，无错误时为0
     // 即便有警告，仍旧是0。
     //cout << "cpp2obj:" << gcc_status << endl;
-    if (gcc_status)             // 非0就是代表失败了
-        return false;
+	if (gcc_status) {            // 非0就是代表失败了
+		return false;
+	}
 
 	// 从.showIncludes文件生成.d文件
 	ifstream ifs_showIncludes(showIncludes_path.string());

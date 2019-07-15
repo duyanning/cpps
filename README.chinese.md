@@ -218,6 +218,7 @@ cpps就会把它生成的那个可执行文件给你拷贝一份
 
 你可以在`c:\Users\<Your Name>\.cpps`目录下创建一个名为`config.txt`的文件，在里面写上：
 
+    [gcc]
     include-dir = D:\libs4mingw\boost\include
     lib-dir = D:\libs4mingw\boost\lib
 
@@ -239,8 +240,6 @@ cpps -c vc main.cpp
 
 因为vc提供的选项没有gcc那么丰富，cpps对vc的控制无法通过现成的选项来进行，还需要分析vc的输出。
 在分析过程中，cpps会调用sed，所以你得保证机子上有sed。
-
-使用vc的话，配置文件就不叫config.txt了，而叫vconfig.txt。将来，很可能前者就把后者吸收了，但现在还没有。
 
 ## 解释器指令汇总
 ### using
@@ -288,3 +287,17 @@ cpps -c vc main.cpp
 对于GNU/Linux来说，它位于`~\.cpps`
 
 对于Windows来说，它位于`c:\Users\<Your Name>\.cpps`
+
+格式如下：
+
+    [general]
+    compile-by=gcc
+
+    [gcc]
+    include-dir=
+    lib-dir=
+
+    [vc]
+    include-dir=
+    lib-dir=
+

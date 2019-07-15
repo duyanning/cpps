@@ -1,5 +1,4 @@
-#include "std.h" // usingcpp
-#include "foo.h"
+#include <iostream>
 
 using namespace std;
 

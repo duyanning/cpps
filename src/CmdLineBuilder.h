@@ -1,0 +1,15 @@
+#ifndef CMDLINEBUILDER_H
+#define CMDLINEBUILDER_H
+
+
+class CmdLineBuilder {
+public:
+    virtual void add_include_dirs(std::string& cmd, const std::vector<std::string> include_dirs) = 0;
+    virtual void add_lib_dirs(std::string& cmd, const std::vector<std::string> lib_dirs) = 0;
+};
+
+
+using CmdLineBuilderPtr = std::shared_ptr<CmdLineBuilder>;
+
+
+#endif // CMDLINEBUILDER_H
