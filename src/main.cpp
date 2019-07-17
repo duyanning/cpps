@@ -86,6 +86,8 @@ string class_name;
 bool clear_run = false;
 int run_by = 1; // 0 - system(); 1 - execv()
 string compile_by = "gcc"; // gcc; vc
+int config_general_run_by = 1;
+string config_general_compile_by = "gcc";
 int max_line_scan = -1;              // 最多扫描这么多行，-1代表全部扫描
 string output_name;
 
@@ -114,8 +116,8 @@ try {
             script_pos = i;
             argc_script =  argc - i;
             argc = i + 1;
-//            cout << "script_pos:" << script_pos << endl;
-//            cout << "argc_script:" << argc_script << endl;
+            //cout << "script_pos:" << script_pos << endl;
+            //cout << "argc_script:" << argc_script << endl;
             break;
         }
     }
@@ -168,35 +170,49 @@ try {
     po::options_description visible_options; // 呈现给用户的选项
     visible_options.add(info_opts).add(build_opts).add(run_opts).add(generation_opts).add(config_opts);
 
-	po::options_description config_file_opts("config.txt options"); // 配置文件中的选项
-	config_file_opts.add_options()
-		("general.run-by,r", po::value<int>(&run_by)->default_value(1), "run using: 0 - system(), 1 - execv()")
-		("general.compile-by,c", po::value<string>(&compile_by)->default_value("gcc"), "compile using: gcc, vc")
-		("gcc.include-dir,I", po::value<vector<string>>(), "add a directory to be searched for header files")
-		("gcc.lib-dir,L", po::value<vector<string>>(), "add a directory to be searched for libs")
-		("vc.include-dir,I", po::value<vector<string>>(), "add a directory to be searched for header files")
-		("vc.lib-dir,L", po::value<vector<string>>(), "add a directory to be searched for libs")
-		;
-
-
-	// 先读取配置文件(因为命令行的优先级高于配置文件)
-	fs::path cfg_path = get_home();
-	cfg_path /= ".cpps/config.txt";
-	ifstream ifs(cfg_path.string());
-    if (ifs) {
-        po::store(parse_config_file(ifs, config_file_opts), vm);
-        po::notify(vm);
-    }
-
-	// 再解析命令行
 	po::positional_options_description p;
 	p.add("script", 1);
 	p.add("args", -1);
 
+	// 解析命令行
 	po::store(po::command_line_parser(argc, argv).options(cmdline_options).positional(p).allow_unregistered().run(), vm);
+	//po::notify(vm);
+
+	po::options_description config_file_opts("config.txt options"); // 配置文件中的选项
+	config_file_opts.add_options()
+		("general.run-by", po::value<int>(&config_general_run_by)->default_value(1), "run using: 0 - system(), 1 - execv()")
+		("general.compile-by", po::value<string>(&config_general_compile_by)->default_value("gcc"), "compile using: gcc, vc")
+		("gcc.include-dir", po::value<vector<string>>(), "add a directory to be searched for header files")
+		("gcc.lib-dir", po::value<vector<string>>(), "add a directory to be searched for libs")
+		("vc.include-dir", po::value<vector<string>>(), "add a directory to be searched for header files")
+		("vc.lib-dir", po::value<vector<string>>(), "add a directory to be searched for libs")
+		;
+
+
+	// 读取配置文件
+	fs::path cfg_path = get_home();
+	cfg_path /= ".cpps/config.txt";
+	ifstream ifs(cfg_path.string());
+    if (ifs) {
+		try {
+			po::store(parse_config_file(ifs, config_file_opts), vm);
+		}
+		catch (const po::error& ex) {
+			std::cerr << ex.what() << '\n';
+			cerr << "error in config.txt" << endl;
+			return 0;
+		}
+
+        //po::notify(vm);
+    }
+
 	po::notify(vm);
 
 	// 处理命令行上和配置文件中的选项
+	if (vm.count("compile-by") == 0 && vm.count("general.compile-by")) {
+		compile_by = config_general_compile_by;
+	}
+
 	if (compile_by == "gcc") {
 		//cout << "gcc" << endl;
 		cc = GCC;
@@ -376,7 +392,10 @@ bool build_exe()
 		}
 		else if (cc == CC::VC) {
 			string additional_options = "";
-			fs::path h_path = headers_to_pc[0];
+			fs::path h_path;
+			if (headers_to_pc.size() >= 1) {
+				h_path = headers_to_pc[0];
+			}
 			if (headers_to_pc.empty()) { // 如果压根没有预编译头文件
 	
 			}

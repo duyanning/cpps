@@ -51,18 +51,42 @@ bool VcCpp2ObjAction::execute(const DepInfo& info)
     cmd += " ";
     cmd += cpp_path.string();
 
-    //cmd += " -fpch-deps -MMD -MF " + dep_path.string();
+// 只支持BRE，意味着不支持-r选项；路径中的\要写成\\。   
+#define USE_MINISED_FROM_GNUWIN32		1
+// 支持ERE，即-r选项；路径中的\要写成\\。   
+#define USE_SED_FROM_GNUWIN32			0
+// 支持ERE，即-r选项；路径中的\要写成\\\\。    
+#define USE_SED_FROM_GITFORWINDOWS		0
+// 没试过，不清楚。
+#define USE_SED_FROM_UNXUTILS			0
+
+#if USE_SED_FROM_GITFORWINDOWS
 	cmd += R"( /showIncludes | sed -r -e "/Note: including file:[[:space:]]+C:\\\\Program Files/d" -e "/Note: including file:/w)";
+#elif USE_MINISED_FROM_GNUWIN32
+	cmd += R"( /showIncludes | minised -e "/Note: including file:[ \t]\+C:\\Program Files/d" -e "/Note: including file:/w)";
+#endif
 	cmd += " ";
 	string showIncludes_path_string = showIncludes_path.string();
+#if USE_SED_FROM_GITFORWINDOWS
 	showIncludes_path_string = regex_replace(showIncludes_path_string, std::regex(R"(\\)"), R"(\\\\)"); // \换为\\\\，但因为前一个是正则，所以得转义，后边那个不用。
+#elif USE_MINISED_FROM_GNUWIN32
+	showIncludes_path_string = regex_replace(showIncludes_path_string, std::regex(R"(\\)"), R"(\\)"); // \换为\\，但因为前一个是正则，所以得转义，后边那个不用。
+#endif
 	cmd += showIncludes_path_string;
 	cmd += R"(")";
+#if USE_SED_FROM_GITFORWINDOWS
 	cmd += R"( -e "/Note: including file:/d")";
-	//cmd += R"( -e "/^[[:space:]]*$/d")";
+#elif USE_MINISED_FROM_GNUWIN32
+	cmd += R"( | minised -e "/Note: including file:/d")"; // use pipe to avoid minised bug
+#endif
 	cmd += R"( -e "/^)";
 	cmd += cpp_path.filename().string(); // cl每编译一个文件之前，会输出该文件的名字，无法关闭，只能用sed剔除
+#if USE_SED_FROM_GITFORWINDOWS
 	cmd += R"($/d")";
+#elif USE_MINISED_FROM_GNUWIN32
+	cmd += R"(/d")";
+#endif
+	//cmd += R"( -e "p")";
 	cmd += R"( | finderror)";
 
     MINILOG(build_exe_summay_logger, "compiling " << cpp_path.filename().string());
