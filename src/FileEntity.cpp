@@ -42,7 +42,7 @@ bool FileEntity::update()
         MINILOG(update_logger, "Entity::needExecuteActions: true " << name());
         return executeActions(info);
     }
-        
+
 
     return true;
 }
@@ -106,14 +106,14 @@ bool FileEntity::needExecuteActions(const DepInfo& info)
 
     Birthcert birthcert;
     ia >> birthcert;
-        
+
     for (auto p : prerequisiteList) {
         FileEntityPtr fp = static_pointer_cast<FileEntity>(p);
 
         if (birthcert.verifySig(fp->path().string(), fp->sig()) == false)
             return true;
     }
-    
+
     return false;
 }
 

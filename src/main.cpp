@@ -24,21 +24,22 @@ using boost::smatch;
 #endif // _WIN32
 
 #include "CompilerInfo.h"
-#include "FileEntity.h"         
-#include "PhonyEntity.h"          
+#include "FileEntity.h"
+#include "PhonyEntity.h"
 #include "GccObj2ExeAction.h"
 #include "GccCpp2ObjAction.h"
-#include "VcObj2ExeAction.h"        
+#include "VcObj2ExeAction.h"
 #include "VcCpp2ObjAction.h"
-#include "H2GchAction.h"          
-#include "UpdateGraphAction.h" 
-#include "ShebangMagic.h"                
-#include "GchMagic.h"                    
-#include "helpers.h"                     
-#include "Loggers.h"                     
+#include "H2GchAction.h"
+#include "UpdateGraphAction.h"
+#include "ShebangMagic.h"
+#include "GchMagic.h"
+#include "helpers.h"
+#include "Loggers.h"
 #include "samples.h"
 #include "GccCmdLineBuilder.h"
 #include "VcCmdLineBuilder.h"
+#include "ArgvQuote.h"
 
 // 路径相关的变量命名约定：
 // xxx_file 文件的相对路径，类型fs::path
@@ -94,7 +95,7 @@ string output_name;
 void collect_info();
 bool build_exe();
 bool build();
-void run(int argc, char* argv[]);
+void run();
 void generate_main_file(string main_file__name);
 void generate_class_files(string class_name);
 fs::path resolve_shebang_wrapper(fs::path wrapper_path);
@@ -103,19 +104,36 @@ char usage[] = "Usage: cpps [options] <script.cpp> [args]";
 po::variables_map vm;
 
 int script_pos; // 脚本在cpps命令行参数中的位置
-int argc_script; // 脚本的参数个数
+int script_argc; // 脚本的参数个数
+
+int original_argc;
+char** original_argv;
 
 int main(int argc, char* argv[])
 try {
 	//cout << argv[0] << endl;
+	original_argc = argc;
+	original_argv = argv;
+	//cout << "original_argc: " << original_argc << endl;
+	//cout << "original_argv: " << original_argv << endl;
+ //   {
+ //       cout << "argc: " << argc << endl;
+ //       for (int i = 0; i < argc; i++) {
+ //           cout << "arg[" << i << "]: " << argv[i] << endl;
+ //       }
+ //       assert(argv[argc] == nullptr);
+ //       cout << "================================================================" << endl;
+
+ //   }
 
     // 确定脚本在命令行上的位置script_pos
     // 调整cpps的argc，不让其看到脚本的命令行选项与参数
+	int argc_excluding_script_arguments;
     for (int i = 0; i < argc; i++) {
         if (is_a_cpp_src(argv[i])) {
             script_pos = i;
-            argc_script =  argc - i;
-            argc = i + 1;
+            script_argc =  argc - i;
+			argc_excluding_script_arguments = i + 1;
             //cout << "script_pos:" << script_pos << endl;
             //cout << "argc_script:" << argc_script << endl;
             break;
@@ -175,7 +193,7 @@ try {
 	p.add("args", -1);
 
 	// 解析命令行
-	po::store(po::command_line_parser(argc, argv).options(cmdline_options).positional(p).allow_unregistered().run(), vm);
+	po::store(po::command_line_parser(argc_excluding_script_arguments, argv).options(cmdline_options).positional(p).allow_unregistered().run(), vm);
 	//po::notify(vm);
 
 	po::options_description config_file_opts("config.txt options"); // 配置文件中的选项
@@ -224,7 +242,7 @@ try {
 	else {
 		assert(false);
 	}
-	
+
 	if (vm.count("help")) {
         cout << usage << endl;
         cout << visible_options << "\n";
@@ -290,7 +308,7 @@ try {
     if (vm.count(config_file_include_dir)) {
         cmd_line_builder->add_include_dirs(cc_info[cc].cmd_line_include_dirs, vm[config_file_include_dir].as<vector<string>>());
     }
-    
+
     // 命令行上指定的库文件目录
     if (vm.count("lib-dir")) {
         cmd_line_builder->add_lib_dirs(cc_info[cc].cmd_line_lib_dirs, vm["lib-dir"].as<vector<string>>());
@@ -319,7 +337,7 @@ try {
 
 	// 运行
     if (success) {
-        run(argc, argv);
+        run();
     }
 
 
@@ -348,7 +366,7 @@ void make_sure_these_at_the_head(vector<fs::path>& sources_to_pc, vector<fs::pat
 		if (!is_one_of(src, sources_to_pc)) {
 			sources.push_back(src);
 		}
-		
+
 	}
 }
 
@@ -397,14 +415,14 @@ bool build_exe()
 				h_path = headers_to_pc[0];
 			}
 			if (headers_to_pc.empty()) { // 如果压根没有预编译头文件
-	
+
 			}
 			else {
 				//fs::path h_path = source2header_to_pc[src_path];
 				//fs::path h_path = headers_to_pc[0];
 				fs::path pch_path = shadow(h_path);
 				pch_path += ".pch";
-	
+
 				additional_options += "/Fp: ";
 				additional_options += pch_path.string();
 				if (is_one_of(src_path, sources_to_pc)) { // 用于生成预编译头文件的
@@ -415,7 +433,7 @@ bool build_exe()
 				}
 				additional_options += h_path.filename().string();
 			}
-	
+
 			obj->addAction(makeVcCpp2ObjAction(additional_options, h_path));
 
 		}
@@ -587,7 +605,7 @@ bool build()
     }
 
     bool success;
-    
+
 	if (cc == CC::GCC) {
 	    GchMagic gch_magic(headers_to_pc);
 	    success = build_gch();
@@ -754,48 +772,30 @@ void collect_info()
 
 }
 
-void run(int argc, char* argv[])
+void run()
 {
-//    const int max_num_of_args = 100;
-//    const int max_len_of_arg = 100;
-//    char script_arg_vector[max_num_of_args][max_len_of_arg];
-//    char* script_argv[max_num_of_args];
-//    int script_argc;
-
-
-#ifdef _WIN32
-    //run_by = 0;
-#endif // _WIN32
-
     if (run_by == 1) {
         MINILOG0("run using execv()");
 
-//        for (int i = 0; i < max_num_of_args; i++) {
-//            script_argv[i] = script_arg_vector[i];
-//            script_arg_vector[i][0] = '\0';
-//        }
-//        script_argc = 0;
-//
-//        strcpy(script_argv[0], script_file.string().c_str());
-//        script_argc++;
-
-//        if (vm.count("args")) {
-//            for (auto a : vm["args"].as<vector<string>>()) {
-//                strcpy(script_arg_vector[script_argc++], a.c_str());
-//            }
-//        }
-//        script_argv[script_argc] = 0;
+		char** script_argv = original_argv + script_pos;
 
 #ifdef _WIN32
-        // Windows没有exec功能，但有个_exec函数来模拟exec。
+		for (int i = 0; i < script_argc; i++) {
+			//cout << "script_argv[" << i << "]: " << script_argv[i] << endl;
+			string argument{ script_argv[i] };
+			string quoted_argument;
+			ArgvQuote(argument, quoted_argument, false);
+			script_argv[i] = new char[quoted_argument.size() + 1];
+			strcpy(script_argv[i], quoted_argument.c_str());
+		}
+		assert(script_argv[script_argc] == nullptr);
+		
+		// Windows没有exec功能，但有个_exec函数来模拟exec。
         // 可是_exec创建了一个子进程，往往子进程还没有结束，父进程就已经结束了。
-        // 导致命令行窗口的输出混乱。
-        //_execv(exe_path.string().c_str(), script_argv);
-        //_spawnv(_P_WAIT, exe_path.string().c_str(), script_argv);
-        _spawnv(_P_WAIT, exe_path.string().c_str(), argv + script_pos);
+        // 导致命令行窗口的输出混乱。所以我们用_spawnv。
+        _spawnv(_P_WAIT, exe_path.string().c_str(), script_argv);
 #else
-        //execv(exe_path.c_str(), script_argv);
-        execv(exe_path.c_str(), argv + script_pos);
+        execv(exe_path.c_str(), script_argv);
 #endif
     }
     else if (run_by == 0) {
@@ -810,9 +810,9 @@ void run(int argc, char* argv[])
 //            }
 //        }
 
-        for (int i = 1; i < argc_script; i++) {
+        for (int i = 1; i < script_argc; i++) {
                 script_args += " '"; // 把脚本的参数用单引号括起来，避免通配符展开。该展开的通配符在解释器执行时已经展开过了
-                script_args += argv[script_pos + i];
+                script_args += original_argv[script_pos + i];
                 script_args += "'";
         }
 

@@ -128,6 +128,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">config.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="src\ArgvQuote.cpp" />
     <ClCompile Include="src\Birthcert.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">config.h</PrecompiledHeaderFile>
@@ -245,6 +246,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Action.h" />
+    <ClInclude Include="src\ArgvQuote.h" />
     <ClInclude Include="src\Birthcert.h" />
     <ClInclude Include="src\CmdLineBuilder.h" />
     <ClInclude Include="src\CompilerInfo.h" />

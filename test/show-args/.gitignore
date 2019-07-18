@@ -1,4 +1,5 @@
 show-args
-show-args.exe
+*.exe
+*.obj
 a.txt
 b.txt
