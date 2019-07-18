@@ -7,6 +7,8 @@ class GccCmdLineBuilder : public CmdLineBuilder {
 public:
     void add_include_dirs(std::string& cmd, const std::vector<std::string> include_dirs) override;
     void add_lib_dirs(std::string& cmd, const std::vector<std::string> lib_dirs) override;
+	void add_libs(std::string& cmd, const std::vector<std::string> libs) override;
+	void add_dll_dirs(std::string& cmd, const std::vector<std::string> dll_dirs) override;
 };
 
 

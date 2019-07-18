@@ -36,10 +36,10 @@ bool VcCpp2ObjAction::execute(const DepInfo& info)
     // fs::path birthcert_path = obj_path;
     // birthcert_path += ".birthcert";
 
-    string cmd = vc_compile_cpp_cmd;
+    string cmd = compile_cpp_cmd;
 
     cmd += " ";
-    cmd += cc_info[cc].cmd_line_include_dirs;
+    cmd += compile_cmd_include_dirs;
         
 	cmd += m_additional_options;
 

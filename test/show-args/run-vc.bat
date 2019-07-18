@@ -1,6 +1,6 @@
 @ECHO OFF	
 
-cpps -c gcc --clear show-args.cpp a b "c d"
+cpps --clear -c vc show-args.cpp a b "c d"
 rem CHECK: argc: 4
 rem CHECK-NEXT: arg[0]: show-args.cpp
 rem CHECK-NEXT: arg[1]: a

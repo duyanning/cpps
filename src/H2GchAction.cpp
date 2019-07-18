@@ -28,10 +28,10 @@ bool H2GchAction::execute(const DepInfo& info)
     if (exists(dep_path))
         remove(dep_path);
 
-    string cmd = gcc_compile_h_cmd;
+    string cmd = compile_h_cmd;
 
     cmd += " ";
-    cmd += cc_info[cc].cmd_line_include_dirs;
+    cmd += compile_cmd_include_dirs;
 
     cmd += " -o";
 

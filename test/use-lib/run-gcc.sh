@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-cpps --clear hello.cpp
+cpps --clear -c gcc hello.cpp
 # CHECK: "hello.cpp" exists.
 

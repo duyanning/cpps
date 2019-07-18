@@ -5,14 +5,13 @@
 
 class GccObj2ExeAction : public Action {
 public:
-    GccObj2ExeAction(string other_options);
+    GccObj2ExeAction();
     bool execute(const DepInfo& info) override;
 private:
-    string m_other_options;
 };
 
 using GccObj2ExeActionPtr = shared_ptr<GccObj2ExeAction>;
 
-GccObj2ExeActionPtr makeGccObj2ExeAction(string other_options);
+GccObj2ExeActionPtr makeGccObj2ExeAction();
 
 #endif // GCCOBJ2EXEACTION_H

@@ -21,3 +21,21 @@ GccCmdLineBuilder::add_lib_dirs(std::string& cmd, const std::vector<std::string>
     }    
 }
 
+void GccCmdLineBuilder::add_libs(std::string& cmd, const std::vector<std::string> libs)
+{
+	for (auto lib : libs) {
+		cmd += " -l";
+		cmd += lib;
+	}
+}
+
+void GccCmdLineBuilder::add_dll_dirs(std::string& cmd, const std::vector<std::string> dll_dirs)
+{
+	cmd = "PATH=";
+	for (auto dir : dll_dirs) {
+		cmd += dir;
+		cmd += ":";
+	}
+
+}
+

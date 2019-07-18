@@ -4,15 +4,13 @@
 #include "Loggers.h"
 #include "global.h"
 
-GccObj2ExeAction::GccObj2ExeAction(string other_options)
-    :
-    m_other_options(other_options)
+GccObj2ExeAction::GccObj2ExeAction()
 {
 }
 
-GccObj2ExeActionPtr makeGccObj2ExeAction(string other_options)
+GccObj2ExeActionPtr makeGccObj2ExeAction()
 {
-    return GccObj2ExeActionPtr(new GccObj2ExeAction(other_options));
+    return GccObj2ExeActionPtr(new GccObj2ExeAction);
 }
 
 bool GccObj2ExeAction::execute(const DepInfo& info)
@@ -33,10 +31,10 @@ bool GccObj2ExeAction::execute(const DepInfo& info)
     // fs::path birthcert_path = exe_path;
     // birthcert_path += ".birthcert";
 
-    string cmd = gcc_link_cmd;
+    string cmd = link_cmd;
 
     cmd += " ";
-    cmd += cc_info[cc].cmd_line_lib_dirs;
+    cmd += link_cmd_lib_dirs;
 
     cmd += " -o";
 
@@ -50,7 +48,7 @@ bool GccObj2ExeAction::execute(const DepInfo& info)
     }
 
     cmd += " ";
-    cmd += m_other_options;
+    cmd += link_cmd_libs;
 
     // -l 选项的位置很重要，必须放在使用它的.o文件之后
     cmd += extra_link_flags;

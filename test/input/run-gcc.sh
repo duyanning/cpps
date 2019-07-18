@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-cpps --clear hello.cpp <<EOF
+cpps --clear -c gcc hello.cpp <<EOF
  tom
 EOF
 # CHECK: hello, tom

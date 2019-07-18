@@ -147,3 +147,6 @@ main.cpp包含了foo.h，执行main.cpp后，将foo.h改名为bar.h，但不修�
 当前节点的动作要不要执行，还是要比较生成当前节点时记录的下级的签名，跟下级节点现在的签名。
 
 
+* 参考资料
+gcc的选项
+https://gcc.gnu.org/onlinedocs/gcc/Option-Summary.html

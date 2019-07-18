@@ -5,14 +5,13 @@
 
 class VcObj2ExeAction : public Action {
 public:
-    VcObj2ExeAction(string other_options);
+    VcObj2ExeAction();
     bool execute(const DepInfo& info) override;
 private:
-    string m_other_options;
 };
 
 using VcObj2ExeActionPtr = shared_ptr<VcObj2ExeAction>;
 
-VcObj2ExeActionPtr makeVcObj2ExeAction(string other_options);
+VcObj2ExeActionPtr makeVcObj2ExeAction();
 
 #endif // VCOBJ2EXEACTION_H

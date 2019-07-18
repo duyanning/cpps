@@ -1,9 +1,9 @@
 @echo off
 for /d %%i in (*) do (
     cd %%i
-    if exist "test-mingw.bat" (
+    if exist "run-mingw.bat" (
 	    echo running %%i
-	    call test.bat
+	    call run-mingw.bat | bash -i -c "FileCheck run-mingw.bat"
 	    echo done %%i
 	)
     cd ..

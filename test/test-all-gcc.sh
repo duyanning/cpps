@@ -7,10 +7,10 @@
 for i in */ ;
 do
     cd $i
-    if [ -f "test.sh" ]
+    if [ -f "run-gcc.sh" ]
 	then
 	    echo running $i
-    	./test.sh | FileCheck test.sh
+    	./run-gcc.sh | FileCheck run-gcc.sh
 		echo done $i
 	fi
     cd ..

@@ -44,6 +44,10 @@
 #include <pwd.h>
 #endif
 
+#ifdef _WIN32
+#include <process.h>
+#endif
+
 #include "MiniLogger.h"
 
 using namespace std;

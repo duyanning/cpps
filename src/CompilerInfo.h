@@ -3,7 +3,8 @@
 
 // 目前支持的底层编译器
 enum CC {
-	GCC,
+	GCC = 0,
+	MINGW,
 	VC
 };
 
@@ -11,10 +12,14 @@ extern CC cc;
 
 struct CompilerInfo {
     const string compiler_name;
-	const char* obj_ext;
-	const char* pch_ext;
-    string cmd_line_include_dirs;
-    string cmd_line_lib_dirs;
+	const string obj_ext;
+	const string pch_ext;
+	const string compile_cpp_cmd;
+	const string compile_h_cmd;
+	const string link_cmd;
+	// 我看下面这俩各种编译器不用分开
+    //string compile_cmd_include_dirs;
+    //string link_cmd_lib_dirs;
 };
 
 extern CompilerInfo cc_info[];

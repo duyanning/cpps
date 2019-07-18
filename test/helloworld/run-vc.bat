@@ -1,4 +1,4 @@
 @ECHO OFF	
-cpps --clear hello.cpp
+cpps --clear -c vc hello.cpp
 rem CHECK: hello
 rem CHECK-NEXT: world

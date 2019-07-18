@@ -4,15 +4,13 @@
 #include "Loggers.h"
 #include "global.h"
 
-VcObj2ExeAction::VcObj2ExeAction(string other_options)
-    :
-    m_other_options(other_options)
+VcObj2ExeAction::VcObj2ExeAction()
 {
 }
 
-VcObj2ExeActionPtr makeVcObj2ExeAction(string other_options)
+VcObj2ExeActionPtr makeVcObj2ExeAction()
 {
-    return VcObj2ExeActionPtr(new VcObj2ExeAction(other_options));
+    return VcObj2ExeActionPtr(new VcObj2ExeAction);
 }
 
 bool VcObj2ExeAction::execute(const DepInfo& info)
@@ -33,7 +31,7 @@ bool VcObj2ExeAction::execute(const DepInfo& info)
     // fs::path birthcert_path = exe_path;
     // birthcert_path += ".birthcert";
 
-    string cmd = vc_link_cmd;
+    string cmd = link_cmd;
 
 	cmd += " /Fe:";
 
@@ -48,12 +46,12 @@ bool VcObj2ExeAction::execute(const DepInfo& info)
 
     // 下面这些东西必须放在文件名之后
     cmd += " ";
-    cmd += m_other_options;
+    cmd += link_cmd_libs;
 
 
     cmd += " /link";
     cmd += " ";
-    cmd += cc_info[cc].cmd_line_lib_dirs;
+    cmd += link_cmd_lib_dirs;
 
     // -l 选项的位置很重要，必须放在使用它的.o文件之后
     cmd += " ";

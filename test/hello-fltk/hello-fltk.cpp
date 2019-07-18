@@ -4,7 +4,10 @@
 #include <FL/Fl_Button.H>
 
 // linklib fltk
-
+ 
+// mingw-extra-compile-flags: -DWIN32
+// mingw-extra-link-flags: -mwindows -lole32 -luuid -lcomctl32
+ 
 int main(int argc, char **argv)
 {
     Fl_Window* window = new Fl_Window(340,180);
