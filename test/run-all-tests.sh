@@ -1,12 +1,17 @@
 #!/usr/bin/env bash
 
-. tests
+# . tests
 
-for i in $DIRS
+# for i in $DIRS
+
+for i in */ ;
 do
-    echo running $i
     cd $i
-    ./test.sh | FileCheck test.sh
+    if [ -f "test.sh" ]
+	then
+	    echo running $i
+    	./test.sh | FileCheck test.sh
+		echo done $i
+	fi
     cd ..
-    echo done $i
 done
