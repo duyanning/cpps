@@ -1,0 +1,32 @@
+[general]
+# gcc, mingw, vc
+# the defalut is: gcc
+compile-by=vc
+
+[gcc]
+# gcc因为是在linux系统下，对开发者比较友好，一般不用专门配
+
+[mingw]
+# 下面的libs4mingw是我自己创建的一个目录，里面是我用mingw编译生成的一些库
+
+# you can repeat include-dir and lib-dir many times
+# Boost
+include-dir = F:\libs4mingw\boost\include
+lib-dir = F:\libs4mingw\boost\lib
+dll-dir = F:\libs4mingw\boost\lib
+
+# FLTK
+include-dir = F:\libs4mingw\fltk-1.3.3
+lib-dir = F:\libs4mingw\fltk-1.3.3\lib
+
+# mingw dll
+dll-dir = C:\MinGW\bin
+
+
+[vc]
+
+# vc配合vcpkg，不要太爽
+# FLTK
+include-dir = F:\vcpkg\installed\x86-windows\include
+lib-dir = F:\vcpkg\installed\x86-windows\lib
+dll-dir = F:\vcpkg\installed\x86-windows\bin
