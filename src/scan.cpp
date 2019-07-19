@@ -24,6 +24,9 @@ void scan(fs::path src_path)
 	string compiler_specific_linklib_string = R"(//\s+)" + cc_info[cc].compiler_name;
 	compiler_specific_linklib_string += R"(-linklib\s+([\w\-\.]+))";
 	regex compiler_specific_linklib_pat{ compiler_specific_linklib_string };
+
+	// 下面这行，前后三个*号，不是正则的一部分，而是c++ raw-string的自定义delimiter
+	// https://stackoverflow.com/questions/49416631/escape-r-in-a-raw-string-in-c
 	regex precompile_pat{ R"***(^\s*#include\s+"([\w\./]+\.(h|hpp|H|hh))"\s+//\s+precompile)***" };
 	string extra_compile_flags_string = R"(//\s+)" + cc_info[cc].compiler_name;
 	extra_compile_flags_string += R"(-extra-compile-flags:\s+(.*)$)";

@@ -1,4 +1,4 @@
-#include "std.h" // precompile
+#include "std.h"
 
 int main()
 {
