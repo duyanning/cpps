@@ -90,7 +90,7 @@ sudo make install
 
 那你执行下面这行即可：
 ```ShellSession
-    cpps hello.cpp
+cpps hello.cpp
 ```
 
 ## 如果脚本由多个.cpp文件组成
@@ -120,7 +120,7 @@ foo.h
 ```    
 然后执行下边这行即可
 ```ShellSession
-    cpps hello.cpp
+cpps hello.cpp
 ```    
 
 如果你的.cpp文件与.h文件不同名的话，那就要这样写：
@@ -153,12 +153,12 @@ foo.h
 ## 还支持shebang
 在你的hello.cpp文件第一行写上：
 ```c++
-    #!/usr/bin/env cpps
+#!/usr/bin/env cpps
 ```
 然后执行
 ```ShellSession
-    chmod +x hello.cpp
-    ./hello.cpp
+chmod +x hello.cpp
+./hello.cpp
 ```    
 感觉是不是很爽？
 
@@ -177,8 +177,8 @@ cpps认它，别的编译器却不认它。
 
 然后将这个.cpps文件设置成可执行的
 ```ShellSession
-    chmod +x hello.cpps
-    ./hello.cpps
+chmod +x hello.cpps
+./hello.cpps
 ```
 咦？
 好像在个shell脚本中调用cpps hello.cpp即可达到相同效果？！
@@ -187,7 +187,7 @@ cpps认它，别的编译器却不认它。
 
 ## 干干净净运行
 ```ShellSession
-    cpps --clear hello.cpp
+cpps --clear hello.cpp
 ```    
 相当于先删除之前生成的.o文件、exe文件，然后再从头build，然后再运行。
 
@@ -196,7 +196,7 @@ cpps认它，别的编译器却不认它。
 
 ## 我想得到cpps在背后生成的那个可执行文件
 ```ShellSession
-    cpps --build hello.cpp -o hello
+cpps --build hello.cpp -o hello
 ```    
 cpps就会把它生成的那个可执行文件给你拷贝一份
 
@@ -210,20 +210,20 @@ cpps就会把它生成的那个可执行文件给你拷贝一份
 
 然后，在用cpps执行程序时，你还需要在命令行指定boost头文件(.h)所在目录、库文件(.a)所在目录，以及动态库文件(.dll)所在目录，如下：
 ```ShellSession
-    cpps -c mingw hello.cpp -ID:\libs4mingw\boost\include -LD:\libs4mingw\boost\lib --dll-dir=D:\libs4mingw\boost\lib
+cpps -c mingw hello.cpp -ID:\libs4mingw\boost\include -LD:\libs4mingw\boost\lib --dll-dir=D:\libs4mingw\boost\lib
 ```
 每次都要指定太麻烦？
 
 你可以在`c:\Users\<Your Name>\.cpps`目录下创建一个名为`config.txt`的文件，在里面写上：
 ```INI
-    [mingw]
-    include-dir = D:\libs4mingw\boost\include
-    lib-dir = D:\libs4mingw\boost\lib
-    dll-dir = D:\libs4mingw\boost\lib
+[mingw]
+include-dir = D:\libs4mingw\boost\include
+lib-dir = D:\libs4mingw\boost\lib
+dll-dir = D:\libs4mingw\boost\lib
 ```
 这样你以后只需要运行
 ```ShellSession
-    cpps hello.cpp
+cpps hello.cpp
 ```
 即可。
 
@@ -272,12 +272,13 @@ cpps -c vc main.cpp
 ```
 ## 命令行选项
 请运行以下命令来查看：
-
-    cpps --help
-
+```ShellSession
+cpps --help
+```
 ## 命令行上的东西，哪些属于cpps？哪些属于脚本？
-`cpps [cpps的命令行选项...] 脚本 [脚本的命令行选项与命令行参数...]`
-
+```ShellSession
+cpps [cpps的命令行选项...] 脚本 [脚本的命令行选项与命令行参数...]
+```
 也就是说，脚本(即xxx.cpp)之后的东西将传给脚本，作为脚本的命令行选项与参数
 
 ## 配置文件
@@ -289,36 +290,36 @@ cpps -c vc main.cpp
 
 格式如下：
 ```INI
-	[general]
-	# gcc, mingw, vc
-	# the defalut is: gcc
-	compile-by=vc
+[general]
+# gcc, mingw, vc
+# the defalut is: gcc
+compile-by=vc
 
-	[gcc]
-	# gcc因为在linux系统下，对开发者比较友好，一般不用专门配
+[gcc]
+# gcc因为在linux系统下，对开发者比较友好，一般不用专门配
 
-	[mingw]
-	# 下面的libs4mingw是我自己创建的一个目录，里面是我用mingw编译生成的一些库
+[mingw]
+# 下面的libs4mingw是我自己创建的一个目录，里面是我用mingw编译生成的一些库
 
-	# you can repeat include-dir and lib-dir many times
-	# Boost
-	include-dir = F:\libs4mingw\boost\include
-	lib-dir = F:\libs4mingw\boost\lib
-	dll-dir = F:\libs4mingw\boost\lib
+# you can repeat include-dir and lib-dir many times
+# Boost
+include-dir = F:\libs4mingw\boost\include
+lib-dir = F:\libs4mingw\boost\lib
+dll-dir = F:\libs4mingw\boost\lib
 
-	# FLTK
-	include-dir = F:\libs4mingw\fltk-1.3.3
-	lib-dir = F:\libs4mingw\fltk-1.3.3\lib
+# FLTK
+include-dir = F:\libs4mingw\fltk-1.3.3
+lib-dir = F:\libs4mingw\fltk-1.3.3\lib
 
-	# mingw dll
-	dll-dir = C:\MinGW\bin
+# mingw dll
+dll-dir = C:\MinGW\bin
 
 
-	[vc]
+[vc]
 
-	# vc配合vcpkg，不要太爽
-	# FLTK
-	include-dir = F:\vcpkg\installed\x86-windows\include
-	lib-dir = F:\vcpkg\installed\x86-windows\lib
-	dll-dir = F:\vcpkg\installed\x86-windows\bin
+# vc配合vcpkg，不要太爽
+# FLTK
+include-dir = F:\vcpkg\installed\x86-windows\include
+lib-dir = F:\vcpkg\installed\x86-windows\lib
+dll-dir = F:\vcpkg\installed\x86-windows\bin
 ```INI	
