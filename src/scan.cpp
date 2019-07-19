@@ -20,12 +20,15 @@ void scan(fs::path src_path)
 	string line;
 	regex usingcpp_pat{ R"(^\s*#include\s+"([\w\./]+)\.h"\s+//\s+usingcpp)" };
 	regex using_pat{ R"(using\s+([\w\./]+\.(c|cpp|cxx|c\+\+|C|cc|cp|CPP)))" };
-	regex linklib_pat{ R"(linklib\s+([\w\-\.]+))" };
+	regex linklib_pat{ R"(//\s+linklib\s+([\w\-\.]+))" };
+	string compiler_specific_linklib_string = R"(//\s+)" + cc_info[cc].compiler_name;
+	compiler_specific_linklib_string += R"(-linklib\s+([\w\-\.]+))";
+	regex compiler_specific_linklib_pat{ compiler_specific_linklib_string };
 	regex precompile_pat{ R"***(^\s*#include\s+"([\w\./]+\.(h|hpp|H|hh))"\s+//\s+precompile)***" };
-	string extra_compile_flags_string = cc_info[cc].compiler_name;
+	string extra_compile_flags_string = R"(//\s+)" + cc_info[cc].compiler_name;
 	extra_compile_flags_string += R"(-extra-compile-flags:\s+(.*)$)";
 	regex extra_compile_flags_pat{ extra_compile_flags_string };
-	string extra_link_flags_string = cc_info[cc].compiler_name;
+	string extra_link_flags_string = R"(//\s+)" + cc_info[cc].compiler_name;
 	extra_link_flags_string += R"(-extra-link-flags:\s+(.*)$)";
 	regex extra_link_flags_pat{ extra_link_flags_string };
 	int n = 0;
@@ -67,6 +70,11 @@ void scan(fs::path src_path)
 
 		// 搜集使用的库名字
 		if (regex_search(line, matches, linklib_pat)) {
+			MINILOG(collect_info_logger, "found lib: " << matches[1]);
+			libs.push_back(matches[1]);
+		}
+
+		if (regex_search(line, matches, compiler_specific_linklib_pat)) {
 			MINILOG(collect_info_logger, "found lib: " << matches[1]);
 			libs.push_back(matches[1]);
 		}

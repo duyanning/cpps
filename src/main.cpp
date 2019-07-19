@@ -251,8 +251,8 @@ try {
 		cc = VC;
 	}
 	else {
-		assert(false);
-		// todo 此处给用户要有提示。
+		cout << "unsupported compiler: " << compile_by << endl;
+		return 0;
 	}
 
 	if (vm.count("help")) {
