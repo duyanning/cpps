@@ -37,6 +37,20 @@ void make_sure_these_at_the_head(vector<fs::path>& sources_to_pc, vector<fs::pat
 	}
 }
 
+void make_sure_this_at_the_head(fs::path& sources_to_pc, vector<fs::path>& sources)
+{
+	vector<fs::path> original_sources{ sources };
+	sources.clear();
+	sources.push_back(sources_to_pc);
+
+	for (auto src : original_sources) {
+		if (src != sources_to_pc) {
+			sources.push_back(src);
+		}
+
+	}
+}
+
 bool build_exe()
 {
 	cmd_line_builder->add_libs(link_cmd_libs, libs);
@@ -49,9 +63,10 @@ bool build_exe()
 	}
 	else if (cc == CC::VC) {
 		exe->addAction(makeVcObj2ExeAction());
-		// 将sources中跟预编译头文件相关的.cpp提到到最前边，以便先行编译。
-		make_sure_these_at_the_head(sources_to_pc, sources);
-		assert(sources_to_pc.size() <= 1);
+		//// 将sources中跟预编译头文件相关的.cpp提到到最前边，以便先行编译。
+		//make_sure_these_at_the_head(sources_to_pc, sources);
+		//assert(sources_to_pc.size() <= 1);
+		make_sure_this_at_the_head(vc_cpp_to_generate_pch, sources);
 	}
 	else {
 		assert(false);
@@ -66,39 +81,38 @@ bool build_exe()
 		fs::path obj_path = shadow(src_path);
 		obj_path += cc_info[cc].obj_ext;
 
-		//
-		//FileEntityPtr obj = makeVulnerableFileEntity(obj_path);
+
 		FileEntityPtr obj = makeFileEntity(obj_path);
 		if (cc == CC::GCC || cc == CC::MINGW) {
 			obj->addAction(makeGccCpp2ObjAction());
 		}
 		else if (cc == CC::VC) {
-			string additional_options = "";
-			fs::path h_path;
-			if (headers_to_pc.size() >= 1) {
-				h_path = headers_to_pc[0];
-			}
-			if (headers_to_pc.empty()) { // 如果压根没有预编译头文件
+			//string additional_options = "";
+			//fs::path h_path;
+			//if (headers_to_pc.size() >= 1) {
+			//	h_path = headers_to_pc[0];
+			//}
+			//if (headers_to_pc.empty()) { // 如果压根没有预编译头文件
 
-			}
-			else {
-				//fs::path h_path = source2header_to_pc[src_path];
-				//fs::path h_path = headers_to_pc[0];
-				fs::path pch_path = shadow(h_path);
-				pch_path += ".pch";
+			//}
+			//else {
+			//	//fs::path h_path = source2header_to_pc[src_path];
+			//	//fs::path h_path = headers_to_pc[0];
+			//	fs::path pch_path = shadow(h_path);
+			//	pch_path += ".pch";
 
-				additional_options += "/Fp: ";
-				additional_options += pch_path.string();
-				if (is_one_of(src_path, sources_to_pc)) { // 用于生成预编译头文件的
-					additional_options += " /Yc";
-				}
-				else { // 使用预编译头文件的
-					additional_options += " /Yu";
-				}
-				additional_options += h_path.filename().string();
-			}
+			//	additional_options += "/Fp: ";
+			//	additional_options += pch_path.string();
+			//	if (is_one_of(src_path, sources_to_pc)) { // 用于生成预编译头文件的
+			//		additional_options += " /Yc";
+			//	}
+			//	else { // 使用预编译头文件的
+			//		additional_options += " /Yu";
+			//	}
+			//	additional_options += h_path.filename().string();
+			//}
 
-			obj->addAction(makeVcCpp2ObjAction(additional_options, h_path));
+			obj->addAction(makeVcCpp2ObjAction());
 
 		}
 		else {
@@ -184,7 +198,6 @@ bool build_gch()
 
 
 
-		//FileEntityPtr gch = makeVulnerableFileEntity(gch_path);
 		FileEntityPtr gch = makeFileEntity(gch_path);
 		gch->addAction(makeH2GchAction());
 

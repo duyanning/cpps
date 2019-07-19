@@ -4,11 +4,10 @@
 #include "Action.h"
 
 class VcCpp2ObjAction : public Action {
-	std::string m_additional_options;
-	fs::path m_h_path; // 采用的预编译的头文件
+	//std::string m_additional_options;
+	//fs::path m_h_path; // 采用的预编译的头文件
 public:
-	VcCpp2ObjAction(std::string additional_options, fs::path h_path = "")
-		: m_additional_options{ additional_options }, m_h_path{ h_path } 
+	VcCpp2ObjAction()
 	{
 
 	}
@@ -19,9 +18,9 @@ using VcCpp2ObjActionPtr = shared_ptr<VcCpp2ObjAction>;
 
 
 inline
-VcCpp2ObjActionPtr makeVcCpp2ObjAction(std::string additional_options = "", fs::path h_path = "")
+VcCpp2ObjActionPtr makeVcCpp2ObjAction()
 {
-    return VcCpp2ObjActionPtr(new VcCpp2ObjAction(additional_options));
+    return VcCpp2ObjActionPtr(new VcCpp2ObjAction);
 }
 
 #endif // VCCPP2OBJACTION_H

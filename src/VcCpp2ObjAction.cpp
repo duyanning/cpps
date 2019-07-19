@@ -41,7 +41,21 @@ bool VcCpp2ObjAction::execute(const DepInfo& info)
     cmd += " ";
     cmd += compile_cmd_include_dirs;
         
-	cmd += m_additional_options;
+	//cmd += m_additional_options;
+	if (vc_use_pch) {
+		fs::path pch_path = shadow(vc_h_to_precompile);
+		pch_path += ".pch";
+
+		cmd += " /Fp: ";
+		cmd += pch_path.string();
+		if (cpp_path == vc_cpp_to_generate_pch) { // 用于创建预编译头文件的.cpp
+			cmd += " /Yc";
+		}
+		else { // 使用预编译头文件的.cpp
+			cmd += " /Yu";
+		}
+		cmd += vc_h_to_precompile.filename().string();
+	}
 
     cmd += " /Fo:";
 
@@ -129,7 +143,7 @@ bool VcCpp2ObjAction::execute(const DepInfo& info)
 	//}
 
 	// 被预编译的头文件没出现在/showIncludes中。我们自己加上
-	path_set.insert(m_h_path.string());
+	path_set.insert(vc_h_to_precompile.string());
 
 	ofstream ofs_d{ dep_path.string() };
 	ofs_d << obj_path.string() << ": \\" << endl;

@@ -105,23 +105,29 @@ void scan(fs::path src_path)
 				}
 				headers_to_pc.push_back(a);
 
-				if (cc == CC::GCC) {
+				if (cc == CC::VC) {
+					vc_use_pch = true;
+					vc_h_to_precompile = a;
+					vc_cpp_to_generate_pch = src_path;
 				}
-				else if (cc == CC::VC) {
-					sources_to_pc.push_back(src_path);
-					source2header_to_pc[src_path] = a;
-					if (headers_to_pc.size() >= 2) {
-						cout << "at the moment, vcpps supports only one precompiled header, but many found:" << endl;
-						for (auto h : headers_to_pc) {
-							cout << h.filename() << endl;
-						}
-						throw 1;
-					}
 
-				}
-				else {
-					assert(false);
-				}
+				//if (cc == CC::GCC) {
+				//}
+				//else if (cc == CC::VC) {
+				//	sources_to_pc.push_back(src_path);
+				//	source2header_to_pc[src_path] = a;
+				//	if (headers_to_pc.size() >= 2) {
+				//		cout << "at the moment, vcpps supports only one precompiled header, but many found:" << endl;
+				//		for (auto h : headers_to_pc) {
+				//			cout << h.filename() << endl;
+				//		}
+				//		throw 1;
+				//	}
+
+				//}
+				//else {
+				//	assert(false);
+				//}
 
 			}
 			else {
