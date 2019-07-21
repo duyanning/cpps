@@ -65,6 +65,8 @@ bool vc_use_pch = false; // vc是否使用预编译头文件。(目前只支持�
 fs::path vc_h_to_precompile; // vc需要预编译的头文件。等于headers_to_pc[0]
 fs::path vc_cpp_to_generate_pch; // vc用于产生预编译头文件的cpp文件
 
+string vc_compiler_dir;
+
 string extra_compile_flags; // 源文件中指定的，编译时用的其他选项
 string extra_link_flags; // 源文件中指定的，链接时用的其他选项
 
@@ -208,6 +210,7 @@ try {
 		("mingw.include-dir", po::value<vector<string>>(), "add a directory to be searched for header files")
 		("mingw.lib-dir", po::value<vector<string>>(), "add a directory to be searched for libs")
 		("mingw.dll-dir", po::value<vector<string>>(), "add a directory to be searched for dlls")
+		("vc.compiler-dir", po::value<string>(&vc_compiler_dir), "directory where compiler resides")
 		("vc.include-dir", po::value<vector<string>>(), "add a directory to be searched for header files")
 		("vc.lib-dir", po::value<vector<string>>(), "add a directory to be searched for libs")
 		("vc.dll-dir", po::value<vector<string>>(), "add a directory to be searched for dlls")
@@ -241,7 +244,7 @@ try {
 	if (vm.count("compile-by") == 0 && vm.count("general.compile-by")) {
 		compile_by = config_general_compile_by;
 	}
-	
+
 	if (compile_by == "gcc") {
 		cc = GCC;
 	}
@@ -372,6 +375,16 @@ try {
     compile_cpp_cmd += extra_compile_flags;
     compile_h_cmd += extra_compile_flags;
     //gcc_link_cmd += extra_link_flags;
+
+	if (cc == CC::VC && vm.count("vc.compiler-dir")) {
+		// 将cl.exe所在目录加入PATH环境变量，以便cpps调用
+		//string env_path = R"(PATH=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\bin\HostX86\x86;)";
+		string env_path = "PATH=";
+		env_path += vc_compiler_dir;
+		env_path += ";";
+		env_path += getenv("PATH");
+		put_env(env_path.c_str());
+	}
 
     // 构建
     bool success = build();

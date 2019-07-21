@@ -10,8 +10,11 @@ void run()
 
 		char** script_argv = original_argv + script_pos;
 
+
 		//const char* env[] = { R"(PATH=F:\vcpkg\installed\x86-windows\bin)", nullptr };
-		const char* const env[] = { exec_cmd_env_vars.c_str(), nullptr };
+		const char* const env[] = { exec_cmd_env_vars.c_str(),
+			//R"(PATH=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\bin\HostX86\x86)",
+			nullptr };
 
 #ifdef _WIN32
 		for (int i = 0; i < script_argc; i++) {

@@ -35,7 +35,8 @@ bool VcCpp2ObjAction::execute(const DepInfo& info)
     // fs::path birthcert_path = obj_path;
     // birthcert_path += ".birthcert";
 
-    string cmd = compile_cpp_cmd;
+	string cmd = R"(")"; // cmd的怪癖，传给system函数的东西，前后还得一个引号。 参考： https://stackoverflow.com/questions/9964865/c-system-not-working-when-there-are-spaces-in-two-different-parameters
+	cmd += compile_cpp_cmd;
 
     cmd += " ";
     cmd += compile_cmd_include_dirs;
@@ -101,6 +102,9 @@ bool VcCpp2ObjAction::execute(const DepInfo& info)
 #endif
 	//cmd += R"( -e "p")";
 	cmd += R"( | finderror)";
+
+
+	cmd += R"(")"; // 传给system函数的东西最后额外的引号
 
     MINILOG(build_exe_summay_logger, "compiling " << cpp_path.filename().string());
     MINILOG(build_exe_detail_logger, cmd);

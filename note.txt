@@ -185,3 +185,57 @@ system函数通过绝对路径调用调用cl.exe
 
 
 然而通过绝对路径调用cl搞定了，但是cl需要的一些设置，因为没有执行vcvars32.bat却缺乏了。导致无法正常编译。
+
+vcvars32.bat应当就是设置了一些环境变量
+我先在一个干净的cmd窗口中执行set，列出所有环境变量；
+然后再在该cmd窗口中执行vcvars32.bat，然后再用set列出所有环境变量。
+并将二者对比，发现果然设置了很多环境变量。
+我觉得其中重要的是：INCLUDE, LIB, LIBPATH, PATH四个
+
+set INCLUDE=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\ATLMFC\include;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\include;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um;C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\ucrt;C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\shared;C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um;C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\winrt;C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\cppwinrt
+
+set LIB=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\ATLMFC\lib\x86;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\lib\x86;C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x86;C:\Program Files (x86)\Windows Kits\10\lib\10.0.17763.0\ucrt\x86;C:\Program Files (x86)\Windows Kits\10\lib\10.0.17763.0\um\x86;
+
+set LIBPATH=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\ATLMFC\lib\x86;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\lib\x86;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\lib\x86\store\references;C:\Program Files (x86)\Windows Kits\10\UnionMetadata\10.0.17763.0;C:\Program Files (x86)\Windows Kits\10\References\10.0.17763.0;C:\Windows\Microsoft.NET\Framework\v4.0.30319;
+
+set Path=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\bin\HostX86\x86;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\VC\VCPackages;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\TestWindow;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\bin\Roslyn;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Team Tools\Performance Tools;C:\Program Files (x86)\Microsoft Visual Studio\Shared\Common\VSPerfCollectionTools\vs2019\;C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.6.1 Tools\;C:\Program Files (x86)\Windows Kits\10\bin\10.0.17763.0\x86;C:\Program Files (x86)\Windows Kits\10\bin\x86;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\\MSBuild\Current\Bin;C:\Windows\Microsoft.NET\Framework\v4.0.30319;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\Tools\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\MinGW\bin;F:\myprj\cpps\Debug;C:\Users\duyanning\AppData\Local\Microsoft\WindowsApps;C:\Program Files\Java\jdk1.8.0_144\bin;F:\java-tools\apache-maven-3.6.1\bin;;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja;F:\vcpkg\installed\x86-windows\tools\qt5
+
+把这四个设置一下，就可以执行cl了。
+我希望能够再精简一下
+我把libpath整个干掉，好像没问题。cpps仍能正常工作。
+
+set INCLUDE=
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\ATLMFC\include;
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\include;
+C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\include\um;
+C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\ucrt;
+C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\shared;
+C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um;
+C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\winrt;
+C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\cppwinrt
+
+set LIB=
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\ATLMFC\lib\x86;
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\lib\x86;
+C:\Program Files (x86)\Windows Kits\NETFXSDK\4.6.1\lib\um\x86;
+C:\Program Files (x86)\Windows Kits\10\lib\10.0.17763.0\ucrt\x86;
+C:\Program Files (x86)\Windows Kits\10\lib\10.0.17763.0\um\x86;
+
+set Path=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\bin\HostX86\x86;
+其实path只需要上面这一个目录，就是cl.exe所在的目录
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\VC\VCPackages;
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\TestWindow;
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer;
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\bin\Roslyn;
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Team Tools\Performance Tools;
+C:\Program Files (x86)\Microsoft Visual Studio\Shared\Common\VSPerfCollectionTools\vs2019\;
+C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.6.1 Tools\;
+C:\Program Files (x86)\Windows Kits\10\bin\10.0.17763.0\x86;
+C:\Program Files (x86)\Windows Kits\10\bin\x86;
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\\MSBuild\Current\Bin;
+C:\Windows\Microsoft.NET\Framework\v4.0.30319;
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\;
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\Tools\;
+下面剩下的都是系统自己的路径
+C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\MinGW\bin;F:\myprj\cpps\Debug;C:\Users\duyanning\AppData\Local\Microsoft\WindowsApps;C:\Program Files\Java\jdk1.8.0_144\bin;F:\java-tools\apache-maven-3.6.1\bin;;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja;F:\vcpkg\installed\x86-windows\tools\qt5
+

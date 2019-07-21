@@ -25,8 +25,10 @@ CompilerInfo cc_info[] = {
 		".obj",
 		".pch",
 		"cl /nologo /EHsc /c",
+		//R"("C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\bin\Hostx86\x86\cl.exe"  /nologo /EHsc /c)",
 		"", // vc的头文件不能编译
 		"cl /nologo"
+		//R"("C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\bin\Hostx86\x86\cl.exe"  /nologo)"
 	}
 };
 

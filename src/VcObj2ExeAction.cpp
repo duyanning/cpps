@@ -31,7 +31,9 @@ bool VcObj2ExeAction::execute(const DepInfo& info)
     // fs::path birthcert_path = exe_path;
     // birthcert_path += ".birthcert";
 
-    string cmd = link_cmd;
+	string cmd = R"(")"; // cmd的怪癖，传给system函数的东西，前后还得一个引号。 参考： https://stackoverflow.com/questions/9964865/c-system-not-working-when-there-are-spaces-in-two-different-parameters
+
+    cmd += link_cmd;
 
 	cmd += " /Fe:";
 
@@ -56,6 +58,9 @@ bool VcObj2ExeAction::execute(const DepInfo& info)
     // -l 选项的位置很重要，必须放在使用它的.o文件之后
     cmd += " ";
     cmd += extra_link_flags;
+
+
+	cmd += R"(")"; // 传给system函数的东西最后额外的引号
 
     MINILOG(build_exe_summay_logger, "linking " << exe_path.filename().string());
     MINILOG(build_exe_detail_logger, cmd);

@@ -115,3 +115,15 @@ void safe_remove(fs::path f)
         remove(f);
 }
 
+// 可移植的putenv
+void put_env(const char* envstring)
+{
+#if defined(_MSC_VER)
+	_putenv(envstring);
+#elif defined(__MINGW32__)
+	assert(false);
+#else
+	putenv(const_cast<char*>(envstring));
+#endif
+
+}
