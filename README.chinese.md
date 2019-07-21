@@ -232,7 +232,7 @@ config.txt中的`include-dir`、`lib-dir`和`dll-dir`可以在多行中出现。
 如果你在资源管理器中不好建立名字里带点的目录，你只要用cpps执行一次.cpp文件即可建立该目录。
 
 ## 使用Visual C++作为底层编译器
-确保cl.exe在你的PATH环境变量中；确保minised.exe与finderror.exe跟cpps.exe放在一起(这俩随cpps提供)。
+确保minised.exe与finderror.exe跟cpps.exe放在一起(这俩随cpps提供)。
 ```ShellSession
 cpps -c vc main.cpp
 ```
@@ -240,6 +240,14 @@ cpps -c vc main.cpp
 
 因为vc提供的选项没有gcc那么丰富，cpps对vc的控制无法通过现成的选项来进行，还需要分析vc的输出。
 在分析过程中，cpps会调用gnuwin32提供的minised.exe(就在minised文件夹下，你将它跟cpps.exe放一起)。
+
+如果你不想每次运行cpps之前，都要先在cmd窗口中运行Visual C++提供的vcvars32.bat来设置环境变量，你可以这样做：
+
+* 新打开一个干净的cmd窗口
+* 在这个窗口中运行vcvars32.bat来设置环境变量
+* 在这个窗口中运行cpps提供的小程序vc-config-gen.exe
+* 然后将其输出复制粘贴到配置文件config.txt的vc区块即可。
+
 
 ## 解释器指令汇总
 ### using
