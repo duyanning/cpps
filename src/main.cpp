@@ -379,11 +379,11 @@ try {
 	if (cc == CC::VC && vm.count("vc.compiler-dir")) {
 		// 将cl.exe所在目录加入PATH环境变量，以便cpps调用
 		//string env_path = R"(PATH=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\bin\HostX86\x86;)";
-		string env_path = "PATH=";
-		env_path += vc_compiler_dir;
-		env_path += ";";
-		env_path += getenv("PATH");
-		put_env(env_path.c_str());
+		string env_path_value = "";
+		env_path_value += vc_compiler_dir;
+		env_path_value += ";";
+		env_path_value += getenv("PATH");
+		put_env("PATH", env_path_value.c_str());
 	}
 
     // 构建

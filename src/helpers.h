@@ -9,6 +9,6 @@ bool is_a_cpp_src(fs::path f);
 bool is_a_c_src(fs::path f);
 void safe_remove(fs::path f);
 
-void put_env(const char* envstring);
+void put_env(const std::string name, const std::string value);
 
 #endif // HELPERS_H
