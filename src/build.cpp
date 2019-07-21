@@ -66,7 +66,10 @@ bool build_exe()
 		//// 将sources中跟预编译头文件相关的.cpp提到到最前边，以便先行编译。
 		//make_sure_these_at_the_head(sources_to_pc, sources);
 		//assert(sources_to_pc.size() <= 1);
-		make_sure_this_at_the_head(vc_cpp_to_generate_pch, sources);
+		if (vc_use_pch) {
+			make_sure_this_at_the_head(vc_cpp_to_generate_pch, sources);
+		}
+		
 	}
 	else {
 		assert(false);
@@ -80,7 +83,6 @@ bool build_exe()
 		// 根据.cpp文件的名字，确定.o文件的名字
 		fs::path obj_path = shadow(src_path);
 		obj_path += cc_info[cc].obj_ext;
-
 
 		FileEntityPtr obj = makeFileEntity(obj_path);
 		if (cc == CC::GCC || cc == CC::MINGW) {

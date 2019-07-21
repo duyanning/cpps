@@ -67,6 +67,8 @@
 		</Linker>
 		<Unit filename="src/Action.cpp" />
 		<Unit filename="src/Action.h" />
+		<Unit filename="src/ArgvQuote.cpp" />
+		<Unit filename="src/ArgvQuote.h" />
 		<Unit filename="src/Birthcert.cpp" />
 		<Unit filename="src/Birthcert.h" />
 		<Unit filename="src/CmdLineBuilder.cpp" />
@@ -91,6 +93,8 @@
 		<Unit filename="src/H2GchAction.h" />
 		<Unit filename="src/Loggers.cpp" />
 		<Unit filename="src/Loggers.h" />
+		<Unit filename="src/MingwCmdLineBuilder.cpp" />
+		<Unit filename="src/MingwCmdLineBuilder.h" />
 		<Unit filename="src/MiniLogger.cpp" />
 		<Unit filename="src/MiniLogger.h" />
 		<Unit filename="src/PhonyEntity.cpp" />
@@ -105,16 +109,20 @@
 		<Unit filename="src/VcCpp2ObjAction.h" />
 		<Unit filename="src/VcObj2ExeAction.cpp" />
 		<Unit filename="src/VcObj2ExeAction.h" />
+		<Unit filename="src/build.cpp" />
 		<Unit filename="src/config.cpp" />
 		<Unit filename="src/config.h" />
 		<Unit filename="src/config.h.in" />
 		<Unit filename="src/fwd.h" />
+		<Unit filename="src/gen.cpp" />
 		<Unit filename="src/global.h" />
 		<Unit filename="src/helpers.cpp" />
 		<Unit filename="src/helpers.h" />
 		<Unit filename="src/main.cpp" />
+		<Unit filename="src/run.cpp" />
 		<Unit filename="src/samples.cpp" />
 		<Unit filename="src/samples.h" />
+		<Unit filename="src/scan.cpp" />
 		<Unit filename="src/sha1.cpp" />
 		<Unit filename="src/sha1.hpp" />
 		<Extensions>

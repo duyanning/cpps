@@ -232,6 +232,7 @@ config.txt中的`include-dir`、`lib-dir`和`dll-dir`可以在多行中出现。
 如果你在资源管理器中不好建立名字里带点的目录，你只要用cpps执行一次.cpp文件即可建立该目录。
 
 ## 使用Visual C++作为底层编译器
+确保cl.exe在你的PATH环境变量中；确保minised.exe与finderror.exe跟cpps.exe放在一起(这俩随cpps提供)。
 ```ShellSession
 cpps -c vc main.cpp
 ```
@@ -255,20 +256,21 @@ cpps -c vc main.cpp
 ```c++
 #include "foo.h" // using foo.cpp
 ```
-### linklib
+### `linklib`和`<compiler>-linklib`
 例子：
 ```c++
 #include <FL/Fl.H> // linklib fltk
 ```
-### extra-compile-flags和extra-link-flags
+如果同一个库，在不同编译器下有不同的名字，你可以用`<compiler>-linklib`。
+### `<compiler>-extra-compile-flags`和`<compiler>-extra-link-flags`
 例子：如果你在Windows下用MinGW编译使用FLTK的程序，除了
 ```c++
 // linklib fltk
 ```
 你还需要在.cpp文件中加上以下指令
 ```c++
-// extra-compile-flags: -DWIN32
-// extra-link-flags: -mwindows -lole32 -luuid -lcomctl32
+// mingw-extra-compile-flags: -DWIN32
+// mingw-extra-link-flags: -mwindows -lole32 -luuid -lcomctl32
 ```
 ## 命令行选项
 请运行以下命令来查看：
@@ -284,15 +286,15 @@ cpps [cpps的命令行选项...] 脚本 [脚本的命令行选项与命令行参
 ## 配置文件
 `config.txt`
 
-对于GNU/Linux来说，它位于`~\.cpps`
+对于GNU/Linux来说，它位于目录`~\.cpps`下。
 
-对于Windows来说，它位于`c:\Users\<Your Name>\.cpps`
+对于Windows来说，它位于目录`c:\Users\<Your Name>\.cpps`下。
 
-格式如下：
+下面是个例子，你可以看到其中有4个section：general、gcc、mingw、vc。
+
 ```INI
 [general]
-# gcc, mingw, vc
-# the defalut is: gcc
+# 指定默认的底层编译器，目前支持：gcc、mingw、vc三种。
 compile-by=vc
 
 [gcc]
@@ -322,4 +324,4 @@ dll-dir = C:\MinGW\bin
 include-dir = F:\vcpkg\installed\x86-windows\include
 lib-dir = F:\vcpkg\installed\x86-windows\lib
 dll-dir = F:\vcpkg\installed\x86-windows\bin
-```INI	
+```	

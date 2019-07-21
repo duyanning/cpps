@@ -150,3 +150,38 @@ main.cpp包含了foo.h，执行main.cpp后，将foo.h改名为bar.h，但不修�
 * 参考资料
 gcc的选项
 https://gcc.gnu.org/onlinedocs/gcc/Option-Summary.html
+
+* vc
+cpps必须在执行过vcvars32.bat的cmd窗口中才能调用cl.exe
+我想把vcvars32.bat这步省了
+
+system函数通过绝对路径调用调用cl.exe
+
+#+BEGIN_SRC c++
+    std::cout << "Hello World!\n";
+	// 没有管道ok的
+	//string cmd = R"("C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\bin\Hostx86\x86\cl.exe")";
+
+	// 管道+minised 不行。
+	//string cmd = R"("C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\bin\Hostx86\x86\cl.exe"   | sed "xxx")";
+	//string cmd = R"("C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\bin\Hostx86\x86\cl.exe"   | sed --help )";
+
+	// 管道+dir ok的.
+	// 管道+工程目录下的hello.exe是好的
+	// 管道+通过path找到的hello.exe也是好的
+	// 只要管道后边出现双引号就不行
+
+
+// 参考： https://stackoverflow.com/questions/9964865/c-system-not-working-when-there-are-spaces-in-two-different-parameters
+// 最后改成下面这种形式。就是在前后再加上双引号就可以了。即传给system函数的东西，除了给带空格的路径加上双引号之外，还要最后再在所有东西前后加上双引号。
+// 这最后加的双引号会被cmd去掉。
+	string cmd = R"***(""C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\bin\Hostx86\x86\cl.exe"    "" ")***";
+	
+	
+	cout << "detail: " << cmd << endl;
+	system(cmd.c_str());
+
+#+END_SRC
+
+
+然而通过绝对路径调用cl搞定了，但是cl需要的一些设置，因为没有执行vcvars32.bat却缺乏了。导致无法正常编译。

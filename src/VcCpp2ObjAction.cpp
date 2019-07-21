@@ -23,7 +23,6 @@ bool VcCpp2ObjAction::execute(const DepInfo& info)
     FileEntityPtr cpp = static_pointer_cast<FileEntity>(info.all[0]);
     fs::path cpp_path = cpp->path();
 
-    //VulnerableFileEntityPtr obj = static_pointer_cast<VulnerableFileEntity>(info.target);
     FileEntityPtr obj = static_pointer_cast<FileEntity>(info.target);
     fs::path obj_path = obj->path();
 
