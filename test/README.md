@@ -22,7 +22,7 @@
 每个目录下得提供一个test.bat
 
 
-注意：得用cmd，而不能用conemu
+注意：得用cmd或powershell，而不能用conemu
 用conemu的话，会有类似
 ←[0m←[
 的东西出现在FileCheck的输出中。
@@ -38,3 +38,21 @@
     ..\run-this-test-mingw.bat
 
 每个目录下得提供一个test-mingw.bat
+
+# 将一个测试用例在gcc/mingw/vc三者间调整
+需要修改部分的对照表
+
+| GCC     | MinGW     | VC     |
+| ---     | ---       | ---    |
+| #       | REM       | REM    |
+| -c vc   | -c mingw  | -c vc  |
+| gcc.exe | mingw.exe | vc.exe |
+| 'a b'   | "a b"     | "a b"  |
+
+
+
+
+ 
+
+
+
