@@ -25,7 +25,8 @@ int main()
 	string line;
 	while (getline(in, line)) {
 
-		if (line.find("Path=") == 0) {
+		//if (line.find("Path=") == 0) {
+		if (boost::ifind_first(line, "PATH=").begin() == line.begin()) {
 
 			//cout << line << endl;
 			auto semicolon_pos = line.find(";");
@@ -55,6 +56,9 @@ int main()
 
 
 	}
+
+	in.close();
+	remove("vars.txt");
 
 	return 0;
 }
