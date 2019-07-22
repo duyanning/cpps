@@ -19,7 +19,7 @@ void scan(fs::path src_path)
 
 	string line;
 	regex usingcpp_pat{ R"(^\s*#include\s+"([\w\./]+)\.h"\s+//\s+usingcpp)" };
-	regex using_pat{ R"(using\s+([\w\./]+\.(c|cpp|cxx|c\+\+|C|cc|cp|CPP)))" };
+	regex using_pat{ R"(using\s+([\w\./]+\.(cpp|cxx|c\+\+|cc|c)))" }; // | 或的顺序还挺重要，把长的排前边。免得前缀就匹配。
 	regex linklib_pat{ R"(//\s+linklib\s+([\w\-\.]+))" };
 	string compiler_specific_linklib_string = R"(//\s+)" + cc_info[cc].compiler_name;
 	compiler_specific_linklib_string += R"(-linklib\s+([\w\-\.]+))";
