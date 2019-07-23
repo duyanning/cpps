@@ -33,7 +33,7 @@ extern string script_file_name;
 extern string main_file_nextername;
 extern string class_name;
 extern bool clear_run;
-extern int run_by;
+extern string run_by;
 extern string compile_by;
 extern int config_general_run_by;
 extern string config_general_compile_by;

@@ -52,9 +52,18 @@
 所以，cpps与其说是一个解释器，不如说是一个高级的build system engine，它只需要用户在.cpp中以解释器指令的形式提供少许信息就可以构建一个完整的build system。
 
 ## 获取
+### GNU/Linux
 ```
 git clone https://github.com/duyanning/cpps.git
 ```
+### Windows
+提供了已经编译好的二进制文件。
+
+下载，解压后得到一个文件夹，其中包含了cpps.exe与其他几个.exe。
+
+然后该目录加入环境变量PATH即可。
+
+(提供的二进制文件，从压缩包的名字可以看出，有用vc编译，有用mingw编译的。这个只是说cpps的二进制文件是用vc或mingw编译的，并不代表cpps执行时使用哪个底层编译器，执行cpps时用哪个底层编译器要在配置文件或命令行中指定)
 
 ## 安装前准备工作
 以ubuntu为例

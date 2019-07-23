@@ -5,7 +5,7 @@
 
 void run()
 {
-	if (run_by == 1) {
+	if (run_by == "exec") {
 		MINILOG0("run using execv()");
 
 		char** script_argv = original_argv + script_pos;
@@ -36,7 +36,7 @@ void run()
 		execve(exe_path.c_str(), script_argv, const_cast<char* const *>(env));
 #endif
 	}
-	else if (run_by == 0) {
+	else if (run_by == "system") {
 		MINILOG0("run using system()");
 		string script_args;
 
@@ -59,6 +59,9 @@ void run()
 		MINILOG0("final cmd line: " << cmd_line);
 		// 运行产生的可执行文件
 		system(cmd_line.c_str());
+	}
+	else {
+		cout << "unsupported run-by: " << run_by << endl;
 	}
 
 }

@@ -87,7 +87,7 @@ string script_file_name;
 string main_file_name;
 string class_name;
 bool clear_run = false;
-int run_by = 1; // 0 - system(); 1 - execv()
+string run_by; // exec/system
 string compile_by; // gcc/mingw/vc
 int config_general_run_by = 1;
 string config_general_compile_by = "gcc";
@@ -164,8 +164,8 @@ try {
 
     po::options_description run_opts("Run options");
     run_opts.add_options()
-        ("run-by,r", po::value<int>(&run_by)->default_value(1), "run resulting app using: 0 - system(), 1 - exec()")
-		("compile-by,c", po::value<string>(&compile_by), "compile script using: gcc, mingw, vc")
+        ("run-by,r", po::value<string>(), "run resulting app using: exec, system")
+		("compile-by,c", po::value<string>(), "compile script using: gcc, mingw, vc")
         ;
 
     po::options_description generation_opts("Generation options");
@@ -203,7 +203,7 @@ try {
 
 	po::options_description config_file_opts("config.txt options"); // 配置文件中的选项
 	config_file_opts.add_options()
-		("general.run-by", po::value<int>(&config_general_run_by)->default_value(1), "run using: 0 - system(), 1 - execv()")
+		//("general.run-by", po::value<int>(&config_general_run_by)->default_value(1), "run using: 0 - system(), 1 - execv()")
 		("general.compile-by", po::value<string>(&config_general_compile_by)->default_value("gcc"), "compile using: gcc, mingw, vc")
 		("gcc.compiler-dir", po::value<string>(), "directory where gcc compiler resides")
 		("gcc.include-dir", po::value<vector<string>>(), "add a directory to be searched for header files")
@@ -248,7 +248,7 @@ try {
 		compile_by = vm["compile-by"].as<string>();
 	}
 	else if (vm.count("general.compile-by")) {
-		compile_by = vm["compile-by"].as<string>();
+		compile_by = vm["general.compile-by"].as<string>();
 	}
 	else {
 #if defined(_MSC_VER)
@@ -260,9 +260,6 @@ try {
 #endif
 
 	}
-	//if (vm.count("compile-by") == 0 && vm.count("general.compile-by")) {
-	//	compile_by = config_general_compile_by;
-	//}
 
 	if (compile_by == "gcc") {
 		cc = GCC;
@@ -276,6 +273,14 @@ try {
 	else {
 		cout << "unsupported compiler: " << compile_by << endl;
 		return 0;
+	}
+	//cout << "safads" << endl;
+
+	if (vm.count("run-by")) {
+		run_by = vm["run-by"].as<string>();
+	}
+	else {
+		run_by = "exec";
 	}
 
 	if (vm.count("help")) {
@@ -429,6 +434,10 @@ try {
 
 
     return 0;
+}
+catch (const po::error& ex) {
+	std::cerr << ex.what() << '\n';
+	return 1;
 }
 catch (int exit_code) {
     return exit_code;
