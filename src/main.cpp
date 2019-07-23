@@ -65,11 +65,12 @@ bool vc_use_pch = false; // vc是否使用预编译头文件。(目前只支持�
 fs::path vc_h_to_precompile; // vc需要预编译的头文件。等于headers_to_pc[0]
 fs::path vc_cpp_to_generate_pch; // vc用于产生预编译头文件的cpp文件
 
-string vc_compiler_dir;
+
 
 string extra_compile_flags; // 源文件中指定的，编译时用的其他选项
 string extra_link_flags; // 源文件中指定的，链接时用的其他选项
 
+string compiler_dir;
 string compile_cmd_include_dirs;
 string link_cmd_lib_dirs;
 string link_cmd_libs;
@@ -87,7 +88,7 @@ string main_file_name;
 string class_name;
 bool clear_run = false;
 int run_by = 1; // 0 - system(); 1 - execv()
-string compile_by = "gcc"; // gcc; vc
+string compile_by; // gcc/mingw/vc
 int config_general_run_by = 1;
 string config_general_compile_by = "gcc";
 int max_line_scan = -1;              // 最多扫描这么多行，-1代表全部扫描
@@ -163,14 +164,14 @@ try {
 
     po::options_description run_opts("Run options");
     run_opts.add_options()
-        ("run-by,r", po::value<int>(&run_by)->default_value(1), "run using: 0 - system(), 1 - execv()")
-		("compile-by,c", po::value<string>(&compile_by), "compile using: gcc, mingw, vc")
+        ("run-by,r", po::value<int>(&run_by)->default_value(1), "run resulting app using: 0 - system(), 1 - exec()")
+		("compile-by,c", po::value<string>(&compile_by), "compile script using: gcc, mingw, vc")
         ;
 
     po::options_description generation_opts("Generation options");
     generation_opts.add_options()
-        ("generate,g", po::value(&main_file_name), "generate a script skeleton")
-        ("class", po::value(&class_name), "generate .h/.cpp pair for a class")
+        ("generate,g", po::value(&main_file_name), "'cpps -g hello.cpp' generate a helloworld program")
+        ("class", po::value(&class_name), "'cpps --class Car' generate Car.cpp and Car.h")
         ;
 
     po::options_description config_opts("Configuration options");
@@ -204,13 +205,15 @@ try {
 	config_file_opts.add_options()
 		("general.run-by", po::value<int>(&config_general_run_by)->default_value(1), "run using: 0 - system(), 1 - execv()")
 		("general.compile-by", po::value<string>(&config_general_compile_by)->default_value("gcc"), "compile using: gcc, mingw, vc")
+		("gcc.compiler-dir", po::value<string>(), "directory where gcc compiler resides")
 		("gcc.include-dir", po::value<vector<string>>(), "add a directory to be searched for header files")
 		("gcc.lib-dir", po::value<vector<string>>(), "add a directory to be searched for libs")
 		("gcc.dll-dir", po::value<vector<string>>(), "add a directory to be searched for dlls")
+		("mingw.compiler-dir", po::value<string>(), "directory where mingw compiler resides")
 		("mingw.include-dir", po::value<vector<string>>(), "add a directory to be searched for header files")
 		("mingw.lib-dir", po::value<vector<string>>(), "add a directory to be searched for libs")
 		("mingw.dll-dir", po::value<vector<string>>(), "add a directory to be searched for dlls")
-		("vc.compiler-dir", po::value<string>(&vc_compiler_dir), "directory where compiler resides")
+		("vc.compiler-dir", po::value<string>(), "directory where vc compiler resides")
 		("vc.include-dir", po::value<vector<string>>(), "add a directory to be searched for header files")
 		("vc.lib-dir", po::value<vector<string>>(), "add a directory to be searched for libs")
 		("vc.dll-dir", po::value<vector<string>>(), "add a directory to be searched for dlls")
@@ -241,9 +244,25 @@ try {
 	//cout << vm.count("compile-by") << endl;
 	//cout << vm.count("general.compile-by") << endl;
 	// 处理命令行上和配置文件中的选项
-	if (vm.count("compile-by") == 0 && vm.count("general.compile-by")) {
-		compile_by = config_general_compile_by;
+	if (vm.count("compile-by")) {
+		compile_by = vm["compile-by"].as<string>();
 	}
+	else if (vm.count("general.compile-by")) {
+		compile_by = vm["compile-by"].as<string>();
+	}
+	else {
+#if defined(_MSC_VER)
+		compile_by = "vc";
+#elif defined(__MINGW32__)
+		compile_by = "mingw";
+#else
+		compile_by = "gcc";
+#endif
+
+	}
+	//if (vm.count("compile-by") == 0 && vm.count("general.compile-by")) {
+	//	compile_by = config_general_compile_by;
+	//}
 
 	if (compile_by == "gcc") {
 		cc = GCC;
@@ -372,19 +391,31 @@ try {
     if (collect_only)
         return 0;
 
+	// todo: 额外的flags，是各个.cpp文件独立设置？还是？独立设置吧
     compile_cpp_cmd += extra_compile_flags;
     compile_h_cmd += extra_compile_flags;
     //gcc_link_cmd += extra_link_flags;
 
-	if (cc == CC::VC && vm.count("vc.compiler-dir")) {
-		// 将cl.exe所在目录加入PATH环境变量，以便cpps调用
-		//string env_path = R"(PATH=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\bin\HostX86\x86;)";
+
+	string config_file_compiler_dir = cc_info[cc].compiler_name + ".compiler-dir";
+	if (vm.count(config_file_compiler_dir)) {
+		compiler_dir = vm[config_file_compiler_dir].as<string>();
 		string env_path_value = "";
-		env_path_value += vc_compiler_dir;
+		env_path_value += compiler_dir;
 		env_path_value += ";";
 		env_path_value += getenv("PATH");
 		put_env("PATH", env_path_value.c_str());
 	}
+
+	//if (cc == CC::VC && vm.count("vc.compiler-dir")) {
+	//	// 将cl.exe所在目录加入PATH环境变量，以便cpps调用
+	//	//string env_path = R"(PATH=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\bin\HostX86\x86;)";
+	//	string env_path_value = "";
+	//	env_path_value += compiler_dir;
+	//	env_path_value += ";";
+	//	env_path_value += getenv("PATH");
+	//	put_env("PATH", env_path_value.c_str());
+	//}
 
     // 构建
     bool success = build();

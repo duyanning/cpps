@@ -12,16 +12,20 @@ void generate_main_file(string main_file_name)
 		return;
 	}
 	f.open(main_file_name);
-	f << main_sample;
+	f << main_cpp_sample;
 	f.close();
 
 
-	if (fs::exists("std.h")) {
-		cout << "std.h already exists." << endl;
+	if (fs::exists("std.h") || fs::exists("std.cpp")) {
+		cout << "std.h or std.cpp exists." << endl;
 		return;
 	}
 	f.open("std.h");
-	f << std_header_sample;
+	f << std_h_sample;
+	f.close();
+
+	f.open("std.cpp");
+	f << std_cpp_sample;
 	f.close();
 }
 

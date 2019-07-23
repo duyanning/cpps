@@ -1,7 +1,7 @@
 #include "samples.h"
 
-char main_sample[] =
-    R"(#include "std.h" // precompile std.h
+char main_cpp_sample[] =
+    R"(#include "std.h" // usingcpp
 
 using namespace std;
 
@@ -14,7 +14,7 @@ int main()
 
 
 
-char std_header_sample[] =
+char std_h_sample[] =
     R"(#ifndef STD_H
 #define STD_H
 
@@ -40,6 +40,9 @@ char std_header_sample[] =
 #endif // STD_H
 )";
 
+char std_cpp_sample[] =
+R"(#include "std.h" // precompile std.h
+)";
 
 char class_h_sample[] =
     R"(#ifndef XXX_H
@@ -58,7 +61,7 @@ private:
 
 
 char class_cpp_sample[] =
-    R"(#include "config.h"
+    R"(#include "std.h" // usingcpps
 #include "XXX.h"
 
 XXX::XXX()
