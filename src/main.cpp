@@ -199,7 +199,6 @@ try {
 
 	// 解析命令行
 	po::store(po::command_line_parser(argc_excluding_script_arguments, argv).options(cmdline_options).positional(p).allow_unregistered().run(), vm);
-	//po::notify(vm);
 
 	po::options_description config_file_opts("config.txt options"); // 配置文件中的选项
 	config_file_opts.add_options()
@@ -233,16 +232,10 @@ try {
 			cerr << "error in config.txt" << endl;
 			return 0;
 		}
-
-        //po::notify(vm);
     }
 
 	po::notify(vm);
 
-	//cout << "compile_by:" << compile_by << endl;
-	//cout << "general.compile-by:" << config_general_compile_by << endl;
-	//cout << vm.count("compile-by") << endl;
-	//cout << vm.count("general.compile-by") << endl;
 	// 处理命令行上和配置文件中的选项
 	if (vm.count("compile-by")) {
 		compile_by = vm["compile-by"].as<string>();
@@ -258,23 +251,16 @@ try {
 #else
 		compile_by = "gcc";
 #endif
-
 	}
 
-	if (compile_by == "gcc") {
-		cc = GCC;
-	}
-	else if (compile_by == "mingw") {
-		cc = MINGW;
-	}
-	else if (compile_by == "vc") {
-		cc = VC;
+	auto it = map_compiler_name2enum.find(compile_by);
+	if (it != map_compiler_name2enum.end()) {
+		cc = it->second;
 	}
 	else {
 		cout << "unsupported compiler: " << compile_by << endl;
 		return 0;
 	}
-	//cout << "safads" << endl;
 
 	if (vm.count("run-by")) {
 		run_by = vm["run-by"].as<string>();
@@ -404,6 +390,7 @@ try {
 
 	string config_file_compiler_dir = cc_info[cc].compiler_name + ".compiler-dir";
 	if (vm.count(config_file_compiler_dir)) {
+		// 将编译器所在目录加入PATH环境变量，以便cpps调用
 		compiler_dir = vm[config_file_compiler_dir].as<string>();
 		string env_path_value = "";
 		env_path_value += compiler_dir;
@@ -411,16 +398,6 @@ try {
 		env_path_value += getenv("PATH");
 		put_env("PATH", env_path_value.c_str());
 	}
-
-	//if (cc == CC::VC && vm.count("vc.compiler-dir")) {
-	//	// 将cl.exe所在目录加入PATH环境变量，以便cpps调用
-	//	//string env_path = R"(PATH=C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\bin\HostX86\x86;)";
-	//	string env_path_value = "";
-	//	env_path_value += compiler_dir;
-	//	env_path_value += ";";
-	//	env_path_value += getenv("PATH");
-	//	put_env("PATH", env_path_value.c_str());
-	//}
 
     // 构建
     bool success = build();
@@ -431,7 +408,6 @@ try {
     if (success) {
         run();
     }
-
 
     return 0;
 }

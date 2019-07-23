@@ -32,6 +32,11 @@ CompilerInfo cc_info[] = {
 	}
 };
 
+map<string, CC> map_compiler_name2enum = {
+	{ "gcc", CC::GCC },
+	{ "mingw", CC::MINGW },
+	{ "vc", CC::VC }
+};
 
 //// 如果使用了<thread>或者<future>里的东西，就需要-pthread这个参数。注意，不是-lpthread，不过效果似乎是一样的。
 //#if defined(__CYGWIN__) || defined(_WIN32)

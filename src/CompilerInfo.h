@@ -23,6 +23,6 @@ struct CompilerInfo {
 };
 
 extern CompilerInfo cc_info[];
-
+extern map<string, CC> map_compiler_name2enum;
 
 #endif // COMPILERINFO_H
