@@ -4,8 +4,8 @@
 #include "CompilerInfo.h"
 #include "CmdLineBuilder.h"
 
-void parse_options(int argc, char* argv[]);
-void collect_info();
+void parse(int argc, char* argv[]);
+void collect();
 bool build_exe();
 bool build();
 void run();
@@ -50,8 +50,8 @@ extern string config_general_compile_by;
 extern int max_line_scan;
 extern string output_name;
 
-void parse_options(int argc, char* argv[]);
-void collect_info();
+void parse(int argc, char* argv[]);
+void collect();
 bool build_exe();
 bool build();
 void run();

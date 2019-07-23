@@ -160,7 +160,7 @@ void scan(fs::path src_path)
 
 }
 
-void collect_info()
+void collect()
 {
 	// 确定可执行文件的路径
 	fs::path script_path = canonical(script_file).make_preferred();

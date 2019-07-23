@@ -5,7 +5,7 @@
 
 fs::path resolve_shebang_wrapper(fs::path wrapper_path);
 
-void parse_options(int argc, char* argv[])
+void parse(int argc, char* argv[])
 {
 	//cout << argv[0] << endl;
 	original_argc = argc;
