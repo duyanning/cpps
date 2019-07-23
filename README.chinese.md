@@ -336,4 +336,7 @@ dll-dir = C:\MinGW\bin
 include-dir = F:\vcpkg\installed\x86-windows\include
 lib-dir = F:\vcpkg\installed\x86-windows\lib
 dll-dir = F:\vcpkg\installed\x86-windows\bin
-```	
+```
+
+## 其他
+QQ交流群：492455203
