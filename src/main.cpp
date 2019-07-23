@@ -11,10 +11,6 @@ try {
     collect();
     if (collect_only) return 0;
 
-    // todo: 额外的flags，是各个.cpp文件独立设置？还是？独立设置吧
-    //compile_cpp_cmd += compiler_specific_extra_compile_flags;
-    //compile_h_cmd += compiler_specific_extra_compile_flags;
-
     // 构建
     bool success = build();
     if (!success) return 0;

@@ -65,7 +65,8 @@ bool vc_use_pch = false; // vc是否使用预编译头文件。(目前只支持�
 fs::path vc_h_to_precompile; // vc需要预编译的头文件。等于headers_to_pc[0]
 fs::path vc_cpp_to_generate_pch; // vc用于产生预编译头文件的cpp文件
 //string compiler_specific_extra_compile_flags; // 源文件中指定的，编译时用的其他选项
-map<fs::path, string> compiler_specific_extra_compile_flags; // 源文件中指定的，编译时用的其他选项。不同文件可能用不同的编译选项
+//unordered_map<fs::path, string> compiler_specific_extra_compile_flags; // 源文件中指定的，编译时用的其他选项。不同文件可能用不同的编译选项
+unordered_map<string, string> compiler_specific_extra_compile_flags; // 源文件中指定的，编译时用的其他选项。不同文件可能用不同的编译选项
 string compiler_specific_extra_link_flags; // 源文件中指定的，链接时用的其他选项
 
 

@@ -100,7 +100,7 @@ void scan(fs::path src_path)
             MINILOG(collect_info_logger, "found extra link flags: " << matches[1]);
             string flags = " ";
             flags += matches[1];
-            compiler_specific_extra_compile_flags[src_path] += flags;
+            compiler_specific_extra_compile_flags[src_path.string()] += flags;
 		}
 
 		if (regex_search(line, matches, compiler_specific_extra_link_flags_pat)) {

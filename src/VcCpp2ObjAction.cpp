@@ -38,7 +38,7 @@ bool VcCpp2ObjAction::execute(const DepInfo& info)
 	string cmd = R"(")"; // cmd的怪癖，传给system函数的东西，前后还得一个引号。 参考： https://stackoverflow.com/questions/9964865/c-system-not-working-when-there-are-spaces-in-two-different-parameters
 	cmd += compile_cpp_cmd;
 
-    cmd += compiler_specific_extra_compile_flags[cpp_path];
+    cmd += compiler_specific_extra_compile_flags[cpp_path.string()];
 
     cmd += " ";
     cmd += compile_cmd_include_dirs;
