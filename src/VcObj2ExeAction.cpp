@@ -57,7 +57,7 @@ bool VcObj2ExeAction::execute(const DepInfo& info)
 
     // -l 选项的位置很重要，必须放在使用它的.o文件之后
     cmd += " ";
-    cmd += extra_link_flags;
+    cmd += compiler_specific_extra_link_flags;
 
 
 	cmd += R"(")"; // 传给system函数的东西最后额外的引号

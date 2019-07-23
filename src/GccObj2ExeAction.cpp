@@ -51,7 +51,7 @@ bool GccObj2ExeAction::execute(const DepInfo& info)
     cmd += link_cmd_libs;
 
     // -l 选项的位置很重要，必须放在使用它的.o文件之后
-    cmd += extra_link_flags;
+    cmd += compiler_specific_extra_link_flags;
 
     MINILOG(build_exe_summay_logger, "linking " << exe_path.filename().string());
     MINILOG(build_exe_detail_logger, cmd);

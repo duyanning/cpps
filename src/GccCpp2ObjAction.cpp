@@ -33,6 +33,8 @@ bool GccCpp2ObjAction::execute(const DepInfo& info)
     // birthcert_path += ".birthcert";
 
     string cmd = compile_cpp_cmd;
+
+    cmd += compiler_specific_extra_compile_flags[cpp_path];
     
     cmd += " ";
     cmd += compile_cmd_include_dirs;

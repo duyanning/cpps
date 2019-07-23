@@ -26,9 +26,11 @@ void scan(fs::path src_path)
 	ifstream in(src_path.string());
 
 	string line;
+
 	regex usingcpp_pat{ R"(^\s*#include\s+"([\w\./]+)\.h"\s+//\s+usingcpp)" };
 	regex using_pat{ R"(using\s+([\w\./]+\.(cpp|cxx|c\+\+|cc|c)))" }; // | 或的顺序还挺重要，把长的排前边。免得前缀就匹配。
 	regex linklib_pat{ R"(//\s+linklib\s+([\w\-\.]+))" };
+
 	string compiler_specific_linklib_string = R"(//\s+)" + cc_info[cc].compiler_name;
 	compiler_specific_linklib_string += R"(-linklib\s+([\w\-\.]+))";
 	regex compiler_specific_linklib_pat{ compiler_specific_linklib_string };
@@ -36,12 +38,16 @@ void scan(fs::path src_path)
 	// 下面这行，前后三个*号，不是正则的一部分，而是c++ raw-string的自定义delimiter
 	// https://stackoverflow.com/questions/49416631/escape-r-in-a-raw-string-in-c
 	regex precompile_pat{ R"***(^\s*#include\s+"([\w\./]+\.(h|hpp|H|hh))"\s+//\s+precompile)***" };
-	string extra_compile_flags_string = R"(//\s+)" + cc_info[cc].compiler_name;
-	extra_compile_flags_string += R"(-extra-compile-flags:\s+(.*)$)";
-	regex extra_compile_flags_pat{ extra_compile_flags_string };
-	string extra_link_flags_string = R"(//\s+)" + cc_info[cc].compiler_name;
-	extra_link_flags_string += R"(-extra-link-flags:\s+(.*)$)";
-	regex extra_link_flags_pat{ extra_link_flags_string };
+
+	string compiler_specific_extra_compile_flags_string = R"(//\s+)" + cc_info[cc].compiler_name;
+	compiler_specific_extra_compile_flags_string += R"(-extra-compile-flags:\s+(.*)$)";
+	regex compiler_specific_extra_compile_flags_pat{ compiler_specific_extra_compile_flags_string };
+
+	string compiler_specific_extra_link_flags_string = R"(//\s+)" + cc_info[cc].compiler_name;
+	compiler_specific_extra_link_flags_string += R"(-extra-link-flags:\s+(.*)$)";
+	regex compiler_specific_extra_link_flags_pat{ compiler_specific_extra_link_flags_string };
+
+
 	int n = 0;
 	while (getline(in, line)) {
 		smatch matches;
@@ -90,17 +96,18 @@ void scan(fs::path src_path)
 			libs.push_back(matches[1]);
 		}
 
-		if (regex_search(line, matches, extra_compile_flags_pat)) {
-			MINILOG(collect_info_logger, "found extra compile flags: " << matches[1]);
-			extra_compile_flags += " ";
-			extra_compile_flags += matches[1];
+		if (regex_search(line, matches, compiler_specific_extra_compile_flags_pat)) {
+            MINILOG(collect_info_logger, "found extra link flags: " << matches[1]);
+            string flags = " ";
+            flags += matches[1];
+            compiler_specific_extra_compile_flags[src_path] += flags;
 		}
 
-		if (regex_search(line, matches, extra_link_flags_pat)) {
-			MINILOG(collect_info_logger, "found extra link flags: " << matches[1]);
-			extra_link_flags += " ";
-			extra_link_flags += matches[1];
-		}
+		if (regex_search(line, matches, compiler_specific_extra_link_flags_pat)) {
+            MINILOG(collect_info_logger, "found extra compile flags: " << matches[1]);
+            compiler_specific_extra_link_flags += " ";
+            compiler_specific_extra_link_flags += matches[1];
+        }
 
 		// 搜集需要预编译的头文件
 		if (regex_search(line, matches, precompile_pat)) {
