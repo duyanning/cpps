@@ -1,6 +1,8 @@
 #ifndef COMPILERINFO_H
 #define COMPILERINFO_H
 
+#include "CmdLineBuilder.h"
+
 // 目前支持的底层编译器
 enum CC {
 	GCC = 0,
@@ -17,6 +19,7 @@ struct CompilerInfo {
 	const string compile_cpp_cmd;
 	const string compile_h_cmd;
 	const string link_cmd;
+	CmdLineBuilderPtr (*make_cmd_line_builder)();
 	// 我看下面这俩各种编译器不用分开
     //string compile_cmd_include_dirs;
     //string link_cmd_lib_dirs;

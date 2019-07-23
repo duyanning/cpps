@@ -15,7 +15,7 @@ public:
 using MingwCmdLineBuilderPtr = std::shared_ptr<MingwCmdLineBuilder>;
 
 inline
-MingwCmdLineBuilderPtr makeMingwCmdLineBuilder()
+CmdLineBuilderPtr makeMingwCmdLineBuilder()
 {
     return MingwCmdLineBuilderPtr(new MingwCmdLineBuilder);
 }

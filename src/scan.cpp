@@ -3,6 +3,14 @@
 #include "Loggers.h"
 #include "helpers.h"
 
+#ifdef HAVE_REGEX
+using std::regex;
+using std::smatch;
+#else
+using boost::regex;
+using boost::smatch;
+#endif
+
 void scan(fs::path src_path)
 {
 	// 如果已经处理过该文件，就不要再处理，避免循环引用

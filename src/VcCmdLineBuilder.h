@@ -14,7 +14,7 @@ public:
 using VcCmdLineBuilderPtr = std::shared_ptr<VcCmdLineBuilder>;
 
 inline
-VcCmdLineBuilderPtr makeVcCmdLineBuilder()
+CmdLineBuilderPtr makeVcCmdLineBuilder()
 {
     return VcCmdLineBuilderPtr(new VcCmdLineBuilder);
 }

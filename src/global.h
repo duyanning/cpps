@@ -4,6 +4,15 @@
 #include "CompilerInfo.h"
 #include "CmdLineBuilder.h"
 
+void parse_options(int argc, char* argv[]);
+void collect_info();
+bool build_exe();
+bool build();
+void run();
+void generate_main_file(string main_file__name);
+void generate_class_files(string class_name);
+
+
 extern string compile_cpp_cmd;
 extern string compile_h_cmd;
 extern string link_cmd;
@@ -19,6 +28,7 @@ extern fs::path vc_h_to_precompile;
 extern fs::path vc_cpp_to_generate_pch;
 extern string extra_compile_flags;
 extern string extra_link_flags;
+extern string compiler_dir;
 extern string compile_cmd_include_dirs;
 extern string link_cmd_lib_dirs;
 extern string link_cmd_libs;
@@ -30,7 +40,7 @@ extern bool collect_only;
 extern bool build_only;
 extern bool show_dep_graph;
 extern string script_file_name;
-extern string main_file_nextername;
+extern string main_file_name;
 extern string class_name;
 extern bool clear_run;
 extern string run_by;
@@ -40,6 +50,7 @@ extern string config_general_compile_by;
 extern int max_line_scan;
 extern string output_name;
 
+void parse_options(int argc, char* argv[]);
 void collect_info();
 bool build_exe();
 bool build();

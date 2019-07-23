@@ -15,7 +15,7 @@ public:
 using GccCmdLineBuilderPtr = std::shared_ptr<GccCmdLineBuilder>;
 
 inline
-GccCmdLineBuilderPtr makeGccCmdLineBuilder()
+CmdLineBuilderPtr makeGccCmdLineBuilder()
 {
     return GccCmdLineBuilderPtr(new GccCmdLineBuilder);
 }
