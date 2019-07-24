@@ -115,10 +115,12 @@
 		<Unit filename="src/config.h.in" />
 		<Unit filename="src/fwd.h" />
 		<Unit filename="src/gen.cpp" />
+		<Unit filename="src/global.cpp" />
 		<Unit filename="src/global.h" />
 		<Unit filename="src/helpers.cpp" />
 		<Unit filename="src/helpers.h" />
 		<Unit filename="src/main.cpp" />
+		<Unit filename="src/parse.cpp" />
 		<Unit filename="src/run.cpp" />
 		<Unit filename="src/samples.cpp" />
 		<Unit filename="src/samples.h" />
