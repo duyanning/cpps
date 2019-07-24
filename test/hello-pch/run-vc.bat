@@ -15,7 +15,7 @@ DEL main.cpp
 COPY backup\main-easy.cpp main.cpp > NUL
 
 cpps -c vc -v main.cpp
-rem CHECK-NEXT: compiling main.cpp
+rem CHECK: compiling main.cpp
 rem CHECK-NEXT: linking main.cpp.vc.exe
 rem CHECK-NEXT: cpps is easy to use
 

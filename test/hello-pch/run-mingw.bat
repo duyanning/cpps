@@ -16,7 +16,7 @@ DEL main.cpp
 COPY backup\main-easy.cpp main.cpp > NUL
 
 cpps -c mingw -v main.cpp
-rem CHECK-NEXT: compiling main.cpp
+rem CHECK: compiling main.cpp
 rem CHECK-NEXT: linking main.cpp.mingw.exe
 rem CHECK-NEXT: cpps is easy to use
 
@@ -24,7 +24,7 @@ rem CHECK-NEXT: cpps is easy to use
 DEL std.h
 COPY backup\std-b.h std.h > NUL
 cpps -c mingw -v main.cpp
-REM CHECK-NEXT: precompiling std.h
+REM CHECK: precompiling std.h
 rem CHECK-NEXT: compiling main.cpp
 rem CHECK-NEXT: compiling std.cpp
 rem CHECK-NEXT: cpps is easy to use

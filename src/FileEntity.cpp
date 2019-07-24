@@ -179,6 +179,7 @@ void FileEntity::generate_birth_cert(const vector<fs::path>& pre_file_paths)
     fs::path birthcert_path = this->path();
     birthcert_path += ".birthcert";
     ofstream ofs(birthcert_path.string());
+    assert(ofs);
     boost::archive::text_oarchive oa(ofs);
 
     oa << birthcert;

@@ -269,6 +269,7 @@
     <ClInclude Include="src\global.h" />
     <ClInclude Include="src\H2GchAction.h" />
     <ClInclude Include="src\helpers.h" />
+    <ClInclude Include="src\InfoPackageScanned.h" />
     <ClInclude Include="src\Loggers.h" />
     <ClInclude Include="src\MingwCmdLineBuilder.h" />
     <ClInclude Include="src\MiniLogger.h" />

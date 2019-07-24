@@ -204,8 +204,9 @@ void parse(int argc, char* argv[])
 	}
 
 	if (collect_only) {
-		collect_info_logger.enable();
-	}
+        collect_info_summary_logger.enable();
+        //collect_info_summary_logger.enable();
+    }
 
 	script_file = script_file_name;
 
