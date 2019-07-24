@@ -171,7 +171,7 @@ void collect_source(fs::path src_path)
     InfoPackageScanned pack;
     // load or scan
     fs::path pack_path = shadow(src_path);
-    pack_path += ".infoPackageScanned";
+    pack_path += ".scan";
 
     if (clear_run) {
         safe_remove(pack_path);

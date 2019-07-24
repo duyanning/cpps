@@ -29,7 +29,7 @@ bool VcCpp2ObjAction::execute(const DepInfo& info)
     fs::path obj_path = obj->path();
 
 	fs::path showIncludes_path = obj_path;
-	showIncludes_path += ".showIncludes";
+	showIncludes_path += ".inc";
 
     fs::path dep_path = obj_path;
     dep_path += ".d";
