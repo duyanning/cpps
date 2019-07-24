@@ -73,10 +73,7 @@ bool GccCpp2ObjAction::execute(const DepInfo& info)
     obj->generate_birth_cert(dep_path);
     //obj->generate_birth_cert();
 
-    MINILOG(build_exe_timer_logger, "compiling " << cpp_path.filename()
-        << " "
-        << timer.format(boost::timer::default_places, "%ws"));
+    MINILOG(build_exe_timer_logger, timer.format(boost::timer::default_places, "%ws") << " compiling " << cpp_path.filename());
 
     return true;
-
 }

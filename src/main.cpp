@@ -9,16 +9,20 @@ try {
     // 解析命令行选项，读取配置文件
     parse(argc, argv);
 
+    MINILOG(build_exe_timer_logger, timer.format(boost::timer::default_places, "%ws") << " PARSE ");
+
     // 扫描源文件，搜集信息
     collect();
+    MINILOG(build_exe_timer_logger, timer.format(boost::timer::default_places, "%ws") << " COLLECT");
     if (collect_only) return 0;
 
     // 构建
     bool success = build();
+    MINILOG(build_exe_timer_logger, timer.format(boost::timer::default_places, "%ws") << " BUILD");
     if (!success) return 0;
     if (build_only) return 0;
 
-    MINILOG(build_exe_timer_logger, "total " << timer.format(boost::timer::default_places, "%ws"));
+    MINILOG(build_exe_timer_logger, timer.format(boost::timer::default_places, "%ws") << " TOTAL = PARSE + COLLECT + BUILD");
 
     // 运行
     run();

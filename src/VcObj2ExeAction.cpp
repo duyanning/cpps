@@ -78,9 +78,7 @@ bool VcObj2ExeAction::execute(const DepInfo& info)
 
     exe->generate_birth_cert();
 
-    MINILOG(build_exe_timer_logger, "linking " << exe_path.filename()
-        << " "
-        << timer.format(boost::timer::default_places, "%ws"));
+    MINILOG(build_exe_timer_logger, timer.format(boost::timer::default_places, "%ws") << " linking " << exe_path.filename());
 
     return true;
 }
