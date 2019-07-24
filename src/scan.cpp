@@ -197,6 +197,8 @@ void collect_source(fs::path src_path)
 
     if (needScan) {
         //cout << pack_path << " pack NOT exists" << endl;
+        // todo: pack可能之前load了东西，scan之前要清除掉。
+        pack.clear();
         scan(src_path, pack);
 
         // 确保目录存在

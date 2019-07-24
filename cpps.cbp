@@ -53,6 +53,8 @@
 					<Add library="$(libs4mingw)/boost/lib/libboost_system-mgw63-mt-x32-1_66.a" />
 					<Add library="$(libs4mingw)/boost/lib/libboost_regex-mgw63-mt-x32-1_66.a" />
 					<Add library="$(libs4mingw)/boost/lib/libboost_serialization-mgw63-mt-x32-1_66.a" />
+					<Add library="$(libs4mingw)/boost/lib/libboost_timer-mgw63-mt-s-x32-1_66.a" />
+					<Add library="$(libs4mingw)/boost/lib/libboost_chrono-mgw63-mt-s-x32-1_66.a" />
 				</Linker>
 			</Target>
 		</Build>
@@ -91,6 +93,7 @@
 		<Unit filename="src/GchMagic.h" />
 		<Unit filename="src/H2GchAction.cpp" />
 		<Unit filename="src/H2GchAction.h" />
+		<Unit filename="src/InfoPackageScanned.h" />
 		<Unit filename="src/Loggers.cpp" />
 		<Unit filename="src/Loggers.h" />
 		<Unit filename="src/MingwCmdLineBuilder.cpp" />
@@ -111,8 +114,10 @@
 		<Unit filename="src/VcObj2ExeAction.h" />
 		<Unit filename="src/build.cpp" />
 		<Unit filename="src/config.cpp" />
-		<Unit filename="src/config.h" />
-		<Unit filename="src/config.h.in" />
+		<Unit filename="src/config.h">
+			<Option compile="1" />
+			<Option weight="0" />
+		</Unit>
 		<Unit filename="src/fwd.h" />
 		<Unit filename="src/gen.cpp" />
 		<Unit filename="src/global.cpp" />

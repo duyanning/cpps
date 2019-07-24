@@ -35,6 +35,12 @@ struct InfoPackageScanned {
     fs::path referenced_vc_h_to_precompile;
     fs::path referenced_vc_cpp_to_generate_pch;
 
+    void clear()
+    {
+        InfoPackageScanned new_obj;
+        *this = new_obj;
+    }
+
 private:
     friend class boost::serialization::access;
     template<class Archive>
