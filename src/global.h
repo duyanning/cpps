@@ -40,6 +40,7 @@ extern bool verbose;
 extern bool very_verbose;
 extern bool collect_only;
 extern bool build_only;
+extern bool report_time;
 extern bool show_dep_graph;
 extern string script_file_name;
 extern string main_file_name;

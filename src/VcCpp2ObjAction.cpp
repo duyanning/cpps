@@ -19,6 +19,8 @@ bool VcCpp2ObjAction::execute(const DepInfo& info)
         }
     }
 
+    boost::timer::cpu_timer timer;
+
     // 构造命令行
     FileEntityPtr cpp = static_pointer_cast<FileEntity>(info.all[0]);
     fs::path cpp_path = cpp->path();
@@ -172,6 +174,10 @@ bool VcCpp2ObjAction::execute(const DepInfo& info)
 	// 从本次运行新生成的.d生成.birthcert，可以保证二者一致。依赖图反映的是老.d
     obj->generate_birth_cert(dep_path);
     //obj->generate_birth_cert();
+
+    MINILOG(build_exe_timer_logger, "compiling " << cpp_path.filename()
+        << " "
+        << timer.format(boost::timer::default_places, "%ws"));
 
     return true;
 

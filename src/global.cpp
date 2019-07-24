@@ -19,6 +19,7 @@ string link_cmd;
 bool verbose = false;
 bool very_verbose = false;
 bool collect_only = false;
+bool report_time = false;
 bool build_only = false;
 bool show_dep_graph = false;
 string script_file_name;

@@ -20,6 +20,8 @@ bool GccObj2ExeAction::execute(const DepInfo& info)
         //cout << "GccObj2ExeAction failed" << endl;
         return false;
     }
+
+    boost::timer::cpu_timer timer;
     
     // 构造命令行
     FileEntityPtr exe = static_pointer_cast<FileEntity>(info.target);
@@ -66,6 +68,10 @@ bool GccObj2ExeAction::execute(const DepInfo& info)
         return false;
 
     exe->generate_birth_cert();
+
+    MINILOG(build_exe_timer_logger, "linking " << exe_path.filename()
+        << " "
+        << timer.format(boost::timer::default_places, "%ws"));
 
     return true;
 }

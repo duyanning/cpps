@@ -161,6 +161,8 @@ void collect_source(fs::path src_path)
         return;
     }
 
+    boost::timer::cpu_timer timer;
+
     MINILOG(collect_info_summary_logger, "collecting " << src_path.filename().string());
 
     sources.push_back(src_path);
@@ -217,6 +219,10 @@ void collect_source(fs::path src_path)
 
     // 将采集到的部分信息合并到整体中
     merge(pack);
+
+    MINILOG(build_exe_timer_logger, "collecting " << src_path.filename() 
+        << " "
+        << timer.format(boost::timer::default_places, "%ws"));
 
     // 采集引用的.cpp文件
     for (auto a : pack.referenced_sources) {

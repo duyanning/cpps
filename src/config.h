@@ -28,7 +28,7 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/unordered_map.hpp>
 #include <boost/serialization/vector.hpp>
-
+#include <boost/timer/timer.hpp>
 
 #define HAVE_REGEX
 

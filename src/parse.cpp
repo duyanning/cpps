@@ -45,8 +45,9 @@ void parse(int argc, char* argv[])
 		("verbose,v", po::bool_switch(&verbose), "be verbose")
 		("very-verbose", po::bool_switch(&very_verbose), "be very verbose")
 		("dependency,d", po::bool_switch(&show_dep_graph), "show dependency graph")
-		("collect", po::bool_switch(&collect_only), "only show information collected")
-		;
+        ("collect", po::bool_switch(&collect_only), "only show information collected")
+        ("report-time", po::bool_switch(&report_time), "report after every stage")
+        ;
 
 	po::options_description build_opts("Build options");
 	build_opts.add_options()
@@ -207,6 +208,14 @@ void parse(int argc, char* argv[])
         collect_info_summary_logger.enable();
         //collect_info_summary_logger.enable();
     }
+
+    if (report_time) {
+        //build_gch_summay_logger.enable();
+        //build_exe_summay_logger.enable();
+        build_exe_timer_logger.enable();
+    }
+
+    
 
 	script_file = script_file_name;
 
