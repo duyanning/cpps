@@ -1,0 +1,2 @@
+Note: including file: F:\myprj\cpps\minised\test\foo.h
+Note: including file: F:\myprj\cpps\minised\test\foo.h
