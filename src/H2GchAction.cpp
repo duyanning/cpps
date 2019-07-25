@@ -42,7 +42,8 @@ bool H2GchAction::execute(const DepInfo& info)
     cmd += h_path.string();
 
     //cmd += " -fpch-deps -MMD -MF " + dep_path.string();
-    cmd += " -MMD -MF " + dep_path.string(); // todo： clang不支持-fpch-deps
+    //cmd += " -MMD -MF " + dep_path.string(); // todo： clang不支持-fpch-deps
+    cmd += " " + cc_info[cc].option_dep + " " + dep_path.string();
 
     MINILOG(build_gch_summay_logger, "precompiling " << h_path.filename().string());
     MINILOG(build_gch_detail_logger, cmd);

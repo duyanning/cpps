@@ -14,6 +14,7 @@ CompilerInfo cc_info[] = {
 		"g++ -std=c++11 -Wall -c",  // -fmax-errors=2是因为某些错误需要两条错误信息
 		"g++ -std=c++11 -Wall",
 		"g++ -std=c++11 -fmax-errors=1",
+        "-fpch-deps -MMD -MF",
 		makeGccCmdLineBuilder
 	},
 	{
@@ -23,6 +24,7 @@ CompilerInfo cc_info[] = {
 		"mingw32-g++ -std=c++11 -Wall -c",
 		"mingw32-g++ -std=c++11 -Wall",
 		"mingw32-g++ -std=c++11 -fmax-errors=1",
+        "-fpch-deps -MMD -MF",
 		makeMingwCmdLineBuilder
 	},
 	{
@@ -32,6 +34,7 @@ CompilerInfo cc_info[] = {
 		"cl /nologo /EHsc /c",
 		"", // vc的头文件不能编译
 		"cl /nologo",
+        "", // vc的.d文件生成比较复杂，不是一两个编译开关可以搞定的事。我们专门为vc搞了派生类
 		makeVcCmdLineBuilder
 	},
 	{
@@ -40,7 +43,8 @@ CompilerInfo cc_info[] = {
 		".gch",
 		"clang++ -Wall -c",
 		"clang++ -x c++-header -Wall",
-		"clang++ -std=c++11",
+		"clang++",
+        "-MMD -MF",
 		makeGccCmdLineBuilder
 	},
 };

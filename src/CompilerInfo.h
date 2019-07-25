@@ -20,6 +20,7 @@ struct CompilerInfo {
 	const string compile_cpp_cmd;
 	const string compile_h_cmd;
 	const string link_cmd;
+    const string option_dep;    // 用于产生.d文件的编译开关
 	CmdLineBuilderPtr (*make_cmd_line_builder)();
 	// 我看下面这俩各种编译器不用分开
     //string compile_cmd_include_dirs;

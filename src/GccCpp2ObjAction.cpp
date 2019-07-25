@@ -50,7 +50,8 @@ bool GccCpp2ObjAction::execute(const DepInfo& info)
     cmd += cpp_path.string();
 
     //cmd += " -fpch-deps -MMD -MF " + dep_path.string();
-    cmd += " -MMD -MF " + dep_path.string(); // todo: clang不支持-fpch-deps
+    //cmd += " -MMD -MF " + dep_path.string(); // todo: clang不支持-fpch-deps
+    cmd += " " + cc_info[cc].option_dep + " " + dep_path.string();
 
     MINILOG(build_exe_summay_logger, "compiling " << cpp_path.filename().string());
     MINILOG(build_exe_detail_logger, cmd);
