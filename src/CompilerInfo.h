@@ -7,7 +7,8 @@
 enum CC {
 	GCC = 0,
 	MINGW,
-	VC
+	VC,
+    CLANG
 };
 
 extern CC cc;

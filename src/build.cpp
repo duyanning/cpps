@@ -58,7 +58,7 @@ bool build_exe()
 	// 构建依赖关系图
 	FileEntityPtr exe = makeFileEntity(exe_path);
 
-	if (cc == CC::GCC || cc == CC::MINGW) {
+	if (cc == CC::GCC || cc == CC::MINGW || cc == CC::CLANG) {
 		exe->addAction(makeGccObj2ExeAction());
 	}
 	else if (cc == CC::VC) {
@@ -85,7 +85,7 @@ bool build_exe()
 		obj_path += cc_info[cc].obj_ext;
 
 		FileEntityPtr obj = makeFileEntity(obj_path);
-		if (cc == CC::GCC || cc == CC::MINGW) {
+		if (cc == CC::GCC || cc == CC::MINGW || cc == CC::CLANG) {
 			obj->addAction(makeGccCpp2ObjAction());
 		}
 		else if (cc == CC::VC) {

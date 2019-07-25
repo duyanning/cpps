@@ -33,13 +33,23 @@ CompilerInfo cc_info[] = {
 		"", // vc的头文件不能编译
 		"cl /nologo",
 		makeVcCmdLineBuilder
-	}
+	},
+	{
+		"clang",
+		".o",
+		".gch",
+		"clang++ -std=c++11 -Wall -c",
+		"clang++ -std=c++11 -Wall",
+		"clang++ -std=c++11",
+		makeGccCmdLineBuilder
+	},
 };
 
 map<string, CC> map_compiler_name2enum = {
 	{ "gcc", CC::GCC },
 	{ "mingw", CC::MINGW },
-	{ "vc", CC::VC }
+	{ "vc", CC::VC },
+	{ "clang", CC::CLANG }
 };
 
 //// 如果使用了<thread>或者<future>里的东西，就需要-pthread这个参数。注意，不是-lpthread，不过效果似乎是一样的。
