@@ -26,7 +26,7 @@ void VcCmdLineBuilder::add_libs(std::string& cmd, const std::vector<std::string>
 	cmd += " ";
 	for (auto lib : libs) {
 		cmd += lib;
-		cmd += ".lib";
+		cmd += ".lib ";
 	}
 }
 
