@@ -177,7 +177,18 @@ void parse(int argc, char* argv[])
 	}
 
 	if (vm.count("version")) {
-		cout << "use: " << compile_by << endl;
+        string compiler_cpps_built_by = "unknown";
+#if defined(_MSC_VER)
+		compiler_cpps_built_by = "vc";
+#elif defined(__MINGW32__)
+		compiler_cpps_built_by = "mingw";
+#elif defined(__clang__)
+        compiler_cpps_built_by = "clang";
+#else
+		compiler_cpps_built_by = "gcc";
+#endif
+		cout << "compiler by which cpps is built: " << compiler_cpps_built_by << endl;
+		cout << "underlying compiler which cpps uses to build script: " << compile_by << endl;
 		throw 0;
 	}
 
