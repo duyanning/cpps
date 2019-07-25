@@ -11,3 +11,5 @@ cpps.cscope_file_list
 .vs
 *.vcxproj.filters
 *.vcxproj.user
+finderror.layout
+vc-config-gen.layout
