@@ -38,8 +38,8 @@ CompilerInfo cc_info[] = {
 		"clang",
 		".o",
 		".gch",
-		"clang++ -std=c++11 -Wall -c",
-		"clang++ -std=c++11 -Wall",
+		"clang++ -Wall -c",
+		"clang++ -x c++-header -Wall",
 		"clang++ -std=c++11",
 		makeGccCmdLineBuilder
 	},

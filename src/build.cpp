@@ -285,7 +285,7 @@ bool build()
 
 	bool success;
 
-	if (cc == CC::GCC || cc == CC::MINGW) {
+	if (cc == CC::GCC || cc == CC::MINGW || cc == CC::CLANG) {
 		GchMagic gch_magic(headers_to_pc);
 		success = build_gch();
 		if (!success)
