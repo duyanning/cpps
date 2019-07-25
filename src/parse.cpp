@@ -60,7 +60,7 @@ void parse(int argc, char* argv[])
 	po::options_description run_opts("Run options");
 	run_opts.add_options()
 		("run-by,r", po::value<string>(), "run resulting app using: exec, system")
-		("compile-by,c", po::value<string>(), "compile script using: gcc, mingw, vc")
+		("compile-by,c", po::value<string>(), "compile script using: gcc, mingw, vc, clang")
 		;
 
 	po::options_description generation_opts("Generation options");
@@ -99,7 +99,7 @@ void parse(int argc, char* argv[])
 	po::options_description config_file_opts("config.txt options");
 	config_file_opts.add_options()
 		//("general.run-by", po::value<int>(&config_general_run_by)->default_value(1), "run using: 0 - system(), 1 - execv()")
-		("general.compile-by", po::value<string>(&config_general_compile_by)->default_value("gcc"), "compile using: gcc, mingw, vc")
+		("general.compile-by", po::value<string>(&config_general_compile_by)->default_value("gcc"), "compile using: gcc, mingw, vc, clang")
 		("gcc.compiler-dir", po::value<string>(), "directory where gcc compiler resides")
 		("gcc.include-dir", po::value<vector<string>>(), "add a directory to be searched for header files")
 		("gcc.lib-dir", po::value<vector<string>>(), "add a directory to be searched for libs")
@@ -112,6 +112,10 @@ void parse(int argc, char* argv[])
 		("vc.include-dir", po::value<vector<string>>(), "add a directory to be searched for header files")
 		("vc.lib-dir", po::value<vector<string>>(), "add a directory to be searched for libs")
 		("vc.dll-dir", po::value<vector<string>>(), "add a directory to be searched for dlls")
+		("clang.compiler-dir", po::value<string>(), "directory where clang compiler resides")
+		("clang.include-dir", po::value<vector<string>>(), "add a directory to be searched for header files")
+		("clang.lib-dir", po::value<vector<string>>(), "add a directory to be searched for libs")
+		("clang.dll-dir", po::value<vector<string>>(), "add a directory to be searched for dlls")
 		;
 
 	// 读取配置文件
@@ -143,6 +147,8 @@ void parse(int argc, char* argv[])
 		compile_by = "vc";
 #elif defined(__MINGW32__)
 		compile_by = "mingw";
+#elif defined(__clang__)
+        compile_by = "clang";
 #else
 		compile_by = "gcc";
 #endif
