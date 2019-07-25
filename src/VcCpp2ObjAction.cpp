@@ -81,7 +81,7 @@ bool VcCpp2ObjAction::execute(const DepInfo& info)
 #if USE_SED_FROM_GITFORWINDOWS
 	cmd += R"( /showIncludes | sed -r -e "/Note: including file:[[:space:]]+C:\\\\Program Files/d" -e "/Note: including file:/w)";
 #elif USE_MINISED_FROM_GNUWIN32
-	cmd += R"( /showIncludes | minised -e "/Note: including file:[ \t]\+C:\\Program Files/d" -e "/Note: including file:/w)";
+	cmd += R"( /showIncludes | minised -e "/Note: including file:[ \t]\+[A-Z]:\\Program Files/d" -e "/Note: including file:/w)";
 #endif
 	cmd += " ";
 	string showIncludes_path_string = showIncludes_path.string();

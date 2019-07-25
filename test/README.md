@@ -40,19 +40,5 @@
 每个目录下得提供一个test-mingw.bat
 
 # 将一个测试用例在gcc/mingw/vc三者间调整
-需要修改部分的对照表
-
-| GCC     | MinGW     | VC     |
-| ---     | ---       | ---    |
-| #       | REM       | REM    |
-| -c vc   | -c mingw  | -c vc  |
-| gcc.exe | mingw.exe | vc.exe |
-| 'a b'   | "a b"     | "a b"  |
-
-
-
-
- 
-
-
-
+../sh2bat.sh  run-gcc.sh vc > run-vc.sh
+../sh2bat.sh  run-gcc.sh mingw > run-mingw.sh
