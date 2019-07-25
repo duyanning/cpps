@@ -4,25 +4,26 @@
 
 int main(int argc, char* argv[])
 try {
-    boost::timer::cpu_timer timer;
 
     // 解析命令行选项，读取配置文件
     parse(argc, argv);
 
-    MINILOG(build_exe_timer_logger, timer.format(boost::timer::default_places, "%ws") << " PARSE ");
+    boost::timer::cpu_timer stage_timer, total_timer;
 
     // 扫描源文件，搜集信息
+    stage_timer.start();
     collect();
-    MINILOG(build_exe_timer_logger, timer.format(boost::timer::default_places, "%ws") << " COLLECT");
+    MINILOG(build_exe_timer_logger, stage_timer.format(boost::timer::default_places, "%ws") << " COLLECT");
     if (collect_only) return 0;
 
     // 构建
+    stage_timer.start();
     bool success = build();
-    MINILOG(build_exe_timer_logger, timer.format(boost::timer::default_places, "%ws") << " BUILD");
+    MINILOG(build_exe_timer_logger, stage_timer.format(boost::timer::default_places, "%ws") << " BUILD");
     if (!success) return 0;
     if (build_only) return 0;
 
-    MINILOG(build_exe_timer_logger, timer.format(boost::timer::default_places, "%ws") << " TOTAL = PARSE + COLLECT + BUILD");
+    MINILOG(build_exe_timer_logger, total_timer.format(boost::timer::default_places, "%ws") << " TOTAL = COLLECT + BUILD");
 
     // 运行
     run();
