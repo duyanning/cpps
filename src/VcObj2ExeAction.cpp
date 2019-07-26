@@ -52,6 +52,14 @@ bool VcObj2ExeAction::execute(const DepInfo& info)
     cmd += " ";
     cmd += link_cmd_libs;
 
+    // 以及配置文件中lib指定的库
+    if (vm.count("vc.lib")) {
+        cmd += " ";
+        for (auto line : vm["vc.lib"].as<vector<string>>()) {
+            cmd += line;
+            cmd += " ";
+        }
+    }
 
     cmd += " /link";
     cmd += " ";

@@ -13,6 +13,19 @@ using boost::regex;
 using boost::smatch;
 #endif
 
+void add_libs_from_string(vector<string>& libs_vector, string libs_string)
+{
+    vector<string> parts;
+    std::string delimiters(" "); // 支持多个分界符
+    boost::split(parts, libs_string, boost::is_any_of(delimiters), boost::token_compress_on); // token_compress_on是为了将单词之间的多个空格视为一个，但最后一个单词之后的空格还是会导致问题，只有在正则表达式上下功夫了
+    //cout << "number: " << parts.size() << endl;
+    //for (auto a : parts) {
+    //    cout << "---> " << a << " " << a.size() << endl;
+    //}
+
+    copy(parts.begin(), parts.end(), back_inserter(libs_vector));
+}
+
 void scan(fs::path src_path, InfoPackageScanned& pack)
 {
     pack.cpp_sig = SHA1::from_file(src_path.string());
@@ -25,10 +38,12 @@ void scan(fs::path src_path, InfoPackageScanned& pack)
 
 	regex usingcpp_pat{ R"(^\s*#include\s+"([\w\./]+)\.h"\s+//\s+usingcpp)" };
 	regex using_pat{ R"(using\s+([\w\./]+\.(cpp|cxx|c\+\+|cc|c)))" }; // | 或的顺序还挺重要，把长的排前边。免得前缀就匹配。
-	regex linklib_pat{ R"(//\s+linklib\s+([\w\-\.]+))" };
+	//regex linklib_pat{ R"(//\s+linklib\s+([\w\-\.]+))" };
+    regex linklib_pat{ R"(//\s+linklib\s+(.+\w))" };
 
 	string compiler_specific_linklib_string = R"(//\s+)" + cc_info[cc].compiler_name;
-	compiler_specific_linklib_string += R"(-linklib\s+([\w\-\.]+))";
+	//compiler_specific_linklib_string += R"(-linklib\s+([\w\-\.]+))";
+    compiler_specific_linklib_string += R"(-linklib\s+(.+\w))";
 	regex compiler_specific_linklib_pat{ compiler_specific_linklib_string };
 
 	// 下面这行，前后三个*号，不是正则的一部分，而是c++ raw-string的自定义delimiter
@@ -68,14 +83,18 @@ void scan(fs::path src_path, InfoPackageScanned& pack)
 		}
 
 		// 搜集使用的库名字
+        //cout << "line: " << line << endl;
 		if (regex_search(line, matches, linklib_pat)) {
 			MINILOG(collect_info_detail_logger, "found lib: " << matches[1]);
-			pack.referenced_libs.push_back(matches[1]);
+			//pack.referenced_libs.push_back(matches[1]);
+            //cout << "found lib: " << matches[1] << endl;
+            add_libs_from_string(pack.referenced_libs, matches[1]);
 		}
 
 		if (regex_search(line, matches, compiler_specific_linklib_pat)) {
 			MINILOG(collect_info_detail_logger, "found lib: " << matches[1]);
-			pack.referenced_libs.push_back(matches[1]);
+			//pack.referenced_libs.push_back(matches[1]);
+            add_libs_from_string(pack.referenced_libs, matches[1]);
 		}
 
 		if (regex_search(line, matches, compiler_specific_extra_compile_flags_pat)) {

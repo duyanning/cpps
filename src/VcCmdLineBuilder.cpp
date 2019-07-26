@@ -26,7 +26,13 @@ void VcCmdLineBuilder::add_libs(std::string& cmd, const std::vector<std::string>
 	cmd += " ";
 	for (auto lib : libs) {
 		cmd += lib;
-		cmd += ".lib ";
+
+        // 如果名字里已经带了.lib，就不用再加了
+        if (!boost::algorithm::iends_with(lib, ".lib")) {
+            cmd += ".lib";
+        }
+
+        cmd += " ";
 	}
 }
 

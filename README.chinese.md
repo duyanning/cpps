@@ -160,6 +160,13 @@ cpps hello.cpp
 ```c++
 #include "std.h" // precompile
 ```
+
+预编译头文件对于缩短C++程序的编译时间，效果非常显著。强烈建议使用！
+而且同一个目录下的C++脚本可以共享同一个预编译头文件。
+
+我一般都是搞一个std.h，里面把所有的标准库、boost库的头文件全都包含上。
+
+用cpps你可以执行`cpps -g hello.cpp`，除了`hello.cpp`外，还将生成`std.h`和`std.cpp`两个文件。
 ## 还支持shebang
 在你的hello.cpp文件第一行写上：
 ```c++
@@ -293,6 +300,8 @@ cpps -c vc main.cpp
 // mingw-extra-compile-flags: -DWIN32
 // mingw-extra-link-flags: -mwindows -lole32 -luuid -lcomctl32
 ```
+库后边的扩展名，你加也可以，不加也可以。还支持通配符(支持的通配符与shell有关)。
+
 ## 命令行选项
 请运行以下命令来查看：
 ```ShellSession
@@ -311,7 +320,7 @@ cpps [cpps的命令行选项...] 脚本 [脚本的命令行选项与命令行参
 
 对于Windows来说，它位于目录`c:\Users\<Your Name>\.cpps`下。
 
-下面是个例子，你可以看到其中有4个section：general、gcc、mingw、vc。
+下面是个例子(更完备的例子请参考examples目录下的config.txt)，你可以看到其中有4个section：general、gcc、mingw、vc。
 
 ```INI
 [general]
