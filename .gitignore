@@ -13,3 +13,6 @@ cpps.cscope_file_list
 *.vcxproj.user
 finderror.layout
 vc-config-gen.layout
+GPATH
+GRTAGS
+GTAGS

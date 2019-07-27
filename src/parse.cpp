@@ -104,20 +104,24 @@ void parse(int argc, char* argv[])
 		("gcc.include-dir", po::value<vector<string>>(), "add a directory to be searched for header files")
 		("gcc.lib-dir", po::value<vector<string>>(), "add a directory to be searched for libs")
 		("gcc.dll-dir", po::value<vector<string>>(), "add a directory to be searched for dlls")
-		("mingw.compiler-dir", po::value<string>(), "directory where mingw compiler resides")
+        ("gcc.extra-compile-flags", po::value<vector<string>>(), "extra compile flags")
+        ("mingw.compiler-dir", po::value<string>(), "directory where mingw compiler resides")
 		("mingw.include-dir", po::value<vector<string>>(), "add a directory to be searched for header files")
 		("mingw.lib-dir", po::value<vector<string>>(), "add a directory to be searched for libs")
 		("mingw.dll-dir", po::value<vector<string>>(), "add a directory to be searched for dlls")
-		("vc.compiler-dir", po::value<string>(), "directory where vc compiler resides")
+        ("mingw.extra-compile-flags", po::value<vector<string>>(), "extra compile flags")
+        ("vc.compiler-dir", po::value<string>(), "directory where vc compiler resides")
 		("vc.include-dir", po::value<vector<string>>(), "add a directory to be searched for header files")
 		("vc.lib-dir", po::value<vector<string>>(), "add a directory to be searched for libs")
         ("vc.dll-dir", po::value<vector<string>>(), "add a directory to be searched for dlls")
-        ("vc.lib", po::value<vector<string>>(), "libs to link")
+        ("vc.linklib", po::value<vector<string>>(), "libs to link")
+        ("vc.extra-compile-flags", po::value<vector<string>>(), "extra compile flags")
         ("clang.compiler-dir", po::value<string>(), "directory where clang compiler resides")
 		("clang.include-dir", po::value<vector<string>>(), "add a directory to be searched for header files")
 		("clang.lib-dir", po::value<vector<string>>(), "add a directory to be searched for libs")
 		("clang.dll-dir", po::value<vector<string>>(), "add a directory to be searched for dlls")
-		;
+        ("clang.extra-compile-flags", po::value<vector<string>>(), "extra compile flags")
+        ;
 
 	// 读取配置文件
 	fs::path cfg_path = get_home();
@@ -258,6 +262,16 @@ void parse(int argc, char* argv[])
 	compile_h_cmd = cc_info[cc].compile_h_cmd;
 	link_cmd = cc_info[cc].link_cmd;
 	cmd_line_builder = cc_info[cc].make_cmd_line_builder();
+
+    // 加上配置文件中指定的额外开关
+    string config_file_extra_compile_flags = cc_info[cc].compiler_name + ".extra-compile-flags";
+    if (vm.count(config_file_extra_compile_flags)) {
+        for (auto line : vm[config_file_extra_compile_flags].as<vector<string>>()) {
+            compile_cpp_cmd += " ";
+            compile_cpp_cmd += line;
+            compile_cpp_cmd += " ";
+        }
+    }
 
 	// 命令行上指定的头文件目录
 	if (vm.count("include-dir")) {

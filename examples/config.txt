@@ -4,9 +4,11 @@
 compile-by=vc
 
 [gcc]
+extra-compile-flags = -Wall
 
 [mingw]
 compiler-dir = C:\MinGW\bin
+extra-compile-flags = -Wall
 
 # 下面的libs4mingw是我自己创建的一个目录，里面是我用mingw编译生成的一些库
 
@@ -56,6 +58,9 @@ lib-dir = "C:\Program Files (x86)\Windows Kits\10\lib\10.0.17763.0\um\x86"
 compiler-dir = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.22.27905\bin\HostX86\x86"
 
 # 下面的lib的作用相当于vc之Linker > Input > Additional Dependencies里的东西 
-lib = kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib
+linklib = kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib
 # 我发现vcpkg在集成至visual studio之后，链接时相当于将vcpkg下的*.lib全都交给链接器
-lib = F:\vcpkg\installed\x86-windows\lib\*.lib
+linklib = F:\vcpkg\installed\x86-windows\lib\*.lib
+
+
+
