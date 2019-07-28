@@ -1,5 +1,6 @@
 #include "config.h"
 #include "global.h"
+#include "UserDefinedRule.h"
 
 // 路径相关的变量命名约定：
 // xxx_file 文件的相对路径，类型fs::path
@@ -70,4 +71,4 @@ fs::path vc_cpp_to_generate_pch; // vc用于产生预编译头文件的cpp文件
 unordered_map<string, string> compiler_specific_extra_compile_flags; // 源文件中指定的，编译时用的其他选项。不同文件可能用不同的编译选项
 string compiler_specific_extra_link_flags; // 源文件中指定的，链接时用的其他选项
 
-
+vector<UserDefinedRule> user_defined_rules; // .cpp文件中指定的，用户自定义规则

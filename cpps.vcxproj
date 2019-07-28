@@ -247,6 +247,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">config.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="src\UserDefinedRule.cpp" />
     <ClCompile Include="src\VcCmdLineBuilder.cpp" />
     <ClCompile Include="src\VcCpp2ObjAction.cpp" />
     <ClCompile Include="src\VcObj2ExeAction.cpp" />
@@ -279,6 +280,7 @@
     <ClInclude Include="src\sha1.hpp" />
     <ClInclude Include="src\ShebangMagic.h" />
     <ClInclude Include="src\UpdateGraphAction.h" />
+    <ClInclude Include="src\UserDefinedRule.h" />
     <ClInclude Include="src\VcCmdLineBuilder.h" />
     <ClInclude Include="src\VcCpp2ObjAction.h" />
     <ClInclude Include="src\VcObj2ExeAction.h" />

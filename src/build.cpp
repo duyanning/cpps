@@ -130,6 +130,20 @@ bool build_exe()
 
 	update_dependency->update();
 
+
+    for (auto r : user_defined_rules) {
+        for (auto t : r.targets) {
+            cout << "target:" << t << endl;
+        }
+        for (auto p : r.prerequisites) {
+            cout << "prerequisite:" << p << endl;
+        }
+        for (auto c : r.commands) {
+            cout << "command:" << c << endl;
+        }
+    }
+
+
 	MINILOGBLK_IF(
 		show_dep_graph, dep_graph_logger,
 		exe->show(os);

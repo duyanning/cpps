@@ -2,6 +2,7 @@
 #define INFOPACKAGESCANNED_H
 
 //#include "FileSig.h"
+#include "UserDefinedRule.h"
 
 namespace boost {
     namespace serialization {
@@ -34,6 +35,8 @@ struct InfoPackageScanned {
     bool referenced_vc_use_pch = false;
     fs::path referenced_vc_h_to_precompile;
     fs::path referenced_vc_cpp_to_generate_pch;
+
+    vector<UserDefinedRule> user_defined_rules;
 
     void clear()
     {

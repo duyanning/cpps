@@ -4,6 +4,7 @@
 #include "helpers.h"
 #include "InfoPackageScanned.h"
 #include "sha1.hpp"
+#include "UserDefinedRule.h"
 
 #ifdef HAVE_REGEX
 using std::regex;
@@ -26,51 +27,6 @@ void add_libs_from_string(vector<string>& libs_vector, string libs_string)
     copy(parts.begin(), parts.end(), back_inserter(libs_vector));
 }
 
-// 各部分的命名可参考 https://www.gnu.org/software/make/manual/make.html#Rule-Introduction
-void process_user_defined_rule(string rule)
-{
-    //cout << rule << endl;
-    // 形如 ui.cpp ui.h : ui.fl // fluid -c ui.fl
-    // ui.cpp ui.h : ui.fl 叫dependency relationship。冒号前的叫targets，冒号后的叫prerequisites
-    // fluid -c ui.fl 叫recipe，可由多个command组成
-
-    // 分离dependency relationship与recipe部分
-    auto slash_slash_pos = rule.find("//");
-    string dependency_relationship = rule.substr(0, slash_slash_pos);
-    boost::algorithm::trim(dependency_relationship);
-    string recipe = rule.substr(slash_slash_pos + 2);
-    boost::algorithm::trim(recipe);
-    //cout << dependency_relationship << endl;
-    //cout << recipe << endl;
-
-    // 分离dependency relationship中的targets与prerequisites
-    auto colon_pos = dependency_relationship.find(":");
-    string targets = dependency_relationship.substr(0, colon_pos);
-    boost::algorithm::trim(targets);
-    string prerequisites = dependency_relationship.substr(colon_pos + 1);
-    boost::algorithm::trim(prerequisites);
-    //cout << targets << endl;
-    //cout << prerequisites << endl;
-
-    // 分离dependency relationship中的各个target
-    vector<string> target_vector;
-    std::string target_delimiters(" "); // 支持多个分界符
-    boost::split(target_vector, targets, boost::is_any_of(target_delimiters), boost::token_compress_on); // token_compress_on是为了将单词之间的多个空格视为一个
-    //for (auto t : target_vector) {
-    //    cout << ">>>" << t << "<<<" << endl;
-    //}
-
-    // 分离prerequisites中的各个prerequisite
-    vector<string> prerequisite_vector;
-    std::string prerequisite_delimiters(" "); // 支持多个分界符
-    boost::split(prerequisite_vector, prerequisites, boost::is_any_of(prerequisite_delimiters), boost::token_compress_on); // token_compress_on是为了将单词之间的多个空格视为一个
-    //for (auto p : prerequisite_vector) {
-    //    cout << ">>>" << p << "<<<" << endl;
-    //}
-
-
-
-}
 
 void scan(fs::path src_path, InfoPackageScanned& pack)
 {
@@ -189,7 +145,7 @@ void scan(fs::path src_path, InfoPackageScanned& pack)
         // 搜集用户自定义规则
         if (regex_search(line, matches, user_defined_rule_pat)) {
             //cout << matches[1] << endl;
-            process_user_defined_rule(matches[1]);
+            process_user_defined_rule(src_path, matches[1], pack);
 
         }
 
@@ -222,6 +178,7 @@ void check_referenced_file(fs::path src_path, InfoPackageScanned& pack)
 
 }
 
+// 将从一个.cpp文件中搜集得到的信息，汇总到全局信息中
 void merge(const InfoPackageScanned& pack)
 {
     copy(pack.referenced_libs.begin(), pack.referenced_libs.end(), std::back_inserter(libs));
@@ -237,6 +194,9 @@ void merge(const InfoPackageScanned& pack)
     vc_use_pch = pack.referenced_vc_use_pch;
     vc_h_to_precompile = pack.referenced_vc_h_to_precompile;
     vc_cpp_to_generate_pch = pack.referenced_vc_cpp_to_generate_pch;
+
+    copy(pack.user_defined_rules.begin(), pack.user_defined_rules.end(), std::back_inserter(user_defined_rules));
+
 }
 
 void collect_source(fs::path src_path)

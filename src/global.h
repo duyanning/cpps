@@ -3,6 +3,7 @@
 
 #include "CompilerInfo.h"
 #include "CmdLineBuilder.h"
+#include "UserDefinedRule.h"
 
 void parse(int argc, char* argv[]);
 void collect();
@@ -30,6 +31,9 @@ extern fs::path vc_cpp_to_generate_pch;
 //extern unordered_map<fs::path, string> compiler_specific_extra_compile_flags;
 extern unordered_map<string, string> compiler_specific_extra_compile_flags;
 extern string compiler_specific_extra_link_flags;
+extern vector<UserDefinedRule> user_defined_rules;
+
+
 extern string compiler_dir;
 extern string compile_cmd_include_dirs;
 extern string link_cmd_lib_dirs;
