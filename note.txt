@@ -239,3 +239,68 @@ C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\Tools\;
 下面剩下的都是系统自己的路径
 C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\MinGW\bin;F:\myprj\cpps\Debug;C:\Users\duyanning\AppData\Local\Microsoft\WindowsApps;C:\Program Files\Java\jdk1.8.0_144\bin;F:\java-tools\apache-maven-3.6.1\bin;;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja;F:\vcpkg\installed\x86-windows\tools\qt5
 
+* 有必要自动生成.cpp文件吗？
+例子：
+比如fltk的fluid
+可从.fl文件生成.cpp文件跟.h文件
+
+例子：
+qt的moc从.h生成.cpp
+
+例子：
+qt的uic从.ui(qt的界面文件)生成.h
+uic widget.ui -o ui_widget.h
+http://c.biancheng.net/view/1820.html
+
+
+有生成.h的，有生成.cpp的
+
+
+
+给.cpp文件附加动作(本来.cpp文件是没有关联动作的)
+并让.cpp文件依赖于.fl文件(本来在依赖图中.cpp文件是叶子节点)
+
+至于要生成.cpp文件需要执行什么动作，需要在其他先天存在的.cpp文件中指定
+#+BEGIN_SRC c++
+
+/* cpps-make a.cpp : a.fl
+fluid -c filename.fl
+*/
+
+#+END_SRC
+
+动作部分可以有多行，直到*/
+每一行都会成为一个ShellAction对象，挂在.cpp文件对象身上。
+
+参考： https://doc.qt.io/archives/qt-4.8/moc.html
+#+BEGIN_SRC c++
+/* cpps-make moc_myclass.cpp : myclass.h
+moc myclass.h
+*/
+
+#+END_SRC
+
+因为这类.cpp是生成的，所以在scan阶段，可能并不存在，所以usingcpp跟using指令还得处理文件不存在的情况，
+#+BEGIN_SRC c++
+#include xxx.h // using(gen) moc_myclass.cpp
+#+END_SRC
+
+或者可以把生成动作也写在这里
+#+BEGIN_SRC c++
+#include xxx.h // using(gen) moc_myclass.cpp : myclass.h    // moc myclass.h
+#+END_SRC
+
+只产生.cpp好处理，要是也产生.h，那么编译.cpp的顺序就很重要。
+要先产生.h，产生才能编译包含该.h的其他.cpp。
+(可以参考处理gcc预编译头文件的做法，单独搞个阶段处理生成他们)
+
+
+
+
+说这么多？因为python脚本使用fltk时，有没有自动执行fluid？
+http://pyfltk.sourceforge.net/
+
+
+
+这个事情先放放
+
