@@ -8,6 +8,7 @@
 
 bool FollowRecipeAction::execute(const DepInfo& info)
 {
+    //cout << "get here" << endl;
     // 因为一个规则可能生成多个target，所以本action会挂在多个节点上。执行一次就行了。
     if (m_executed) return true;
     m_executed = true;
@@ -24,8 +25,25 @@ bool FollowRecipeAction::execute(const DepInfo& info)
 
     boost::timer::cpu_timer timer;
 
+    _MINILOG(build_exe_summay_logger, "making ");
+    MINILOGBLK_IF(
+        build_exe_summay_logger.is_enabled(), build_exe_summay_logger,
+        for (auto t : m_rule.targets) {
+            os << t.filename().string();
+            os << " ";
+        }
+        os << endl;
+    );
+
+
+    // 确保目录存在
+    for (auto t : m_rule.targets) {
+        create_directories(t.parent_path());
+    }
+
     for (auto c : m_rule.commands) {
         //cout << "executing command: " << c << endl;
+        MINILOG(build_exe_detail_logger, c);
         system(c.c_str());
     }
 
@@ -85,7 +103,7 @@ bool FollowRecipeAction::execute(const DepInfo& info)
         a_target->generate_birth_cert();
     }
     
-    //MINILOG(build_exe_timer_logger, timer.format(boost::timer::default_places, "%ws") << " compiling " << cpp_path.filename());
+    MINILOG(build_exe_timer_logger, timer.format(boost::timer::default_places, "%ws") << " making ");
 
     return true;
 }

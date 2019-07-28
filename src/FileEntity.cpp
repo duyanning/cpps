@@ -91,6 +91,7 @@ FileSig FileEntity::sig()
 // 判断是否需要执行关联的动作
 bool FileEntity::needExecuteActions(const DepInfo& info)
 {
+    //cout << "execing needExecuteActions" << this->path() << endl;
     // 如果本身还不存在，要重新生成
     if (!exists(path()))
         return true;
@@ -115,7 +116,10 @@ bool FileEntity::needExecuteActions(const DepInfo& info)
 
     ifstream ifs(birthcert_path.string());
     //cout << "birthcert: " << birthcert_path.string() << endl;
-    assert(ifs);
+    //assert(ifs);
+    // .obj跟出生证明生死与共，但从.fl产生的.cxx文件在，其出生证明未必在。因为.cxx虽是自动生成，但不在cache中。
+    if (!ifs)
+        return true;
 
     boost::archive::text_iarchive ia(ifs);
 

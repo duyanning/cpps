@@ -9,6 +9,17 @@ struct UserDefinedRule {
     vector<fs::path> targets;
     vector<fs::path> prerequisites;
     vector<string> commands;
+private:
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive& ar, const unsigned int version)
+    {
+        ar& dir;
+        ar&targets;
+        ar& prerequisites;
+        ar& commands;
+
+    }
 };
 
 void process_user_defined_rule(fs::path src_path, string rule, InfoPackageScanned& pack);

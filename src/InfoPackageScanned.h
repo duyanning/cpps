@@ -60,6 +60,8 @@ private:
         ar & referenced_vc_use_pch;
         ar & referenced_vc_h_to_precompile;
         ar & referenced_vc_cpp_to_generate_pch;
+        ar& user_defined_rules;
+        ar& generated_files;
     }
 
 };

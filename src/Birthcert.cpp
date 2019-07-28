@@ -12,16 +12,23 @@ void Birthcert::addSig(string path, const FileSig& sig)
 
 bool Birthcert::verifySig(string path, const FileSig& sig)
 {
+    //cout << "verifySig: " << path << endl;
     auto it = m_map.find(path);
-    if (it == m_map.end())
+    if (it == m_map.end()) {
+        //cout << "not found in map" << endl;
         return true;
+    }
+        
 
     
     FileSig old_sig = it->second;
 
-    if (old_sig == sig)
+    if (old_sig == sig) {
+        //cout << "equal" << endl;
         return true;
-
+    }
+        
+    //cout << "not equal" << endl;
     return false;
 
 }
