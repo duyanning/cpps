@@ -1,9 +1,23 @@
 #include "config.h"
+#include "global.h"
 #include "helpers.h"
 #include "FileEntity.h" // using Entity.cpp
 #include "Loggers.h"
 #include "Birthcert.h"
 #include "sha1.hpp"
+
+FileEntityPtr makeFileEntity(fs::path path)
+{
+    auto it = map_file_path_to_ptr.find(path.string());
+    if (it != map_file_path_to_ptr.end()) {
+        return it->second;
+    }
+    
+    FileEntityPtr p{ new FileEntity(path) };
+    map_file_path_to_ptr[path.string()] = p;
+
+    return p;
+}
 
 FileEntity::FileEntity(fs::path path)
 :

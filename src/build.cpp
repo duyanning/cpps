@@ -131,17 +131,17 @@ bool build_exe()
 	update_dependency->update();
 
 
-    for (auto r : user_defined_rules) {
-        for (auto t : r.targets) {
-            cout << "target:" << t << endl;
-        }
-        for (auto p : r.prerequisites) {
-            cout << "prerequisite:" << p << endl;
-        }
-        for (auto c : r.commands) {
-            cout << "command:" << c << endl;
-        }
-    }
+    //for (auto r : user_defined_rules) {
+    //    for (auto t : r.targets) {
+    //        cout << "target:" << t << endl;
+    //    }
+    //    for (auto p : r.prerequisites) {
+    //        cout << "prerequisite:" << p << endl;
+    //    }
+    //    for (auto c : r.commands) {
+    //        cout << "command:" << c << endl;
+    //    }
+    //}
 
 
 	MINILOGBLK_IF(

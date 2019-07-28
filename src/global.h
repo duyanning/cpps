@@ -4,6 +4,7 @@
 #include "CompilerInfo.h"
 #include "CmdLineBuilder.h"
 #include "UserDefinedRule.h"
+#include "FileEntity.h"
 
 void parse(int argc, char* argv[]);
 void collect();
@@ -32,6 +33,10 @@ extern fs::path vc_cpp_to_generate_pch;
 extern unordered_map<string, string> compiler_specific_extra_compile_flags;
 extern string compiler_specific_extra_link_flags;
 extern vector<UserDefinedRule> user_defined_rules;
+
+
+//extern unordered_map<fs::path, FileEntityPtr> map_file_path_to_ptr;
+extern unordered_map<string, FileEntityPtr> map_file_path_to_ptr;
 
 
 extern string compiler_dir;

@@ -1,6 +1,7 @@
 #include "config.h"
 #include "global.h"
 #include "UserDefinedRule.h"
+#include "FileEntity.h"
 
 // 路径相关的变量命名约定：
 // xxx_file 文件的相对路径，类型fs::path
@@ -72,3 +73,7 @@ unordered_map<string, string> compiler_specific_extra_compile_flags; // 源文�
 string compiler_specific_extra_link_flags; // 源文件中指定的，链接时用的其他选项
 
 vector<UserDefinedRule> user_defined_rules; // .cpp文件中指定的，用户自定义规则
+
+
+//unordered_map<fs::path, FileEntityPtr> map_file_path_to_ptr;
+unordered_map<string, FileEntityPtr> map_file_path_to_ptr;
