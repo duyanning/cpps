@@ -89,33 +89,7 @@ bool build_exe()
 			obj->addAction(makeGccCpp2ObjAction());
 		}
 		else if (cc == CC::VC) {
-			//string additional_options = "";
-			//fs::path h_path;
-			//if (headers_to_pc.size() >= 1) {
-			//	h_path = headers_to_pc[0];
-			//}
-			//if (headers_to_pc.empty()) { // 如果压根没有预编译头文件
-
-			//}
-			//else {
-			//	//fs::path h_path = source2header_to_pc[src_path];
-			//	//fs::path h_path = headers_to_pc[0];
-			//	fs::path pch_path = shadow(h_path);
-			//	pch_path += ".pch";
-
-			//	additional_options += "/Fp: ";
-			//	additional_options += pch_path.string();
-			//	if (is_one_of(src_path, sources_to_pc)) { // 用于生成预编译头文件的
-			//		additional_options += " /Yc";
-			//	}
-			//	else { // 使用预编译头文件的
-			//		additional_options += " /Yu";
-			//	}
-			//	additional_options += h_path.filename().string();
-			//}
-
 			obj->addAction(makeVcCpp2ObjAction());
-
 		}
 		else {
 			assert(false);
@@ -140,9 +114,6 @@ bool build_exe()
 			FileEntityPtr dep = makeFileEntity(dep_path);
 			obj_update->addPrerequisite(dep);
 
-			// 其实dep文件也是易变的，但我们这会为简便起见，就当它不会变
-			// dep->addPrerequisite(src);
-			// dep->addAction(makeCpp2DepAction());
 		}
 
 
