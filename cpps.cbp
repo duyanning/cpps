@@ -83,6 +83,8 @@
 		<Unit filename="src/FileEntity.cpp" />
 		<Unit filename="src/FileEntity.h" />
 		<Unit filename="src/FileSig.h" />
+		<Unit filename="src/FollowRecipeAction.cpp" />
+		<Unit filename="src/FollowRecipeAction.h" />
 		<Unit filename="src/GccCmdLineBuilder.cpp" />
 		<Unit filename="src/GccCmdLineBuilder.h" />
 		<Unit filename="src/GccCpp2ObjAction.cpp" />
@@ -102,10 +104,13 @@
 		<Unit filename="src/MiniLogger.h" />
 		<Unit filename="src/PhonyEntity.cpp" />
 		<Unit filename="src/PhonyEntity.h" />
+		<Unit filename="src/SafeCD.h" />
 		<Unit filename="src/ShebangMagic.cpp" />
 		<Unit filename="src/ShebangMagic.h" />
 		<Unit filename="src/UpdateGraphAction.cpp" />
 		<Unit filename="src/UpdateGraphAction.h" />
+		<Unit filename="src/UserDefinedRule.cpp" />
+		<Unit filename="src/UserDefinedRule.h" />
 		<Unit filename="src/VcCmdLineBuilder.cpp" />
 		<Unit filename="src/VcCmdLineBuilder.h" />
 		<Unit filename="src/VcCpp2ObjAction.cpp" />

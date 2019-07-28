@@ -27,6 +27,16 @@ void add_libs_from_string(vector<string>& libs_vector, string libs_string)
     copy(parts.begin(), parts.end(), back_inserter(libs_vector));
 }
 
+void add_src(fs::path referencing_src, string referenced_name, bool check_existence, InfoPackageScanned& pack)
+{
+    fs::path a = referencing_src;
+    a.remove_filename();
+    a /= referenced_name;
+    pack.referenced_sources.push_back(a);
+    if (!check_existence) {
+        pack.generated_files.push_back(a);
+    }
+}
 
 void scan(fs::path src_path, InfoPackageScanned& pack)
 {
@@ -40,14 +50,12 @@ void scan(fs::path src_path, InfoPackageScanned& pack)
 
     // 如果cpps在运行时崩溃，很有可能是此处正则表达式有问题，往往是R"()"少了最右边的那个括号
 
-	regex usingcpp_pat{ R"(^\s*#include\s+"([\w\./]+)\.h"\s+//\s+usingcpp)" };
-	//regex using_pat{ R"(using\s+([\w\./]+\.(cpp|cxx|c\+\+|cc|c)))" }; // | 或的顺序还挺重要，把长的排前边。免得前缀就匹配。
+	//regex usingcpp_pat{ R"(^\s*#include\s+"([\w\./]+)\.h"\s+//\s+usingcpp)" };
+    regex usingcpp_pat{ R"(^\s*#include\s+"([\w\./]+)\.h"\s+//\s+usingcpp(\s+(nocheck))?)" };
     regex using_pat{ R"(using(\s+(nocheck)\s+|\s+)([\w\./]+\.(cpp|cxx|c\+\+|cc|c)))" }; // | 或的顺序还挺重要，把长的排前边。免得前缀就匹配。
-	//regex linklib_pat{ R"(//\s+linklib\s+([\w\-\.]+))" };
     regex linklib_pat{ R"(//\s+linklib\s+(.+\w))" }; // linklib 后边可以跟多个库的名字，用空格分隔，库名字既可以带扩展名，也可以不带。
 
 	string compiler_specific_linklib_string = R"(//\s+)" + cc_info[cc].compiler_name;
-	//compiler_specific_linklib_string += R"(-linklib\s+([\w\-\.]+))";
     compiler_specific_linklib_string += R"(-linklib\s+(.+\w))";
 	regex compiler_specific_linklib_pat{ compiler_specific_linklib_string };
 
@@ -64,7 +72,6 @@ void scan(fs::path src_path, InfoPackageScanned& pack)
 	regex compiler_specific_extra_link_flags_pat{ compiler_specific_extra_link_flags_string };
 
     // 想要新增的指令
-    // cpps-volatile                     包含这个指令的.cpp文件因为内容会在扫描前后会发生变化，所以每次都应当扫描，以确定它引用的其他.cpp
     // cpps-advanced-features on|off     高级特性打开后，才会扫描一些指令，为的是加快扫描速度
     // cpps-before-compile shell命令         在编译本.cpp之前执行的操作
     // cpps-after-compile shell命令        在编译本.cpp之后执行的操作
@@ -81,14 +88,22 @@ void scan(fs::path src_path, InfoPackageScanned& pack)
 
 		// 搜集引用的.cpp文件
 		if (regex_search(line, matches, usingcpp_pat)) {
-			string cpp_file_name = matches[1];
-			cpp_file_name += ".cpp";
-			MINILOG(collect_info_detail_logger, "found: " << cpp_file_name);
+            // !!!!!!! 下面这段注释不要删，留着方便调试
+            //cout << matches.size() << endl;
+            //for (size_t i = 0; i < matches.size(); i++) {
+            //    cout << surround(matches[i]) << endl;
+            //}
+            string filename = matches[1];
+            string nocheck = matches[3];
+
+			filename += ".cpp";
+			MINILOG(collect_info_detail_logger, "found: " << filename);
 			// 一个.cpp文件中引用的另一个.cpp文件，是以相对路径的形式指明的
-			fs::path a = src_path;
-			a.remove_filename();
-			a /= cpp_file_name;
-            pack.referenced_sources.push_back(a);
+            add_src(src_path, filename, nocheck != "nocheck", pack);
+			//fs::path a = src_path;
+			//a.remove_filename();
+			//a /= filename;
+   //         pack.referenced_sources.push_back(a);
 		}
 		else if (regex_search(line, matches, using_pat)) {
 			MINILOG(collect_info_detail_logger, "found: " << matches[0]);
@@ -101,13 +116,14 @@ void scan(fs::path src_path, InfoPackageScanned& pack)
             string filename = matches[3];
             //exit(0);
 			// 一个.cpp文件中引用的另一个.cpp文件，是以相对路径的形式指明的
-			fs::path a = src_path;
-			a.remove_filename();
-			a /= filename;
-            pack.referenced_sources.push_back(a);
-            if (nocheck == "nocheck") {
-                pack.generated_files.push_back(a);
-            }
+            add_src(src_path, filename, nocheck != "nocheck", pack);
+			//fs::path a = src_path;
+			//a.remove_filename();
+			//a /= filename;
+   //         pack.referenced_sources.push_back(a);
+   //         if (nocheck == "nocheck") {
+   //             pack.generated_files.push_back(a);
+   //         }
 		}
 
 		// 搜集使用的库名字

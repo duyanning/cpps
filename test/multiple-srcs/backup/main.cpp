@@ -3,7 +3,7 @@
 #include <string>
 
 #include "foo.h" // using foo.cpp
-#include "bar.h" // usingcpp nocheck 
+#include "bar.h" // usingcpp 
 
 using namespace std;
 
