@@ -26,6 +26,52 @@ void add_libs_from_string(vector<string>& libs_vector, string libs_string)
     copy(parts.begin(), parts.end(), back_inserter(libs_vector));
 }
 
+// 各部分的命名可参考 https://www.gnu.org/software/make/manual/make.html#Rule-Introduction
+void process_user_defined_rule(string rule)
+{
+    //cout << rule << endl;
+    // 形如 ui.cpp ui.h : ui.fl // fluid -c ui.fl
+    // ui.cpp ui.h : ui.fl 叫dependency relationship。冒号前的叫targets，冒号后的叫prerequisites
+    // fluid -c ui.fl 叫recipe，可由多个command组成
+
+    // 分离dependency relationship与recipe部分
+    auto slash_slash_pos = rule.find("//");
+    string dependency_relationship = rule.substr(0, slash_slash_pos);
+    boost::algorithm::trim(dependency_relationship);
+    string recipe = rule.substr(slash_slash_pos + 2);
+    boost::algorithm::trim(recipe);
+    //cout << dependency_relationship << endl;
+    //cout << recipe << endl;
+
+    // 分离dependency relationship中的targets与prerequisites
+    auto colon_pos = dependency_relationship.find(":");
+    string targets = dependency_relationship.substr(0, colon_pos);
+    boost::algorithm::trim(targets);
+    string prerequisites = dependency_relationship.substr(colon_pos + 1);
+    boost::algorithm::trim(prerequisites);
+    //cout << targets << endl;
+    //cout << prerequisites << endl;
+
+    // 分离dependency relationship中的各个target
+    vector<string> target_vector;
+    std::string target_delimiters(" "); // 支持多个分界符
+    boost::split(target_vector, targets, boost::is_any_of(target_delimiters), boost::token_compress_on); // token_compress_on是为了将单词之间的多个空格视为一个
+    //for (auto t : target_vector) {
+    //    cout << ">>>" << t << "<<<" << endl;
+    //}
+
+    // 分离prerequisites中的各个prerequisite
+    vector<string> prerequisite_vector;
+    std::string prerequisite_delimiters(" "); // 支持多个分界符
+    boost::split(prerequisite_vector, prerequisites, boost::is_any_of(prerequisite_delimiters), boost::token_compress_on); // token_compress_on是为了将单词之间的多个空格视为一个
+    //for (auto p : prerequisite_vector) {
+    //    cout << ">>>" << p << "<<<" << endl;
+    //}
+
+
+
+}
+
 void scan(fs::path src_path, InfoPackageScanned& pack)
 {
     pack.cpp_sig = SHA1::from_file(src_path.string());
@@ -35,6 +81,8 @@ void scan(fs::path src_path, InfoPackageScanned& pack)
 	ifstream in(src_path.string());
 
 	string line;
+
+    // 如果cpps在运行时崩溃，很有可能是此处正则表达式有问题，往往是R"()"少了最右边的那个括号
 
 	regex usingcpp_pat{ R"(^\s*#include\s+"([\w\./]+)\.h"\s+//\s+usingcpp)" };
 	regex using_pat{ R"(using\s+([\w\./]+\.(cpp|cxx|c\+\+|cc|c)))" }; // | 或的顺序还挺重要，把长的排前边。免得前缀就匹配。
@@ -66,10 +114,14 @@ void scan(fs::path src_path, InfoPackageScanned& pack)
     // cpps-before-link shell命令            在链接之前执行的操作
     // cpps-after-link shell命令           在链接之后执行的操作
 
+    regex user_defined_rule_pat{ R"(//\scpps-make\s+(.+\w))" };
 
 	int n = 0;
 	while (getline(in, line)) {
 		smatch matches;
+
+        //cout << line << endl;
+
 		// 搜集引用的.cpp文件
 		if (regex_search(line, matches, usingcpp_pat)) {
 			string cpp_file_name = matches[1];
@@ -133,6 +185,13 @@ void scan(fs::path src_path, InfoPackageScanned& pack)
                 pack.referenced_vc_cpp_to_generate_pch = src_path;
             }
 		}
+
+        // 搜集用户自定义规则
+        if (regex_search(line, matches, user_defined_rule_pat)) {
+            //cout << matches[1] << endl;
+            process_user_defined_rule(matches[1]);
+
+        }
 
 
 		if (max_line_scan != -1) {

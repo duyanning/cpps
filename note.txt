@@ -267,6 +267,9 @@ http://c.biancheng.net/view/1820.html
 fluid -c filename.fl
 */
 
+
+// cpps-make a.cpp a.h : a.fl // fluid -c filename.fl
+
 #+END_SRC
 
 动作部分可以有多行，直到*/
@@ -277,6 +280,8 @@ fluid -c filename.fl
 /* cpps-make moc_myclass.cpp : myclass.h
 moc myclass.h
 */
+
+
 
 #+END_SRC
 
