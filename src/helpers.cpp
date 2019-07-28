@@ -42,7 +42,10 @@ fs::path shadow(fs::path p)
     
     //cout << "orig:" << p << endl;
     // 获取cache的位置
-    fs::path cache_dir_name(".cpps/cache");
+    //fs::path cache_dir_name(".cpps/cache");
+    fs::path cache_dir_name(".cpps");
+    cache_dir_name /= "cache";  // window跟linux的路径分隔符不一样
+    //cout << "cache_dir_name" << cache_dir_name.string() << endl;
 
     // 如果p已经位于cache之中，直接返回
     if (p.string().find(cache_dir_name.string()) != std::string::npos) {
@@ -128,5 +131,16 @@ void put_env(const std::string name, const std::string value)
 	string envstring = name + "=" + value;
 	putenv(const_cast<char*>(envstring.c_str()));
 #endif
+
+}
+
+string surround(string s)
+{
+    string r;
+    r += ">>>";
+    r += s;
+    r += "<<<";
+
+    return r;
 
 }

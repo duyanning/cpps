@@ -100,23 +100,23 @@ void parse(int argc, char* argv[])
 	config_file_opts.add_options()
 		//("general.run-by", po::value<int>(&config_general_run_by)->default_value(1), "run using: 0 - system(), 1 - execv()")
 		("general.compile-by", po::value<string>(&config_general_compile_by)->default_value("gcc"), "compile using: gcc, mingw, vc, clang")
-		("gcc.compiler-dir", po::value<string>(), "directory where gcc compiler resides")
+		("gcc.compiler-dir", po::value<vector<string>>(), "directory where gcc compiler resides")
 		("gcc.include-dir", po::value<vector<string>>(), "add a directory to be searched for header files")
 		("gcc.lib-dir", po::value<vector<string>>(), "add a directory to be searched for libs")
 		("gcc.dll-dir", po::value<vector<string>>(), "add a directory to be searched for dlls")
         ("gcc.extra-compile-flags", po::value<vector<string>>(), "extra compile flags")
-        ("mingw.compiler-dir", po::value<string>(), "directory where mingw compiler resides")
+        ("mingw.compiler-dir", po::value<vector<string>>(), "directory where mingw compiler resides")
 		("mingw.include-dir", po::value<vector<string>>(), "add a directory to be searched for header files")
 		("mingw.lib-dir", po::value<vector<string>>(), "add a directory to be searched for libs")
 		("mingw.dll-dir", po::value<vector<string>>(), "add a directory to be searched for dlls")
         ("mingw.extra-compile-flags", po::value<vector<string>>(), "extra compile flags")
-        ("vc.compiler-dir", po::value<string>(), "directory where vc compiler resides")
+        ("vc.compiler-dir", po::value<vector<string>>(), "directory where vc compiler resides")
 		("vc.include-dir", po::value<vector<string>>(), "add a directory to be searched for header files")
 		("vc.lib-dir", po::value<vector<string>>(), "add a directory to be searched for libs")
         ("vc.dll-dir", po::value<vector<string>>(), "add a directory to be searched for dlls")
         ("vc.linklib", po::value<vector<string>>(), "libs to link")
         ("vc.extra-compile-flags", po::value<vector<string>>(), "extra compile flags")
-        ("clang.compiler-dir", po::value<string>(), "directory where clang compiler resides")
+        ("clang.compiler-dir", po::value<vector<string>>(), "directory where clang compiler resides")
 		("clang.include-dir", po::value<vector<string>>(), "add a directory to be searched for header files")
 		("clang.lib-dir", po::value<vector<string>>(), "add a directory to be searched for libs")
 		("clang.dll-dir", po::value<vector<string>>(), "add a directory to be searched for dlls")
@@ -306,12 +306,21 @@ void parse(int argc, char* argv[])
 	// 将编译器所在目录加入PATH环境变量，以便cpps调用
 	string config_file_compiler_dir = cc_info[cc].compiler_name + ".compiler-dir";
 	if (vm.count(config_file_compiler_dir)) {
-		compiler_dir = vm[config_file_compiler_dir].as<string>();
-		string env_path_value = "";
-		env_path_value += compiler_dir;
-		env_path_value += ";";
-		env_path_value += getenv("PATH");
-		put_env("PATH", env_path_value.c_str());
+
+        string env_path_value = "";
+        for (auto compiler_dir : vm[config_file_compiler_dir].as<vector<string>>()) {
+            env_path_value += compiler_dir;
+            env_path_value += ";";
+        }
+        env_path_value += getenv("PATH");
+        put_env("PATH", env_path_value.c_str());
+
+		//compiler_dir = vm[config_file_compiler_dir].as<string>();
+		//string env_path_value = "";
+		//env_path_value += compiler_dir;
+		//env_path_value += ";";
+		//env_path_value += getenv("PATH");
+		//put_env("PATH", env_path_value.c_str());
 	}
 
 }

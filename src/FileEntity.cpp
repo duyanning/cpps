@@ -88,7 +88,7 @@ FileSig FileEntity::sig()
     return sig;
 }
 
-
+// 判断是否需要执行关联的动作
 bool FileEntity::needExecuteActions(const DepInfo& info)
 {
     // 如果本身还不存在，要重新生成
@@ -110,10 +110,11 @@ bool FileEntity::needExecuteActions(const DepInfo& info)
 
     // 有下级节点的，还要看一下下级结点跟自己出身证明上记录的是否一致
     // birthcert中记录的下级文件，可能少于.d中列出的下级文件。(这种情况发生在第一与第二次执行之间)
-    fs::path birthcert_path = path();
+    fs::path birthcert_path = shadow(path());
     birthcert_path += ".birthcert";
 
     ifstream ifs(birthcert_path.string());
+    //cout << "birthcert: " << birthcert_path.string() << endl;
     assert(ifs);
 
     boost::archive::text_iarchive ia(ifs);
@@ -190,7 +191,9 @@ void FileEntity::generate_birth_cert(const vector<fs::path>& pre_file_paths)
         birthcert.addSig(f->path().string(), f->sig());
     }
 
-    fs::path birthcert_path = this->path();
+    //cout << "before shadow: " << this->path() << endl;
+    fs::path birthcert_path = shadow(this->path());
+    //cout << "after shadow: " << birthcert_path << endl;
     birthcert_path += ".birthcert";
     ofstream ofs(birthcert_path.string());
     assert(ofs);

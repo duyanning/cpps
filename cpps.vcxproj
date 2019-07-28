@@ -148,6 +148,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">config.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="src\FollowRecipeAction.cpp" />
     <ClCompile Include="src\GccCmdLineBuilder.cpp" />
     <ClCompile Include="src\GccCpp2ObjAction.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
@@ -259,6 +260,7 @@
     <ClInclude Include="src\CmdLineBuilder.h" />
     <ClInclude Include="src\CompilerInfo.h" />
     <ClInclude Include="src\config.h" />
+    <ClInclude Include="src\FollowRecipeAction.h" />
     <ClInclude Include="src\GccCmdLineBuilder.h" />
     <ClInclude Include="src\GccCpp2ObjAction.h" />
     <ClInclude Include="src\DepInfo.h" />

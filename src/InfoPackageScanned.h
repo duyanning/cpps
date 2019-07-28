@@ -38,6 +38,8 @@ struct InfoPackageScanned {
 
     vector<UserDefinedRule> user_defined_rules;
 
+    vector<fs::path> generated_files; // 这些文件是用户自定义规则生成的，所以我们不检查它们是否存在
+
     void clear()
     {
         InfoPackageScanned new_obj;

@@ -35,11 +35,11 @@ GchMagic::GchMagic(vector<fs::path>& headers_to_precompile)
 
             move(shadow_gch, gch);
 
-            fs::path gch_birthcert = gch;
-            gch_birthcert += ".birthcert";
-            fs::path shadow_gch_birthcert = shadow_gch;
-            shadow_gch_birthcert += ".birthcert";
-            move(shadow_gch_birthcert, gch_birthcert);
+            //fs::path gch_birthcert = gch;
+            //gch_birthcert += ".birthcert";
+            //fs::path shadow_gch_birthcert = shadow_gch;
+            //shadow_gch_birthcert += ".birthcert";
+            //move(shadow_gch_birthcert, gch_birthcert);
 
         }
     }
@@ -59,11 +59,11 @@ GchMagic::~GchMagic()
             MINILOG(gch_magic_logger, gch << "\n=>\n" << shadow_gch);
             move(gch, shadow_gch);
 
-            fs::path gch_birthcert = gch;
-            gch_birthcert += ".birthcert";
-            fs::path shadow_gch_birthcert = shadow_gch;
-            shadow_gch_birthcert += ".birthcert";
-            move(gch_birthcert, shadow_gch_birthcert);
+            //fs::path gch_birthcert = gch;
+            //gch_birthcert += ".birthcert";
+            //fs::path shadow_gch_birthcert = shadow_gch;
+            //shadow_gch_birthcert += ".birthcert";
+            //move(gch_birthcert, shadow_gch_birthcert);
         }
 
         // 跟其他编译系统生成的目录形式的预编译头文件和谐相处，恢复其原名

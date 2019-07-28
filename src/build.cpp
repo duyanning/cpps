@@ -7,6 +7,7 @@
 #include "GccCpp2ObjAction.h"
 #include "VcCpp2ObjAction.h"
 #include "UpdateGraphAction.h"
+#include "FollowRecipeAction.h"
 #include "helpers.h"
 #include "Loggers.h"
 #include "H2GchAction.h"
@@ -75,7 +76,7 @@ bool build_exe()
 		assert(false);
 	}
 
-
+    // *************依赖关系图*************
 	PhonyEntityPtr update_dependency = makePhonyEntity("update dependency graph");
 
 	for (auto src_path : sources) {
@@ -130,21 +131,42 @@ bool build_exe()
 
 	update_dependency->update();
 
+    // *************用户自定义规则产生的文件*************
+    // 诸如fluid这类工具生成的文件，把它们先产生出来
+    // 理论上，这些文件是依赖关系图的一部分，只要update最终的exe就能自动生成
+    // 但是，在cpps第一次执行某脚本时，并没有.d文件，所以.h文件并不在依赖图中。
+    // 于是那些由fluild类工具生成的.h就无法纳入依赖图，从而挂在.h节点上用来生成.h的动作无法执行
+    PhonyEntityPtr update_all_generated = makePhonyEntity("update all generated");
+    for (auto r : user_defined_rules) {
+        ActionPtr action = makeFollowRecipeAction(r); // 一条规则会产生多个文件(多个target)，这些文件关联的是共同的action
+        for (auto t : r.targets) {
+            //cout << "target:" << t << endl;
+            FileEntityPtr a_target = makeFileEntity(t);
+            for (auto p : r.prerequisites) {
+                //cout << "prerequisite:" << p << endl;
+                FileEntityPtr a_prerequisite = makeFileEntity(p);
+                a_target->addPrerequisite(a_prerequisite);
+            }
+            //cout << "target: " << t << endl;
+            a_target->addAction(action);
+            update_all_generated->addPrerequisite(a_target);
+        }
+        //for (auto c : r.commands) {
+        //    cout << "command:" << c << endl;
+        //}
+    }
 
-    //for (auto r : user_defined_rules) {
-    //    for (auto t : r.targets) {
-    //        cout << "target:" << t << endl;
-    //    }
-    //    for (auto p : r.prerequisites) {
-    //        cout << "prerequisite:" << p << endl;
-    //    }
-    //    for (auto c : r.commands) {
-    //        cout << "command:" << c << endl;
-    //    }
-    //}
+    MINILOGBLK_IF(
+        show_dep_graph, dep_graph_logger,
+        os << endl;
+    update_all_generated->show(os);
+    os << endl;
+    );
 
+    update_all_generated->update();
 
-	MINILOGBLK_IF(
+    // *************exe文件*************
+    MINILOGBLK_IF(
 		show_dep_graph, dep_graph_logger,
 		exe->show(os);
 	os << endl;

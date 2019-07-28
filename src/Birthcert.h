@@ -19,6 +19,6 @@ private:
     }
 };
 
-
+// for cpps developers： 千万小心，一定要保证生成的文件在，文件的出生证明就在
 
 #endif // BIRTHCERT_H

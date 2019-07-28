@@ -41,7 +41,8 @@ void scan(fs::path src_path, InfoPackageScanned& pack)
     // 如果cpps在运行时崩溃，很有可能是此处正则表达式有问题，往往是R"()"少了最右边的那个括号
 
 	regex usingcpp_pat{ R"(^\s*#include\s+"([\w\./]+)\.h"\s+//\s+usingcpp)" };
-	regex using_pat{ R"(using\s+([\w\./]+\.(cpp|cxx|c\+\+|cc|c)))" }; // | 或的顺序还挺重要，把长的排前边。免得前缀就匹配。
+	//regex using_pat{ R"(using\s+([\w\./]+\.(cpp|cxx|c\+\+|cc|c)))" }; // | 或的顺序还挺重要，把长的排前边。免得前缀就匹配。
+    regex using_pat{ R"(using(\s+(nocheck)\s+|\s+)([\w\./]+\.(cpp|cxx|c\+\+|cc|c)))" }; // | 或的顺序还挺重要，把长的排前边。免得前缀就匹配。
 	//regex linklib_pat{ R"(//\s+linklib\s+([\w\-\.]+))" };
     regex linklib_pat{ R"(//\s+linklib\s+(.+\w))" }; // linklib 后边可以跟多个库的名字，用空格分隔，库名字既可以带扩展名，也可以不带。
 
@@ -90,12 +91,23 @@ void scan(fs::path src_path, InfoPackageScanned& pack)
             pack.referenced_sources.push_back(a);
 		}
 		else if (regex_search(line, matches, using_pat)) {
-			MINILOG(collect_info_detail_logger, "found: " << matches[1]);
+			MINILOG(collect_info_detail_logger, "found: " << matches[0]);
+            // !!!!!!! 下面这段注释不要删，留着方便调试
+            //cout << matches.size() << endl;
+            //for (size_t i = 0; i < matches.size(); i++) {
+            //    cout << surround(matches[i]) << endl;
+            //}
+            string nocheck = matches[2];
+            string filename = matches[3];
+            //exit(0);
 			// 一个.cpp文件中引用的另一个.cpp文件，是以相对路径的形式指明的
 			fs::path a = src_path;
 			a.remove_filename();
-			a /= matches.str(1);
+			a /= filename;
             pack.referenced_sources.push_back(a);
+            if (nocheck == "nocheck") {
+                pack.generated_files.push_back(a);
+            }
 		}
 
 		// 搜集使用的库名字
@@ -160,17 +172,25 @@ void scan(fs::path src_path, InfoPackageScanned& pack)
 
 }
 
+bool need_check(fs::path p, InfoPackageScanned& pack)
+{
+    auto it = find(pack.generated_files.begin(), pack.generated_files.end(), p);
+    if (it != pack.generated_files.end()) // 是产生的文件，就不需要检查
+        return false;
+    return true;
+}
+
 void check_referenced_file(fs::path src_path, InfoPackageScanned& pack)
 {
     for (auto p : pack.referenced_sources) {
-        if (!exists(p)) {
+        if (!exists(p) && need_check(p, pack)) {
             cout << p << " referenced by " << src_path << " does NOT exsit!" << endl;
             throw 1;
         }
     }
 
     for (auto p : pack.referenced_headers_to_pc) {
-        if (!exists(p)) {
+        if (!exists(p) && need_check(p, pack)) {
             cout << p << " referenced by " << src_path << " does NOT exsit!" << endl;
             throw 1;
         }
@@ -195,7 +215,8 @@ void merge(const InfoPackageScanned& pack)
     vc_h_to_precompile = pack.referenced_vc_h_to_precompile;
     vc_cpp_to_generate_pch = pack.referenced_vc_cpp_to_generate_pch;
 
-    copy(pack.user_defined_rules.begin(), pack.user_defined_rules.end(), std::back_inserter(user_defined_rules));
+    copy(pack.user_defined_rules.begin(), pack.user_defined_rules.end(), std::back_inserter(
+        user_defined_rules));
 
 }
 
