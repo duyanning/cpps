@@ -278,6 +278,7 @@
     <ClInclude Include="src\MiniLogger.h" />
     <ClInclude Include="src\GccObj2ExeAction.h" />
     <ClInclude Include="src\PhonyEntity.h" />
+    <ClInclude Include="src\SafeCD.h" />
     <ClInclude Include="src\samples.h" />
     <ClInclude Include="src\sha1.hpp" />
     <ClInclude Include="src\ShebangMagic.h" />
