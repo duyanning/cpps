@@ -13,7 +13,7 @@ file(GLOB CPPS_SRCS "src/*.cpp")
  
 add_executable (cpps ${CPPS_SRCS})
 
-find_package(Boost REQUIRED COMPONENTS system filesystem program_options serialization)
+find_package(Boost REQUIRED COMPONENTS system filesystem program_options serialization timer chrono)
 
 target_link_libraries(cpps ${Boost_LIBRARIES})
 
