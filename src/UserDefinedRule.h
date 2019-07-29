@@ -23,5 +23,7 @@ private:
 };
 
 void process_user_defined_rule(fs::path src_path, string rule, InfoPackageScanned& pack);
+void process_user_defined_rule_multi_lines(fs::path src_path, string dependency_relationship,
+    vector<string> commands, InfoPackageScanned& pack);
 
 #endif // USERDEFINEDRULE_H

@@ -81,7 +81,8 @@ void scan(fs::path src_path, InfoPackageScanned& pack)
     // cpps-before-link shell命令            在链接之前执行的操作
     // cpps-after-link shell命令           在链接之后执行的操作
 
-    regex user_defined_rule_pat{ R"(//\scpps-make\s+(.+\w))" };
+    regex user_defined_rule_pat{ R"(//\scpps-make\s+(.+\w))" }; // 单行
+    regex user_defined_rule_multi_lines_pat{R"(/\* cpps-make)"};
 
 	int n = 0;
 	while (getline(in, line)) {
@@ -186,7 +187,23 @@ void scan(fs::path src_path, InfoPackageScanned& pack)
             process_user_defined_rule(src_path, matches[1], pack);
 
         }
+        else if (regex_search(line, matches, user_defined_rule_multi_lines_pat)) {
+            //cout << matches[1] << endl;
+            string dependency_relationship;
+            getline(in, dependency_relationship);
+            
+            vector<string> commands;
+            string c;
+            getline(in, c);
+            boost::algorithm::trim(c);
+            while (c != "*/") {
+                commands.push_back(c);
+                getline(in, c);
+                boost::algorithm::trim(c);
+            }
+            process_user_defined_rule_multi_lines(src_path, dependency_relationship, commands, pack);
 
+        }
 
 		if (max_line_scan != -1) {
 			n++;

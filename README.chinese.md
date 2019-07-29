@@ -387,6 +387,24 @@ include-dir = F:\vcpkg\installed\x86-windows\include
 lib-dir = F:\vcpkg\installed\x86-windows\lib
 dll-dir = F:\vcpkg\installed\x86-windows\bin
 ```
+## 内嵌的Make
+现实中的C++工程，源代码除了C++的.cpp跟.h外，还会涉及到其他一些类型的文件。
+
+比如Qt的界面描述文件.ui，FLTK的界面描述文件.fl。
+这些文件经过编译之后，会产生.cpp或.h文件。
+除此之外，Qt著名的moc还会从.h生成.cpp。
+对于这类千变万化的东西，cpps提供了嵌入式的make脚本。
+```c++
+#include "finddialog.h"  // usingcpp
+// using nocheck finddialog.h.moc.cpp
+/* cpps-make
+finddialog.h.moc.cpp : finddialog.h
+	moc finddialog.h -o finddialog.h.moc.cpp
+*/
+```
+`using`指令后的`nocheck`告诉cpps，这个叫finddialog.h.moc.cpp的文件是build阶段生成出来的，即便扫描阶段不存在，也不要报错。
+
+`cpps-make`指令引入一条用户自定义规则，语法同Makefile，当然，不会有普通Makefile那么完备。具体请参考examples里fltk跟qt的例子。
 
 ## 其他
 QQ交流群：492455203
