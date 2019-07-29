@@ -270,6 +270,10 @@ void parse(int argc, char* argv[])
             compile_cpp_cmd += " ";
             compile_cpp_cmd += line;
             compile_cpp_cmd += " ";
+
+            compile_h_cmd += " ";
+            compile_h_cmd += line;
+            compile_h_cmd += " ";
         }
     }
 
