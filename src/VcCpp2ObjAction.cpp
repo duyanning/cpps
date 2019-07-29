@@ -105,7 +105,7 @@ bool VcCpp2ObjAction::execute(const DepInfo& info)
 	cmd += R"(/d")";
 #endif
 	//cmd += R"( -e "p")";
-	cmd += R"( | finderror)";
+	cmd += R"( 2>&1 | finderror)";
 
 
 	cmd += R"(")"; // 传给system函数的东西最后额外的引号

@@ -66,6 +66,7 @@ void scan(fs::path src_path, InfoPackageScanned& pack)
 	string compiler_specific_extra_compile_flags_string = R"(//\s+)" + cc_info[cc].compiler_name;
 	compiler_specific_extra_compile_flags_string += R"(-extra-compile-flags:\s+(.*)$)";
 	regex compiler_specific_extra_compile_flags_pat{ compiler_specific_extra_compile_flags_string };
+    // 还需要增加一个<compiler>-extra-compile-flags-global:应用于所有.cpp文件。这种东西要写在main.cpp中
 
 	string compiler_specific_extra_link_flags_string = R"(//\s+)" + cc_info[cc].compiler_name;
 	compiler_specific_extra_link_flags_string += R"(-extra-link-flags:\s+(.*)$)";
@@ -142,14 +143,14 @@ void scan(fs::path src_path, InfoPackageScanned& pack)
 		}
 
 		if (regex_search(line, matches, compiler_specific_extra_compile_flags_pat)) {
-            MINILOG(collect_info_detail_logger, "found extra link flags: " << matches[1]);
+            MINILOG(collect_info_detail_logger, "found extra compile flags: " << matches[1]);
             string flags = " ";
             flags += matches[1];
             pack.referenced_compiler_specific_extra_compile_flags[src_path.string()] += flags;
 		}
 
 		if (regex_search(line, matches, compiler_specific_extra_link_flags_pat)) {
-            MINILOG(collect_info_detail_logger, "found extra compile flags: " << matches[1]);
+            MINILOG(collect_info_detail_logger, "found extra link flags: " << matches[1]);
             string flags = " ";
             flags += matches[1];
             pack.referenced_compiler_specific_extra_link_flags += flags;
