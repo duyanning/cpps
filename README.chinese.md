@@ -103,6 +103,10 @@ git clone https://github.com/duyanning/cpps.git
 sudo apt-get install libboost-filesystem-dev
 sudo apt-get install libboost-program-options-dev
 sudo apt-get install libboost-serialization-dev
+sudo apt-get install libboost-system-dev
+sudo apt-get install libboost-regex-dev
+sudo apt-get install libboost-timer-dev
+sudo apt-get install libboost-chrono-dev
 ```
 
 ## 编译安装
