@@ -36,7 +36,9 @@ bool GccCpp2ObjAction::execute(const DepInfo& info)
 
     string cmd = compile_cpp_cmd;
 
-    cmd += compiler_specific_extra_compile_flags[cpp_path.string()];
+    cmd += compiler_specific_extra_compile_flags;
+    cmd += " ";
+    cmd += compiler_specific_extra_compile_flags_local[cpp_path.string()];
     
     cmd += " ";
     cmd += compile_cmd_include_dirs;

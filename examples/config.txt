@@ -30,7 +30,7 @@ dll-dir = C:\MinGW\bin
 
 # vc配合vcpkg，不要太爽
 include-dir = F:\vcpkg\installed\x86-windows\include
-include-dir = F:\vcpkg\installed\x86-windows\include\QtWidgets
+#include-dir = F:\vcpkg\installed\x86-windows\include\QtWidgets
 lib-dir = F:\vcpkg\installed\x86-windows\lib
 dll-dir = F:\vcpkg\installed\x86-windows\bin
 

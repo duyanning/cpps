@@ -28,9 +28,8 @@ extern map<fs::path, fs::path> source2header_to_pc;
 extern bool vc_use_pch;
 extern fs::path vc_h_to_precompile;
 extern fs::path vc_cpp_to_generate_pch;
-//extern string compiler_specific_extra_compile_flags;
-//extern unordered_map<fs::path, string> compiler_specific_extra_compile_flags;
-extern unordered_map<string, string> compiler_specific_extra_compile_flags;
+extern string compiler_specific_extra_compile_flags;
+extern unordered_map<string, string> compiler_specific_extra_compile_flags_local;
 extern string compiler_specific_extra_link_flags;
 extern vector<UserDefinedRule> user_defined_rules;
 

@@ -28,7 +28,8 @@ struct InfoPackageScanned {
 
     vector<fs::path> referenced_sources; // 本.cpp引用的其他.cpp
     vector<string> referenced_libs; // 本.cpp通过linklib或<compiler>-linklib引用的库名字
-    unordered_map<string, string> referenced_compiler_specific_extra_compile_flags; // 本.cpp通过<compiler>-extra-compile-flags指定的额外编译选项
+    string referenced_compiler_specific_extra_compile_flags; // 本.cpp通过<compiler>-extra-compile-flags指定的额外编译选项
+    unordered_map<string, string> referenced_compiler_specific_extra_compile_flags_local; // 本.cpp通过<compiler>-extra-compile-flags(local)指定的额外编译选项
     string referenced_compiler_specific_extra_link_flags; // 本.cpp通过<compiler>-extra-link-flags指定的额外链接选项
     vector<fs::path> referenced_headers_to_pc; // 本.cpp通过precompile指定的需要预编译的头文件
 
@@ -54,7 +55,8 @@ private:
         ar& cpp_sig;
         ar& referenced_sources;
         ar& referenced_libs;
-        ar & referenced_compiler_specific_extra_compile_flags;
+        ar& referenced_compiler_specific_extra_compile_flags;
+        ar& referenced_compiler_specific_extra_compile_flags_local;
         ar & referenced_compiler_specific_extra_link_flags;
         ar & referenced_headers_to_pc;
         ar & referenced_vc_use_pch;

@@ -50,7 +50,6 @@ void scan(fs::path src_path, InfoPackageScanned& pack)
 
     // 如果cpps在运行时崩溃，很有可能是此处正则表达式有问题，往往是R"()"少了最右边的那个括号
 
-	//regex usingcpp_pat{ R"(^\s*#include\s+"([\w\./]+)\.h"\s+//\s+usingcpp)" };
     regex usingcpp_pat{ R"(^\s*#include\s+"([\w\./]+)\.h"\s+//\s+usingcpp(\s+(nocheck))?)" };
     regex using_pat{ R"(using(\s+(nocheck)\s+|\s+)([\w\./]+\.(cpp|cxx|c\+\+|cc|c)))" }; // | 或的顺序还挺重要，把长的排前边。免得前缀就匹配。
     regex linklib_pat{ R"(//\s+linklib\s+(.+\w))" }; // linklib 后边可以跟多个库的名字，用空格分隔，库名字既可以带扩展名，也可以不带。
@@ -66,7 +65,10 @@ void scan(fs::path src_path, InfoPackageScanned& pack)
 	string compiler_specific_extra_compile_flags_string = R"(//\s+)" + cc_info[cc].compiler_name;
 	compiler_specific_extra_compile_flags_string += R"(-extra-compile-flags:\s+(.*)$)";
 	regex compiler_specific_extra_compile_flags_pat{ compiler_specific_extra_compile_flags_string };
-    // 还需要增加一个<compiler>-extra-compile-flags-global:应用于所有.cpp文件。这种东西要写在main.cpp中
+
+    string compiler_specific_extra_compile_flags_local_string = R"(//\s+)" + cc_info[cc].compiler_name;
+    compiler_specific_extra_compile_flags_local_string += R"(-extra-compile-flags(local):\s+(.*)$)";
+    regex compiler_specific_extra_compile_flags_local_pat{ compiler_specific_extra_compile_flags_string };
 
 	string compiler_specific_extra_link_flags_string = R"(//\s+)" + cc_info[cc].compiler_name;
 	compiler_specific_extra_link_flags_string += R"(-extra-link-flags:\s+(.*)$)";
@@ -146,10 +148,17 @@ void scan(fs::path src_path, InfoPackageScanned& pack)
             MINILOG(collect_info_detail_logger, "found extra compile flags: " << matches[1]);
             string flags = " ";
             flags += matches[1];
-            pack.referenced_compiler_specific_extra_compile_flags[src_path.string()] += flags;
+            pack.referenced_compiler_specific_extra_compile_flags += flags;
 		}
 
-		if (regex_search(line, matches, compiler_specific_extra_link_flags_pat)) {
+        if (regex_search(line, matches, compiler_specific_extra_compile_flags_local_pat)) {
+            MINILOG(collect_info_detail_logger, "found extra compile flags: " << matches[1]);
+            string flags = " ";
+            flags += matches[1];
+            pack.referenced_compiler_specific_extra_compile_flags_local[src_path.string()] += flags;
+        }
+
+        if (regex_search(line, matches, compiler_specific_extra_link_flags_pat)) {
             MINILOG(collect_info_detail_logger, "found extra link flags: " << matches[1]);
             string flags = " ";
             flags += matches[1];
@@ -219,7 +228,8 @@ void check_referenced_file(fs::path src_path, InfoPackageScanned& pack)
 void merge(const InfoPackageScanned& pack)
 {
     copy(pack.referenced_libs.begin(), pack.referenced_libs.end(), std::back_inserter(libs));
-    compiler_specific_extra_compile_flags.insert(pack.referenced_compiler_specific_extra_compile_flags.begin(), pack.referenced_compiler_specific_extra_compile_flags.end());
+    compiler_specific_extra_compile_flags += pack.referenced_compiler_specific_extra_compile_flags;
+    compiler_specific_extra_compile_flags_local.insert(pack.referenced_compiler_specific_extra_compile_flags_local.begin(), pack.referenced_compiler_specific_extra_compile_flags_local.end());
     compiler_specific_extra_link_flags += pack.referenced_compiler_specific_extra_link_flags;
     //copy(pack.referenced_headers_to_pc.begin(), pack.referenced_headers_to_pc.end(), std::back_inserter(headers_to_pc));
     for (auto p : pack.referenced_headers_to_pc) {
