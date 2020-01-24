@@ -71,6 +71,7 @@ bool VcCpp2ObjAction::execute(const DepInfo& info)
     cmd += " ";
     cmd += cpp_path.string();
 
+// 下面不可能针对几种sed都进行维护，所以只能保证针对minised的代码有效，别的不保证。
 // 只支持BRE，意味着不支持-r选项；路径中的\要写成\\。   
 #define USE_MINISED_FROM_GNUWIN32		1
 // 支持ERE，即-r选项；路径中的\要写成\\。   
@@ -83,7 +84,21 @@ bool VcCpp2ObjAction::execute(const DepInfo& info)
 #if USE_SED_FROM_GITFORWINDOWS
 	cmd += R"( /showIncludes | sed -r -e "/Note: including file:[[:space:]]+C:\\\\Program Files/d" -e "/Note: including file:/w)";
 #elif USE_MINISED_FROM_GNUWIN32
-	cmd += R"( /showIncludes | minised -e "/Note: including file:[ \t]\+[A-Z]:\\Program Files/d" -e "/Note: including file:/w)";
+	// 忽略vc的自带的头文件
+	cmd += R"( /showIncludes | minised -e "/Note: including file:[ \t]\+[A-Z]:\\Program Files/d")";
+
+	// 忽略配置文件中指定的系统头文件，例如vcpkg下的头文件
+	if (vm.count("vc.system-header-dir")) {
+		for (auto dir : vm["vc.system-header-dir"].as<vector<string>>()) {
+			dir = regex_replace(dir, std::regex(R"(\\)"), R"(\\)"); // \换为\\，但因为前一个是正则，所以得转义，后边那个不用。
+			cmd += R"( -e "/Note: including file:[ \t]\+)";
+			cmd += dir;
+			cmd += R"(/d")";
+		}
+	}
+
+	cmd += R"( -e "/Note: including file:/w)";
+
 #endif
 	cmd += " ";
 	string showIncludes_path_string = showIncludes_path.string();

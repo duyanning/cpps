@@ -116,7 +116,8 @@ void parse(int argc, char* argv[])
         ("vc.dll-dir", po::value<vector<string>>(), "add a directory to be searched for dlls")
         ("vc.linklib", po::value<vector<string>>(), "libs to link")
         ("vc.extra-compile-flags", po::value<vector<string>>(), "extra compile flags")
-        ("clang.compiler-dir", po::value<vector<string>>(), "directory where clang compiler resides")
+		("vc.system-header-dir", po::value<vector<string>>(), "directory to ignore while generating .d file")
+		("clang.compiler-dir", po::value<vector<string>>(), "directory where clang compiler resides")
 		("clang.include-dir", po::value<vector<string>>(), "add a directory to be searched for header files")
 		("clang.lib-dir", po::value<vector<string>>(), "add a directory to be searched for libs")
 		("clang.dll-dir", po::value<vector<string>>(), "add a directory to be searched for dlls")
@@ -295,6 +296,12 @@ void parse(int argc, char* argv[])
 	string config_file_lib_dir = cc_info[cc].compiler_name + ".lib-dir";
 	if (vm.count(config_file_lib_dir)) {
 		cmd_line_builder->add_lib_dirs(link_cmd_lib_dirs, vm[config_file_lib_dir].as<vector<string>>());
+	}
+
+	// 配置文件中指定的系统头文件所在目录，这些目录在.d文件中不列出。目前只针对vc
+	string config_file_system_header_dir = cc_info[cc].compiler_name + ".system-header-dir";
+	if (vm.count(config_file_system_header_dir)) {
+		//cmd_line_builder->add_lib_dirs(link_cmd_lib_dirs, vm[config_file_lib_dir].as<vector<string>>());
 	}
 
 	// 命令行上指定的dll目录
