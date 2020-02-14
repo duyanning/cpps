@@ -31,11 +31,26 @@ void add_src(fs::path referencing_src, string referenced_name, bool check_existe
 {
     fs::path a = referencing_src;
     a.remove_filename();
-    a /= referenced_name;
-    pack.referenced_sources.push_back(a);
-    if (!check_existence) {
-        pack.generated_files.push_back(a);
+
+    expand_variable(referenced_name, a);
+    fs::path path{ referenced_name };
+
+    if (path.is_absolute()) {
+        pack.referenced_sources.push_back(path);
+        if (!check_existence) {
+            pack.generated_files.push_back(path);
+        }
+
     }
+    else {
+        a /= referenced_name;
+        pack.referenced_sources.push_back(a);
+        if (!check_existence) {
+            pack.generated_files.push_back(a);
+        }
+
+    }
+
 }
 
 void scan(fs::path src_path, InfoPackageScanned& pack)
@@ -51,7 +66,7 @@ void scan(fs::path src_path, InfoPackageScanned& pack)
     // 如果cpps在运行时崩溃，很有可能是此处正则表达式有问题，往往是R"()"少了最右边的那个括号
 
     regex usingcpp_pat{ R"(^\s*#include\s+"([\w\./]+)\.h"\s+//\s+usingcpp(\s+(nocheck))?)" };
-    regex using_pat{ R"(using(\s+(nocheck)\s+|\s+)([\w\./]+\.(cpp|cxx|c\+\+|cc|c)))" }; // | 或的顺序还挺重要，把长的排前边。免得前缀就匹配。
+    regex using_pat{ R"(using(\s+(nocheck)\s+|\s+)([\w\./$()]+\.(cpp|cxx|c\+\+|cc|c)))" }; // | 或的顺序还挺重要，把长的排前边。免得前缀就匹配。
     regex linklib_pat{ R"(//\s+linklib\s+(.+\w))" }; // linklib 后边可以跟多个库的名字，用空格分隔，库名字既可以带扩展名，也可以不带。
 
 	string compiler_specific_linklib_string = R"(//\s+)" + cc_info[cc].compiler_name;

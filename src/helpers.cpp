@@ -144,3 +144,8 @@ string surround(string s)
     return r;
 
 }
+
+void expand_variable(string& s, fs::path src_dir)
+{
+    boost::replace_all(s, "$(SHADOWDIR)", shadow(src_dir).string());
+}

@@ -12,5 +12,6 @@ void safe_remove(fs::path f);
 void put_env(const std::string name, const std::string value);
 
 std::string surround(std::string s);
+void expand_variable(string& s, fs::path src_dir);
 
 #endif // HELPERS_H

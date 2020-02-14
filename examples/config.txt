@@ -28,14 +28,28 @@ dll-dir = C:\MinGW\bin
 
 [vc]
 
-# vc配合vcpkg，不要太爽
+# vc配合vcpkg，不要太爽。
 include-dir = F:\vcpkg\installed\x86-windows\include
-include-dir = F:\vcpkg\installed\x86-windows\include\QtWidgets
+
+# Qt还是用官方预编译的吧。因为vcpkg编译Qt实在太慢，更新个别的库，也会导致Qt重新编译。
+#include-dir = F:\vcpkg\installed\x86-windows\include\QtCore
+#include-dir = F:\vcpkg\installed\x86-windows\include\QtWidgets
+#include-dir = F:\vcpkg\installed\x86-windows\include\QtGui
+include-dir = C:\Qt\5.12.7\msvc2017\include
+include-dir = C:\Qt\5.12.7\msvc2017\include\QtCore
+include-dir = C:\Qt\5.12.7\msvc2017\include\QtWidgets
+include-dir = C:\Qt\5.12.7\msvc2017\include\QtGui
+
 lib-dir = F:\vcpkg\installed\x86-windows\lib
+lib-dir = C:\Qt\5.12.7\msvc2017\lib
+
 dll-dir = F:\vcpkg\installed\x86-windows\bin
+dll-dir = C:\Qt\5.12.7\msvc2017\bin
 
 # 把下列这些目录中的头文件视为不会变化的头文件，不要让其出现在.d文件中。相当于gcc的-MMD
 system-header-dir = F:\vcpkg\installed
+system-header-dir = C:\Qt
+
 
 # 下面的部分是用vc-config-gen产生的。每次visual studio升级后，这个位置都会变化。
 # 如果执行cpps时提醒你'cl' is not recognized as an internal or external command，请更新这里
@@ -56,16 +70,23 @@ lib-dir = "C:\Program Files (x86)\Windows Kits\10\lib\10.0.17763.0\ucrt\x86"
 lib-dir = "C:\Program Files (x86)\Windows Kits\10\lib\10.0.17763.0\um\x86"                                              
                                                                                                                         
 compiler-dir = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.24.28314\bin\HostX86\x86"
-                                                                                                                        
-# fltk的界面设计生成工具fluid.exe所在目录。只要在cpps对脚本进行build期间，需要执行的命令都算编译器。
+
+# 只要在cpps对脚本进行build期间，需要执行的命令都算编译器。
+# fltk的界面设计生成工具fluid.exe所在目录。
 compiler-dir = F:\vcpkg\installed\x86-windows\tools\fltk
+
 # Qt的工具所在位置：moc、uic
-compiler-dir = F:\vcpkg\installed\x86-windows\tools\qt5\bin
+#compiler-dir = F:\vcpkg\installed\x86-windows\tools\qt5\bin
+compiler-dir = C:\Qt\5.12.7\msvc2017\bin
 
 # 下面的lib的作用相当于vc之Linker > Input > Additional Dependencies里的东西 
 linklib = kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib
+
 # 我发现vcpkg在集成至visual studio之后，链接时相当于将vcpkg下的*.lib全都交给链接器，我们也如法炮制。
 linklib = F:\vcpkg\installed\x86-windows\lib\*.lib
+
+# 有个叫Qt5Bootstrap.lib，一旦链接进来，会跟qt的其他lib冲突。还是在源码中使用linklib吧
+#linklib = C:\Qt\5.12.7\msvc2017\lib\*.lib
 
 
 

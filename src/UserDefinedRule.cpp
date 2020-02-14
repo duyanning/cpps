@@ -2,6 +2,63 @@
 #include "global.h"
 #include "UserDefinedRule.h"
 #include "InfoPackageScanned.h"
+#include "helpers.h"
+
+void populate_a_rule(
+    UserDefinedRule& rule,
+    const vector<string>& target_vector,
+    const vector<string>& prerequisite_vector,
+    vector<string> commands
+)
+{
+    // todo：在此处进行变量展开，展开之后再看是否绝对路径
+    // todo: 如果是绝对路径，就不要跟当前目录拼接了。
+    // 应该支持这样的变量：$(shadowdir)
+    // 将其替换为shadow(rule.dir)的结果
+
+    for (auto t : target_vector) {
+        expand_variable(t, rule.dir);
+        fs::path path{ t };
+        if (path.is_absolute()) {
+            rule.targets.push_back(path);
+        }
+        else {
+            fs::path a = rule.dir;
+            a /= t;
+            rule.targets.push_back(a);
+        }
+
+    }
+
+    for (auto p : prerequisite_vector) {
+        //fs::path a = rule.dir;
+        //a /= p;
+        //rule.prerequisites.push_back(a);
+
+        expand_variable(p, rule.dir);
+        fs::path path{ p };
+        if (path.is_absolute()) {
+            rule.prerequisites.push_back(path);
+        }
+        else {
+            fs::path a = rule.dir;
+            a /= p;
+            rule.prerequisites.push_back(a);
+        }
+
+
+    }
+
+    //{
+    //    rule.commands.push_back(recipe);
+    //}
+
+    for (auto& c : commands) {
+        expand_variable(c, rule.dir);
+    }
+    rule.commands = commands;
+
+}
 
 // 各部分的命名可参考 https://www.gnu.org/software/make/manual/make.html#Rule-Introduction
 void process_user_defined_rule(fs::path src_path, string rule_string, InfoPackageScanned& pack)
@@ -49,21 +106,9 @@ void process_user_defined_rule(fs::path src_path, string rule_string, InfoPackag
     rule.dir = src_path;
     rule.dir.remove_filename();
 
-    for (auto t : target_vector) {
-        fs::path a = rule.dir;
-        a /= t;
-        rule.targets.push_back(a);
-    }
 
-    for (auto p : prerequisite_vector) {
-        fs::path a = rule.dir;
-        a /= p;
-        rule.prerequisites.push_back(a);
-    }
+    populate_a_rule(rule, target_vector, prerequisite_vector, { recipe });
 
-    {
-        rule.commands.push_back(recipe);
-    }
 
     pack.user_defined_rules.push_back(rule);
 
@@ -101,20 +146,22 @@ void process_user_defined_rule_multi_lines(fs::path src_path, string dependency_
     rule.dir = src_path;
     rule.dir.remove_filename();
 
-    for (auto t : target_vector) {
-        fs::path a = rule.dir;
-        a /= t;
-        rule.targets.push_back(a);
-    }
+    //for (auto t : target_vector) {
+    //    fs::path a = rule.dir;
+    //    a /= t;
+    //    rule.targets.push_back(a);
+    //}
 
-    for (auto p : prerequisite_vector) {
-        fs::path a = rule.dir;
-        a /= p;
-        rule.prerequisites.push_back(a);
-    }
+    //for (auto p : prerequisite_vector) {
+    //    fs::path a = rule.dir;
+    //    a /= p;
+    //    rule.prerequisites.push_back(a);
+    //}
 
-    
-    rule.commands = commands;
+    //
+    //rule.commands = commands;
+
+    populate_a_rule(rule, target_vector, prerequisite_vector, commands);
 
     pack.user_defined_rules.push_back(rule);
 
