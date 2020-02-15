@@ -410,5 +410,19 @@ finddialog.h.moc.cpp : finddialog.h
 
 `cpps-make`指令引入一条用户自定义规则，语法同Makefile，当然，不会有普通Makefile那么完备。具体请参考examples里fltk跟qt的例子。
 
+可将这些自动生成的文件放在影子目录中，以避免污染源码所在目录。在内嵌Make的规则中可使用名为$(SHADOWDIR)的变量代表源文件所在目录的影子目录。除了在内嵌Make中使用该变量外，还可在using指令中使用该变量，以引入自动生成的源文件。
+
+对于Qt的uic生成的.h文件，
+还可使用
+```c++
+// include-dir $(SHADOWDIR)
+```
+指令，告诉编译器在影子目录中查找头文件。
+
+## 变量
+目前近支持一个名为$(SHADOWDIR)的变量，代表源文件所在目录的影子目录。
+可在using以及内嵌的Make规则中使用。
+
+
 ## 其他
 QQ交流群：492455203

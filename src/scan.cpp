@@ -35,12 +35,16 @@ void add_include_dir(fs::path including_src, string dir, InfoPackageScanned& pac
     expand_variable(dir, a);
     fs::path path{ dir };
 
+    //cout << ">>>" << path << endl;
+
     if (path.is_absolute()) {
+        //cout << ">>>" << "is_absolute\n";
         pack.include_dirs.push_back(path);
     }
     else {
         a /= dir;
         pack.include_dirs.push_back(a);
+        //cout << ">>>" << "not is_absolute:" << a << endl;
     }
 }
 
@@ -201,6 +205,8 @@ void scan(fs::path src_path, InfoPackageScanned& pack)
 
         if (regex_search(line, matches, include_dir_pat)) {
             MINILOG(collect_info_detail_logger, "found include-dir: " << matches[1]);
+            //string dir = " "; 
+            //dir += matches[1];
             string dir = matches[1];
             add_include_dir(src_path, dir, pack);
         }
