@@ -62,6 +62,7 @@ fs::path script_file;           // 命令行上指定的脚本路径（这是个
 vector<fs::path> sources; // 所有.cpp文件的绝对路径
 vector<string> libs; // 源文件中指定的需要链接的库的名字。(就gcc来说，就是链接时命令行上-l之后的部分)
 vector<fs::path> headers_to_pc; // 所有需要预编译的头文件的绝对路径
+vector<fs::path> include_dirs; // 所有需要在编译时用到的头文件目录
 //vector<fs::path> sources_to_pc; // 所有需要预编译的.cpp文件的绝对路径(vc的头文件不能直接编译，必须被#include在一个.cpp文件中编译。)
 //map<fs::path, fs::path> source2header_to_pc; // 预编译头文件跟对应的.cpp的对应关系
 bool vc_use_pch = false; // vc是否使用预编译头文件。(目前只支持一个预编译头文件)

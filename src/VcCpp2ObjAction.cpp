@@ -46,6 +46,11 @@ bool VcCpp2ObjAction::execute(const DepInfo& info)
 
     cmd += " ";
     cmd += compile_cmd_include_dirs;
+
+	for (auto dir : include_dirs) {
+		cmd += " /I";
+		cmd += dir.string();
+	}
         
 	//cmd += m_additional_options;
 	if (vc_use_pch) {

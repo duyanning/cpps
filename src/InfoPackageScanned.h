@@ -32,6 +32,7 @@ struct InfoPackageScanned {
     unordered_map<string, string> referenced_compiler_specific_extra_compile_flags_local; // 本.cpp通过<compiler>-extra-compile-flags(local)指定的额外编译选项
     string referenced_compiler_specific_extra_link_flags; // 本.cpp通过<compiler>-extra-link-flags指定的额外链接选项
     vector<fs::path> referenced_headers_to_pc; // 本.cpp通过precompile指定的需要预编译的头文件
+    vector<fs::path> include_dirs; // 本.cpp通过include-dir指定的头文件目录
 
     bool referenced_vc_use_pch = false;
     fs::path referenced_vc_h_to_precompile;
@@ -57,11 +58,12 @@ private:
         ar& referenced_libs;
         ar& referenced_compiler_specific_extra_compile_flags;
         ar& referenced_compiler_specific_extra_compile_flags_local;
-        ar & referenced_compiler_specific_extra_link_flags;
-        ar & referenced_headers_to_pc;
-        ar & referenced_vc_use_pch;
-        ar & referenced_vc_h_to_precompile;
-        ar & referenced_vc_cpp_to_generate_pch;
+        ar& referenced_compiler_specific_extra_link_flags;
+        ar& referenced_headers_to_pc;
+        ar& include_dirs;
+        ar& referenced_vc_use_pch;
+        ar& referenced_vc_h_to_precompile;
+        ar& referenced_vc_cpp_to_generate_pch;
         ar& user_defined_rules;
         ar& generated_files;
     }

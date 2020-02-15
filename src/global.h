@@ -6,15 +6,6 @@
 #include "UserDefinedRule.h"
 #include "FileEntity.h"
 
-void parse(int argc, char* argv[]);
-void collect();
-bool build_exe();
-bool build();
-void run();
-void generate_main_file(string main_file__name);
-void generate_class_files(string class_name);
-
-
 extern string compile_cpp_cmd;
 extern string compile_h_cmd;
 extern string link_cmd;
@@ -23,6 +14,7 @@ extern fs::path script_file;
 extern vector<fs::path> sources;
 extern vector<string> libs;
 extern vector<fs::path> headers_to_pc;
+extern vector<fs::path> include_dirs;
 extern vector<fs::path> sources_to_pc;
 extern map<fs::path, fs::path> source2header_to_pc;
 extern bool vc_use_pch;

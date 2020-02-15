@@ -27,6 +27,23 @@ void add_libs_from_string(vector<string>& libs_vector, string libs_string)
     copy(parts.begin(), parts.end(), back_inserter(libs_vector));
 }
 
+void add_include_dir(fs::path including_src, string dir, InfoPackageScanned& pack)
+{
+    fs::path a = including_src;
+    a.remove_filename();
+
+    expand_variable(dir, a);
+    fs::path path{ dir };
+
+    if (path.is_absolute()) {
+        pack.include_dirs.push_back(path);
+    }
+    else {
+        a /= dir;
+        pack.include_dirs.push_back(a);
+    }
+}
+
 void add_src(fs::path referencing_src, string referenced_name, bool check_existence, InfoPackageScanned& pack)
 {
     fs::path a = referencing_src;
@@ -68,6 +85,7 @@ void scan(fs::path src_path, InfoPackageScanned& pack)
     regex usingcpp_pat{ R"(^\s*#include\s+"([\w\./]+)\.h"\s+//\s+usingcpp(\s+(nocheck))?)" };
     regex using_pat{ R"(using(\s+(nocheck)\s+|\s+)([\w\./$()]+\.(cpp|cxx|c\+\+|cc|c)))" }; // | 或的顺序还挺重要，把长的排前边。免得前缀就匹配。
     regex linklib_pat{ R"(//\s+linklib\s+(.+\w))" }; // linklib 后边可以跟多个库的名字，用空格分隔，库名字既可以带扩展名，也可以不带。
+    regex include_dir_pat{ R"(//\s+include-dir\s+([\w$()/]+))" }; // include-dir后边可以跟一个目录
 
 	string compiler_specific_linklib_string = R"(//\s+)" + cc_info[cc].compiler_name;
     compiler_specific_linklib_string += R"(-linklib\s+(.+\w))";
@@ -181,6 +199,12 @@ void scan(fs::path src_path, InfoPackageScanned& pack)
             pack.referenced_compiler_specific_extra_link_flags += flags;
         }
 
+        if (regex_search(line, matches, include_dir_pat)) {
+            MINILOG(collect_info_detail_logger, "found include-dir: " << matches[1]);
+            string dir = matches[1];
+            add_include_dir(src_path, dir, pack);
+        }
+
 		// 搜集需要预编译的头文件
 		if (regex_search(line, matches, precompile_pat)) {
 			MINILOG(collect_info_detail_logger, "found pch: " << matches[1]);
@@ -269,7 +293,8 @@ void merge(const InfoPackageScanned& pack)
             headers_to_pc.push_back(p);
         }
     }
-    
+    copy(pack.include_dirs.begin(), pack.include_dirs.end(), std::back_inserter(include_dirs));
+
     vc_use_pch = pack.referenced_vc_use_pch;
     vc_h_to_precompile = pack.referenced_vc_h_to_precompile;
     vc_cpp_to_generate_pch = pack.referenced_vc_cpp_to_generate_pch;
