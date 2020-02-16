@@ -450,6 +450,11 @@ finddialog.h.cpp : finddialog.h
 
 为了能够在源码中`#include`生成的`.h`文件，还需要告诉编译器在影子目录中寻找头文件，这是通过`include-dir`指令实现的。
 
+引入cpps-make指令之后，cpps的“scan-build-run”三阶段中的build阶段就被进一步划分成了两个子阶段：
+
+- 第一个阶段执行内嵌的Makefile，产生.cpp和.h
+- 第二个阶段编译所有.cpp，产生.exe
+
 ### `include-dir`
 请参考`cpps-make`中的例子。
 
