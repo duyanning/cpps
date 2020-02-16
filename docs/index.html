@@ -1,67 +1,127 @@
      <meta charset="utf-8" emacsmode="-*- markdown -*-"><link rel="stylesheet" href="https://casual-effects.com/markdeep/latest/slate.css?">
 
 
-    **cpps - C++脚本的(伪)解释器 / 不需要任何Makefile的C++项目建构系统引擎**
-    支持GCC，MinGW，Visual C++, Clang
+    **cpps - C++脚本的(伪)解释器**
+    也可以理解为不需要任何Makefile的C++项目建构系统引擎
+
+
+支持GCC，MinGW，Visual C++, Clang
  
 # 简介
-## 如果脚本由一个.cpp文件组成
-比如hello.cpp
+## 项目地址
+[GitHub](https://github.com/duyanning/cpps)
+
+## 如果脚本只包含一个.cpp文件
+比如你有一个hello.cpp
+```C++
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+    cout << "hello, world" << endl;
+}
+```
 
 那你执行下面这行即可：
-```ShellSession
-cpps hello.cpp
+```shell
+$ cpps hello.cpp
 ```
 
 ## 如果脚本由多个.cpp文件组成
-比如你的c++代码位于目录`~/work/hello`下，共有三个文件：
+比如你的c++代码位于目录`~/work/hello`下，共有三个文件：main.cpp、foo.cpp、foo.h，内容分别如下：
+```C++
+// main.cpp
+#include <iostream>
+#include "foo.h"
 
-hello.cpp
+using namespace std;
 
-foo.cpp
+int main()
+{
+    cout << "hello, the result is " << foo() << endl;
+}
 
-foo.h
+```
 
-如果你在hello.cpp中调用了foo.cpp中的某个函数，那么
+```C++
+// foo.cpp
+#include "foo.h"
+int foo()
+{
+    return 5;
+}
+```
 
-### 在gcc的编译环境下
+```C++
+// foo.h
+#ifndef FOO_H
+#define FOO_H
+int foo();
+#endif
+```
 
-你需要在hello.cpp中写
-```c++
+如果你使用make+Makefile的方案，除了源文件外，你还需要准备一个Makefile，内容如下：
+
+```Makefile
+hello: main.o foo.o
+    g++ -o hello main.o foo.o
+
+main.o: main.cpp foo.h
+    g++ -c main.cpp
+
+foo.o: foo.cpp foo.h
+    g++ -c foo.cpp
+```
+
+然后执行：
+```shell
+$ make
+$ ./hello
+```
+
+但如果你使用cpps的话，只需在main.cpp中
+```C++
 #include "foo.h"
 ```
-然后将foo.cpp也加进你的Makefile中。
-
-### 在cpps的解释环境下
-
-你只需要在上面这行`#include`后添加一条注释，如下：
-```c++
+这行之后添加一条注释，使其变成：
+```C++
 #include "foo.h" // usingcpp
-```    
-然后执行下边这行即可
-```ShellSession
-cpps hello.cpp
-```    
-
-如果你的.cpp文件与.h文件不同名的话，那就要这样写：
-```c++
-#include "foo.h" // using fooandbar.cpp
 ```
 
-## 如果你在hello.cpp中使用了某个库
-比如pthread
+然后执行
+```shell
+$ cpps main.cpp
+```    
+即可。
 
-### 在gcc的编译环境下
 
-你需要在gcc的命令行写`-lpthread`才能将该库链接进来
+除了usingcpp指令外，你也可以使用using指令，以上那种写法等同于：
+```c++
+#include "foo.h" // using foo.cpp
+```
+这种写法主要用在.cpp文件与.h文件不同名的情况下。
 
-### 在cpps的解释环境下
+
+## 链接某个库
+如果你在hello.cpp中，使用了某个库，比如pthread，
+
+那么，在gcc的编译环境下
+
+你需要在gcc的命令行写`-lpthread`才能将该库链接进来。
+
+在cpps的解释环境下，
 
 你只要在任意一个.cpp文件中加上这样的注释即可：
-```c++
+```C++
 // linklib pthread
 ```    
-我觉得如果哪个.cpp文件用了这个库，就把linklib写在哪个.cpp文件中。如果多个.cpp文件都用了的话，写多次也没问题。觉得烦，不如集中写在main函数所在的.cpp中。
+推荐做法是，如果哪个.cpp文件用了这个库，就把linklib指令写在哪个.cpp文件中。
+
+如果多个.cpp文件都用了同一个库的话，写多次也没问题。
+
+觉得烦，不如集中写在main函数所在的.cpp中。
 
 
 # 理念
@@ -95,7 +155,7 @@ build过程还会产生一大堆中间文件，弄脏资料所在目录。
 因为它并不是传统意义上的解释器，而是背后调用底层编译器(比如gcc)先对源代码进行编译，然后再执行产生的exe程序的。
 
 ## cpps相比真解释器的优势
-* 支持底层编译器(比如gcc)支持的全部c++语法（必须的）
+* 支持底层编译器(比如gcc)支持的全部c++语法（C++源码由底层编译器编译，所有的cpps指令皆以C++注释的形式存在）
 * 脚本执行速度快（是底层编译器产生的机器语言代码在执行）
 
 ## cpps相比真解释器的劣势
@@ -129,10 +189,10 @@ build过程还会产生一大堆中间文件，弄脏资料所在目录。
 ## cpps的哲学
 
 任何build system都包括两个部分：
-- 一个build system engine
-- 一些由用户编写的文件
 
-例如：make和Makefile，cmake和CMakeLists.txt。
+- 一个build system engine(如make)
+- 一些由用户编写的文件(如Makefile)
+
 
 一般来说，engine做的事情越多，需要用户编写的部分就越少。
 
@@ -227,13 +287,11 @@ chmod +x hello.cpp
 ```    
 感觉是不是很爽？
 
-只可惜，这一行并不是合法的C++代码
+只可惜，这一行并不是合法的C++代码。
 
-cpps认它，别的编译器却不认它。
+它会导致hello.cpp在编译时报错(虽然cpps通过一些魔法使得自己的底层编译器不会报错)。
 
-更好的做法是：不要在.cpp文件中直接添加shebang，而是新建一个扩展名为.cpps的文件，比如：
-    
-    hello.cpps
+更好的做法是：不要在.cpp文件中直接添加shebang，而是新建一个扩展名为.cpps的文件，比如`hello.cpps`。
     
 然后在这个文件中的第一行写shebang，第二行给出.cpp脚本的路径（绝对路径、相对路径都可以），如下：
 
@@ -241,29 +299,31 @@ cpps认它，别的编译器却不认它。
     hello.cpp
 
 然后将这个.cpps文件设置成可执行的
-```ShellSession
-chmod +x hello.cpps
-./hello.cpps
+```shell
+$ chmod +x hello.cpps
+$ ./hello.cpps
 ```
 咦？
-好像在个shell脚本中调用cpps hello.cpp即可达到相同效果？！
+好像在个shell脚本中调用`cpps hello.cpp`即可达到相同效果？！
 
 也不完全是，用shell脚本的话会多执行一次shell，而且也无法通过扩展名提醒你这是一个C++脚本。
 
 ## 干干净净运行
-```ShellSession
-cpps --clear hello.cpp
+```shell
+$ cpps --clear hello.cpp
 ```    
 相当于先删除之前生成的.o文件、exe文件，然后再从头build，然后再运行。
 
 如果你用新版本的cpps运行以前运行过的C++程序时遇到问题，可以这样试一下。
 
+如果还有问题，直接把缓存目录`.cpps/cache`删除掉即可。
+
 
 ## 我想得到cpps在背后生成的那个可执行文件
-```ShellSession
-cpps --build hello.cpp -o hello
+```shell
+$ cpps --build hello.cpp -o hello
 ```    
-cpps就会把它生成的那个可执行文件给你拷贝一份
+cpps就会把它生成的那个可执行文件给你拷贝一份。
 
 ## 使用MingGW作为底层编译器
 需要装了MingW，并确保`C:\MinGW\bin`在你的PATH环境变量中。
@@ -274,8 +334,8 @@ cpps就会把它生成的那个可执行文件给你拷贝一份
 
 
 然后，在用cpps执行程序时，你还需要在命令行指定boost头文件(.h)所在目录、库文件(.a)所在目录，以及动态库文件(.dll)所在目录，如下：
-```ShellSession
-cpps -c mingw hello.cpp -ID:\libs4mingw\boost\include -LD:\libs4mingw\boost\lib --dll-dir=D:\libs4mingw\boost\lib
+```shell
+$ cpps -c mingw hello.cpp -ID:\libs4mingw\boost\include -LD:\libs4mingw\boost\lib --dll-dir=D:\libs4mingw\boost\lib
 ```
 每次都要指定太麻烦？
 
@@ -287,8 +347,8 @@ lib-dir = D:\libs4mingw\boost\lib
 dll-dir = D:\libs4mingw\boost\lib
 ```
 这样你以后只需要运行
-```ShellSession
-cpps hello.cpp
+```shell
+$ cpps hello.cpp
 ```
 即可。
 
@@ -298,69 +358,119 @@ config.txt中的`include-dir`、`lib-dir`和`dll-dir`可以在多行中出现。
 
 ## 使用Visual C++作为底层编译器
 确保minised.exe与finderror.exe跟cpps.exe放在一起(这俩随cpps提供)。
-```ShellSession
-cpps -c vc main.cpp
+```shell
+> cpps -c vc main.cpp
 ```
-像上面这样，使用-c参数指定使用vc。
+像上面这样，使用`-c`参数指定使用vc。
 
 因为vc提供的选项没有gcc那么丰富，cpps对vc的控制无法通过现成的选项来进行，还需要分析vc的输出。
 在分析过程中，cpps会调用gnuwin32提供的minised.exe(就在minised文件夹下，你将它跟cpps.exe放一起)。
 
-如果你不想每次运行cpps之前，都要先在cmd窗口中运行Visual C++提供的vcvars32.bat来设置环境变量，你可以这样做：
+熟悉Visual C++命令行编译工具的朋友都知道，在执行cl之前，得先运行`vcvars32.bat`以设置必要的环境变量。
+如果你不想每次运行cpps之前，都要先在cmd窗口中运行Visual C++提供的vcvars32.bat，你可以这样做：
 
-* 新打开一个干净的cmd窗口
-* 在这个窗口中运行vcvars32.bat来设置环境变量
-* 在这个窗口中运行cpps提供的小程序vc-config-gen.exe
-* 然后将其输出复制粘贴到配置文件config.txt的vc区块即可。
+- 新打开一个干净的cmd窗口
+- 在这个窗口中运行vcvars32.bat来设置环境变量
+- 在这个窗口中运行cpps提供的小程序vc-config-gen.exe
+- 然后将其输出复制粘贴到配置文件config.txt的vc区块即可。
 
+这样做了之后，就可以直接运行cpps，而无须先执行`vcvars32.bat`了。
 
 ## 解释器指令汇总
 
-注意：所有的指令都是写在.cpp文件中的，写在.h中没用。
+绝大多数cpps指令，以C++单行注释的形式存在。极少数也可以C++多行注释的形式存在。
 
-### using
-例子：
-```c++
-#include "foo.h" // using foo.cpp
-```
-### usingcpp
-例子：
-```c++
-#include "foo.h" // usingcpp
-```
-等价于
-```c++
-#include "foo.h" // using foo.cpp
-```
-### `linklib`和`<compiler>-linklib`
-例子：
-```c++
+所有的指令都是写在.cpp文件中的，写在.h中没用，因为cpps根本不会扫描.h文件中的内容。
+
+### `usingcpp`与`using`
+简介中已经说过，不再重复。
+
+### `linklib`与`<compiler>-linklib`
+比如一个使用了FLTK库的程序，可以以下形式链接fltk。
+```C++
 #include <FL/Fl.H> // linklib fltk
 ```
-如果同一个库，在不同编译器下有不同的名字，你可以用`<compiler>-linklib`。
-### `<compiler>-extra-compile-flags`和`<compiler>-extra-link-flags`
-例子：如果你在Windows下用MinGW编译使用FLTK的程序，除了
-```c++
+如果同一个库，在不同编译器下有不同的名字，你可以用`<compiler>-linklib`这种形式代替`linklib`。
+其中`<compiler>`可以是gcc、vc、mingw、clang等。
+
+库后边的扩展名，你加也可以，不加也可以。还支持通配符(支持的通配符与shell有关)。
+
+### `<compiler>-extra-compile-flags`与`<compiler>-extra-link-flags`
+有些程序需要特殊的编译/链接选项，比如你在Windows下用MinGW编译使用FLTK的程序，除了
+```C++
 // linklib fltk
 ```
+
 你还需要在.cpp文件中加上以下指令
-```c++
+```C++
 // mingw-extra-compile-flags: -DWIN32
 // mingw-extra-link-flags: -mwindows -lole32 -luuid -lcomctl32
 ```
-库后边的扩展名，你加也可以，不加也可以。还支持通配符(支持的通配符与shell有关)。
+
+### `<compiler>-extra-compile-flags(local)`
+这条指令最后带个`(local)`，与`<compiler>-extra-compile-flags`的不同在于：
+前者仅对当前源文件起作用，后者对所有源文件起作用。
+
+### `cpps-make`
+现实中的C++工程，源代码除了C++的.cpp跟.h外，还会涉及到其他一些类型的文件。
+这些文件经过编译之后，会产生.cpp或.h文件，而这些生成的.cpp或.h文件，需要被编译进来。
+
+比如FLTK的界面描述文件.fl，经由fluid编译之后会产生.cpp文件和.h文件。
+
+又比如Qt的界面描述文件.ui，经由uic编译之后会产生.h文件；
+
+包含Q_OBJECT的.h文件经由moc编译后会产生.cpp文件；
+
+资源文件.qrc经rcc编译后会产生.cpp文件。
+
+对于这类千变万化的东西，cpps提供了嵌入式的Makefile。
+
+```C++
+// using nocheck finddialog.h.cpp
+/* cpps-make
+finddialog.h.cpp : finddialog.h
+	moc finddialog.h -o finddialog.h.cpp
+*/
+
+// cpps-make propertiesdialog.ui.h : propertiesdialog.ui // uic propertiesdialog.ui -o propertiesdialog.ui.h
+
+// using nocheck $(SHADOWDIR)/resources.qrc.cpp
+// cpps-make $(SHADOWDIR)/resources.qrc.cpp : resources.qrc // rcc resources.qrc -o $(SHADOWDIR)/resources.qrc.cpp
+
+// include-dir $(SHADOWDIR)
+```
+
+`using`指令后的`nocheck`告诉cpps，这个叫`finddialog.h.cpp`的文件是build阶段生成出来的，即便扫描阶段不存在，也不要报错。
+
+`cpps-make`指令引入一条用户自定义规则，语法同Makefile，当然，不会有普通Makefile那么完备。`moc`那条规则采用的是多行cpps-make语法，跟我们熟悉的语法很像。
+
+`uic`与`rcc`两条规则采用的是单行`cpps-make`语法。
+
+`rcc`那条规则中还使用了变量`$(SHADOWDIR)`，该变量代表`cpps-make`指令所处源文件所在目录的影子目录(就是cpps缓存.o文件的目录)。这样做的好处是，将这些自动生成的文件放在影子目录中，可以避免污染源码所在目录。从上面的例子中可以看到，除了在内嵌Makefile中使用该变量外，还可在`using`指令中使用该变量，以引入自动生成的源文件。
+
+为了能够在源码中`#include`生成的`.h`文件，还需要告诉编译器在影子目录中寻找头文件，这是通过`include-dir`指令实现的。
+
+### `include-dir`
+请参考`cpps-make`中的例子。
+
+### 变量
+目前近支持一个名为`$(SHADOWDIR)`的变量，代表源文件所在目录的影子目录。
+可在内嵌的Makefile规则，以及using指令中使用。
+
 
 ## 命令行
-### 命令行选项
-请运行以下命令来查看：
-```ShellSession
-cpps --help
+命令行上的东西，哪些属于cpps？哪些属于脚本？
+```shell
+$ cpps [cpps的命令行选项...] hello.cpp [脚本的命令行选项与命令行参数...]
 ```
-### 命令行上的东西，哪些属于cpps？哪些属于脚本？
-```ShellSession
-cpps [cpps的命令行选项...] 脚本 [脚本的命令行选项与命令行参数...]
+也就是说，脚本(即hello.cpp)之后的东西将传给脚本，作为脚本的命令行选项与参数
+
+请运行以下命令来查看命令行选项：
+```shell
+$ cpps --help
 ```
-也就是说，脚本(即xxx.cpp)之后的东西将传给脚本，作为脚本的命令行选项与参数
+
+命令行选项跟配置文件在很大程度上是重叠的。
 
 ## 配置文件
 `config.txt`
@@ -404,37 +514,6 @@ include-dir = F:\vcpkg\installed\x86-windows\include
 lib-dir = F:\vcpkg\installed\x86-windows\lib
 dll-dir = F:\vcpkg\installed\x86-windows\bin
 ```
-## 内嵌的Make
-现实中的C++工程，源代码除了C++的.cpp跟.h外，还会涉及到其他一些类型的文件。
-
-比如Qt的界面描述文件.ui，FLTK的界面描述文件.fl。
-这些文件经过编译之后，会产生.cpp或.h文件。
-除此之外，Qt著名的moc还会从.h生成.cpp。
-对于这类千变万化的东西，cpps提供了嵌入式的make脚本。
-```c++
-#include "finddialog.h"  // usingcpp
-// using nocheck finddialog.h.moc.cpp
-/* cpps-make
-finddialog.h.moc.cpp : finddialog.h
-	moc finddialog.h -o finddialog.h.moc.cpp
-*/
-```
-`using`指令后的`nocheck`告诉cpps，这个叫finddialog.h.moc.cpp的文件是build阶段生成出来的，即便扫描阶段不存在，也不要报错。
-
-`cpps-make`指令引入一条用户自定义规则，语法同Makefile，当然，不会有普通Makefile那么完备。具体请参考examples里fltk跟qt的例子。
-
-可将这些自动生成的文件放在影子目录中，以避免污染源码所在目录。在内嵌Make的规则中可使用名为$(SHADOWDIR)的变量代表源文件所在目录的影子目录。除了在内嵌Make中使用该变量外，还可在using指令中使用该变量，以引入自动生成的源文件。
-
-对于Qt的uic生成的.h文件，
-还可使用
-```c++
-// include-dir $(SHADOWDIR)
-```
-指令，告诉编译器在影子目录中查找头文件。
-
-## 变量
-目前近支持一个名为$(SHADOWDIR)的变量，代表源文件所在目录的影子目录。
-可在using以及内嵌的Make规则中使用。
 
 
 # 其他
