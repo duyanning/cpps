@@ -42,7 +42,7 @@ bool FollowRecipeAction::execute(const DepInfo& info)
         create_directories(t.parent_path());
     }
 
-    //SafeCD scd(m_rule.targets[0].parent_path()); // todo：我现在搞不清为啥当初要在这里cd了。
+    SafeCD scd(m_rule.dir);
 
     // todo：如果要处理命令中的变量，应该在此处进行。
     // 我也不确定了：或许应该在处理target与prerequisites中的变量时一并处理
@@ -57,7 +57,7 @@ bool FollowRecipeAction::execute(const DepInfo& info)
            return false;
     }
     
-    //scd.restore();
+    scd.restore();
 
     // 为每个target产生出生证明文件
     for (auto t : m_rule.targets) {
