@@ -39,8 +39,13 @@ sudo ldconfig
 用last_write_time只能调整modify time，却调整不了change time
 用//抹掉#!会导致两者都改变
 
+"Modify" is the timestamp of the last time the file's content has been mofified. This is often called "mtime". "Change" is the timestamp of the last time the file's inode has been changed, like by changing permissions, ownership, file name, number of hard links.
+
+
+这会对cpps造成什么影响呢？我怎么忘了记录了。
+
 * config.h
-这个文件也就开发时用，发布后要从config.h.in生成config.h
+这个文件也就开发时用用，发布后要从config.h.in生成config.h
 
 * 潜在问题
 ** 内嵌Makefile的问题
@@ -317,4 +322,18 @@ http://pyfltk.sourceforge.net/
 
 
 这个事情先放放
+
+* 对Qt、FLTK等工具集的支持
+自从有了内嵌Makefile，就可以处理Qt等项目了
+但是，手动编写内嵌的Makefile依然是很麻烦的。
+可以提供一些特殊指令，方便Qt工程的处理
+
+比如某个.h要用moc编译，产生的.h.cpp还要加进工程，可以用一条指令完成，比如
+#+BEGIN_SRC c++
+#include "a.h" // cpps-rule-qt-moc a.h
+// or
+#include "a.h" // cpps-rule-qt
+#+END_SRC
+
+这些指令对应的规则，不要内建在cpps的代码中，而应该以可编辑的模板文件形式提供
 

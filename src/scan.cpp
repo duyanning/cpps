@@ -74,13 +74,44 @@ void add_src(fs::path referencing_src, string referenced_name, bool check_existe
 
 }
 
-void scan(fs::path src_path, InfoPackageScanned& pack)
+void substitute_macro_params(string& line, vector<string> macro_args)
+{
+    if (macro_args.size() <= 1) // 第0个参数就是宏的名字
+        return;
+
+    int i = 0;
+    for (auto arg : macro_args) {
+        string macro_param = "$";
+        macro_param += to_string(i);
+        boost::replace_all(line, macro_param, arg);
+        i++;
+    }
+
+    // 此处还想支持$(basename foo.h)得到foo这种
+    // https://en.cppreference.com/w/cpp/regex/regex_replace
+    // https://www.regular-expressions.info/stdregex.html
+   
+    regex basename_pat{ R"(\$\(basename\s+([\w\.]+)\.\w+\))" };
+    line = std::regex_replace(line, basename_pat, "$1");
+}
+
+void scan(fs::path src_path, InfoPackageScanned& pack,
+    bool scan_marco_file = false, fs::path macro_file_path = "", vector<string> macro_args = {})
 {
     pack.cpp_sig = SHA1::from_file(src_path.string());
 
 	MINILOG(build_exe_summay_logger, "scanning " << src_path.filename().string());
 
-	ifstream in(src_path.string());
+    fs::path to_scan_file_path; // 将要扫描哪个文件？
+    if (scan_marco_file) {
+        to_scan_file_path = macro_file_path;
+    }
+    else {
+        to_scan_file_path = src_path;
+    }
+
+	//ifstream in(src_path.string());
+    ifstream in(to_scan_file_path.string());
 
 	string line;
 
@@ -121,8 +152,16 @@ void scan(fs::path src_path, InfoPackageScanned& pack)
     regex user_defined_rule_pat{ R"(//\scpps-make\s+(.+\w))" }; // 单行
     regex user_defined_rule_multi_lines_pat{R"(/\* cpps-make)"};
 
+    regex cpps_macro_pat{R"(//\scpps-macro)"};
+
 	int n = 0;
 	while (getline(in, line)) {
+
+        if (scan_marco_file) {
+            // 用宏参数替换宏体中的$1、$2、……
+            substitute_macro_params(line, macro_args);
+        }
+
 		smatch matches;
 
         //cout << line << endl;
@@ -249,6 +288,42 @@ void scan(fs::path src_path, InfoPackageScanned& pack)
             process_user_defined_rule_multi_lines(src_path, dependency_relationship, commands, pack);
 
         }
+
+        // 遇到了宏
+        if (regex_search(line, matches, cpps_macro_pat)) {
+            string macro_invocation;
+
+            string cpps_macro = "cpps-macro";
+            macro_invocation = line.substr(
+                line.find(cpps_macro) + cpps_macro.length()
+            );
+
+            //cout << "hehe" << macro_invocation << endl;
+            boost::algorithm::trim(macro_invocation);
+
+            vector<string> macro_args;
+            std::string delimiters(" "); // 支持多个分界符
+            boost::split(macro_args, macro_invocation, boost::is_any_of(delimiters), boost::token_compress_on); // token_compress_on是为了将单词之间的多个空格视为一个
+
+            //for (auto a : macro_args) {
+            //    cout << a << endl;
+            //}
+
+            // 宏的名字加上.txt就是宏文件的名字
+            fs::path macro_file_path = get_home();
+            //macro_file_path
+
+            fs::path macro_dir_name(".cpps");
+            macro_dir_name /= "macro";  // window跟linux的路径分隔符不一样
+            macro_dir_name /= macro_args[0];
+
+            macro_file_path /= macro_dir_name;
+            macro_file_path += ".txt";
+
+            scan(src_path, pack, true, macro_file_path, macro_args);
+
+        }
+        
 
 		if (max_line_scan != -1) {
 			n++;

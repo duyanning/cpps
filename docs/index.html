@@ -116,7 +116,7 @@ $ cpps main.cpp
 你只要在任意一个.cpp文件中加上这样的注释即可：
 ```C++
 // linklib pthread
-```    
+``` 
 推荐做法是，如果哪个.cpp文件用了这个库，就把linklib指令写在哪个.cpp文件中。
 
 如果多个.cpp文件都用了同一个库的话，写多次也没问题。
@@ -432,7 +432,7 @@ finddialog.h.cpp : finddialog.h
 	moc finddialog.h -o finddialog.h.cpp
 */
 
-// cpps-make propertiesdialog.ui.h : propertiesdialog.ui // uic propertiesdialog.ui -o propertiesdialog.ui.h
+// cpps-make ui_propertiesdialog.h : propertiesdialog.ui // uic propertiesdialog.ui -o ui_propertiesdialog.h
 
 // using nocheck $(SHADOWDIR)/resources.qrc.cpp
 // cpps-make $(SHADOWDIR)/resources.qrc.cpp : resources.qrc // rcc resources.qrc -o $(SHADOWDIR)/resources.qrc.cpp
@@ -461,6 +461,26 @@ finddialog.h.cpp : finddialog.h
 ### 变量
 目前仅支持一个名为`$(SHADOWDIR)`的变量，代表源文件所在目录的影子目录。
 可在内嵌的Makefile规则，以及using指令中使用。
+
+### 宏指令
+从上面对`cpps-make`的介绍，我们可以看到，要跟Qt这类具有复杂编译流程的开发环境配合起来，需要在C++源文件中以注释的形式，写一大段相当复杂的嵌入式Makefile。
+
+为了解决这个问题，我们提供了宏指令。一条宏指令可以展开为很长一段嵌入式Makefile。用户可以自己定义宏指令。针对Qt，我们已经提供了这样的宏指令。
+
+之前那个超复杂的嵌入式Makefile的例子，使用宏指令，就可以简化为以下形式：
+
+```C++
+// cpps-macro qt-moc finddialog.h
+// cpps-macro qt-uic propertiesdialog.ui
+// cpps-macro qt-rcc resources.qrc
+```
+其中`qt-moc`、`qt-uic`、`qt-rcc`是宏的名字。后边的文件名是传递给宏的参数。在宏文件中可以以`$1`、`$3`、`$3`、……的形式来引用这些参数。
+
+宏文件位于`.cpps/macro`目录下。
+
+在宏文件中除了`$1`、`$3`、`$3`、……，还可以使用一个内置函数`basename`，它可以从
+`$(basename foo.h)`
+得到`foo`。
 
 
 ## 命令行

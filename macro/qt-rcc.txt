@@ -1,0 +1,4 @@
+// using nocheck $(SHADOWDIR)/$1.cpp
+// cpps-make $(SHADOWDIR)/$1.cpp : $1 // rcc $1 -o $(SHADOWDIR)/$1.cpp
+
+// include-dir $(SHADOWDIR)

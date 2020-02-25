@@ -1,0 +1,3 @@
+// cpps-make $(SHADOWDIR)/ui_$(basename $1).h : $1 // uic $1 -o $(SHADOWDIR)/ui_$(basename $1).h
+
+// include-dir $(SHADOWDIR)

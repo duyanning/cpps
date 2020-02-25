@@ -13,7 +13,7 @@ void populate_a_rule(
 {
     // todo：在此处进行变量展开，展开之后再看是否绝对路径
     // todo: 如果是绝对路径，就不要跟当前目录拼接了。
-    // 应该支持这样的变量：$(shadowdir)
+    // 应该支持这样的变量：$(SHADOWDIR)
     // 将其替换为shadow(rule.dir)的结果
 
     for (auto t : target_vector) {

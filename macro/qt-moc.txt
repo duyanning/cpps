@@ -1,0 +1,2 @@
+// using nocheck $(SHADOWDIR)/$1.cpp
+// cpps-make $(SHADOWDIR)/$1.cpp : $1 // moc $1 -o $(SHADOWDIR)/$1.cpp
