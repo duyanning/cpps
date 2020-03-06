@@ -76,6 +76,11 @@ void parse(int argc, char* argv[])
 		("dll-dir", po::value<vector<string>>(), "add a directory to be searched for dlls")
 		;
 
+	po::options_description meta_opts("Meta options");
+	generation_opts.add_options()
+		("config-file", po::value(&config_file_name), "specify the config file to use")
+		;
+
 	po::options_description hidden_opts("Hidden options");
 	hidden_opts.add_options()
 		("script", po::value(&script_file_name), ".cpp file including int main()")
@@ -124,9 +129,18 @@ void parse(int argc, char* argv[])
         ("clang.extra-compile-flags", po::value<vector<string>>(), "extra compile flags")
         ;
 
+
+	// 定位配置文件
+	fs::path cfg_path;
+	if (vm.count("config-file")) { // 如果命令行上指定了配置文件
+		cfg_path = vm["config-file"].as<string>();
+	}
+	else {
+		cfg_path = get_home();
+		cfg_path /= ".cpps/config.txt";
+	}
+
 	// 读取配置文件
-	fs::path cfg_path = get_home();
-	cfg_path /= ".cpps/config.txt";
 	ifstream ifs(cfg_path.string());
 	if (ifs) {
 		try {

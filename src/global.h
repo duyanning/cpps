@@ -45,6 +45,7 @@ extern bool show_dep_graph;
 extern string script_file_name;
 extern string main_file_name;
 extern string class_name;
+extern string config_file_name;
 extern bool clear_run;
 extern string run_by;
 extern string compile_by;
