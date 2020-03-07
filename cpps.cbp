@@ -48,6 +48,8 @@
 				<Option parameters="--collect main.cpp" />
 				<Linker>
 					<Add option="-s" />
+					<Add option="-static-libstdc++" />
+					<Add option="-static-libgcc" />
 					<Add library="$(libs4mingw)/boost/lib/libboost_filesystem-mgw63-mt-x32-1_66.a" />
 					<Add library="$(libs4mingw)/boost/lib/libboost_program_options-mgw63-mt-x32-1_66.a" />
 					<Add library="$(libs4mingw)/boost/lib/libboost_system-mgw63-mt-x32-1_66.a" />
