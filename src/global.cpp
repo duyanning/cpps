@@ -27,6 +27,7 @@ bool show_dep_graph = false;
 string script_file_name;
 string main_file_name;
 string class_name;
+string std_pch_name;
 string config_file_name;
 bool clear_run = false;
 string run_by; // exec/system

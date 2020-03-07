@@ -337,3 +337,11 @@ http://pyfltk.sourceforge.net/
 
 这些指令对应的规则，不要内建在cpps的代码中，而应该以可编辑的模板文件形式提供
 
+* boost::serialization产生的文件有版本问题
+我mingw编译出来的cpps，用的老版本的boost
+
+vc编译出来的cpps，用的新版本的boost
+
+于是，前者在读取后者串行化的文件时，抛出异常了。
+
+

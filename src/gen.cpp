@@ -2,6 +2,25 @@
 #include "global.h"
 #include "samples.h"
 
+void generate_pch_file(string pch_base_name)
+{
+	ofstream f;
+	string pch_h_name = pch_base_name + ".h";
+	string pch_cpp_name = pch_base_name + ".cpp";
+
+	if (fs::exists(pch_h_name) || fs::exists(pch_cpp_name)) {
+		//cout << "std.h or std.cpp exists." << endl;
+		cout << pch_h_name << " or " << pch_cpp_name << " exists." << endl;
+		return;
+	}
+	f.open(pch_h_name);
+	f << std_h_sample;
+	f.close();
+
+	f.open(pch_cpp_name);
+	f << std_cpp_sample;
+	f.close();
+}
 
 void generate_main_file(string main_file_name)
 {
@@ -16,17 +35,7 @@ void generate_main_file(string main_file_name)
 	f.close();
 
 
-	if (fs::exists("std.h") || fs::exists("std.cpp")) {
-		cout << "std.h or std.cpp exists." << endl;
-		return;
-	}
-	f.open("std.h");
-	f << std_h_sample;
-	f.close();
-
-	f.open("std.cpp");
-	f << std_cpp_sample;
-	f.close();
+	generate_pch_file("std");
 }
 
 void generate_class_files(string class_name)

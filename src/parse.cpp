@@ -65,8 +65,9 @@ void parse(int argc, char* argv[])
 
 	po::options_description generation_opts("Generation options");
 	generation_opts.add_options()
-		("generate,g", po::value(&main_file_name), "'cpps -g hello.cpp' generate a helloworld program")
-		("class", po::value(&class_name), "'cpps --class Car' generate Car.cpp and Car.h")
+		("generate,g", po::value(&main_file_name), "'cpps -g hello.cpp' generates a helloworld program")
+		("class", po::value(&class_name), "'cpps --class Car' generates Car.cpp and Car.h")
+		("gen-std-pch", po::value(&std_pch_name), "'cpps --gen-std-pch std' generates std.cpp and std.h for precompiling")
 		;
 
 	po::options_description config_opts("Configuration options");
@@ -77,7 +78,7 @@ void parse(int argc, char* argv[])
 		;
 
 	po::options_description meta_opts("Meta options");
-	generation_opts.add_options()
+	meta_opts.add_options()
 		("config-file", po::value(&config_file_name), "specify the config file to use")
 		;
 
@@ -88,10 +89,10 @@ void parse(int argc, char* argv[])
 		;
 
 	po::options_description cmdline_options; // 用于解析命令的选项
-	cmdline_options.add(info_opts).add(build_opts).add(run_opts).add(generation_opts).add(config_opts).add(hidden_opts);
+	cmdline_options.add(info_opts).add(build_opts).add(run_opts).add(generation_opts).add(config_opts).add(meta_opts).add(hidden_opts);
 
 	po::options_description visible_options; // 呈现给用户的选项
-	visible_options.add(info_opts).add(build_opts).add(run_opts).add(generation_opts).add(config_opts);
+	visible_options.add(info_opts).add(build_opts).add(run_opts).add(generation_opts).add(config_opts).add(meta_opts);
 
 	po::positional_options_description p;
 	p.add("script", 1);
@@ -214,6 +215,11 @@ void parse(int argc, char* argv[])
 
 	if (vm.count("generate")) {
 		generate_main_file(main_file_name);
+		throw 0;
+	}
+
+	if (vm.count("gen-std-pch")) {
+		generate_pch_file(std_pch_name);
 		throw 0;
 	}
 
