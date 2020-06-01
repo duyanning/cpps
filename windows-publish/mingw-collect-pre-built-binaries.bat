@@ -5,3 +5,4 @@ COPY ..\bin\ReleaseStatic\*.exe cpp-mingw-prebuilt-bin
 COPY ..\finderror\bin\Release\*.exe cpp-mingw-prebuilt-bin
 COPY ..\vc-config-gen\bin\Release\*.exe cpp-mingw-prebuilt-bin
 COPY ..\minised\*.exe cpp-mingw-prebuilt-bin
+XCOPY /I ..\macro cpp-mingw-prebuilt-bin\macro
