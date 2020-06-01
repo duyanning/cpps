@@ -70,11 +70,15 @@ bool VcCpp2ObjAction::execute(const DepInfo& info)
 
     cmd += " /Fo:";
 
-    cmd += " ";
+    cmd += R"(")";
     cmd += obj_path.string();
+	cmd += R"(")";
 
-    cmd += " ";
+	cmd += " ";
+
+	cmd += R"(")";
     cmd += cpp_path.string();
+	cmd += R"(")";
 
 // 下面不可能针对几种sed都进行维护，所以只能保证针对minised的代码有效，别的不保证。
 // 只支持BRE，意味着不支持-r选项；路径中的\要写成\\。   

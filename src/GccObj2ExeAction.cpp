@@ -42,11 +42,13 @@ bool GccObj2ExeAction::execute(const DepInfo& info)
 
     cmd += " ";
 
+    cmd += R"(")";
     cmd += exe_path.string();
+    cmd += R"(")";
 
     for (auto p : info.all) {
         FileEntityPtr f = static_pointer_cast<FileEntity>(p);
-        cmd = cmd + " " + f->path().string();
+        cmd = cmd + " " + R"(")" + f->path().string() + R"(")";
     }
 
     cmd += " ";

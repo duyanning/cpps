@@ -39,13 +39,13 @@ bool VcObj2ExeAction::execute(const DepInfo& info)
 
 	cmd += " /Fe:";
 
-    cmd += " ";
-
+    cmd += R"(")";
     cmd += exe_path.string();
+    cmd += R"(")";
 
     for (auto p : info.all) {
         FileEntityPtr f = static_pointer_cast<FileEntity>(p);
-        cmd = cmd + " " + f->path().string();
+        cmd = cmd + " " + R"(")" + f->path().string() + R"(")";
     }
 
     // 下面这些东西必须放在文件名之后

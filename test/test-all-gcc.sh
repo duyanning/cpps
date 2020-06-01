@@ -6,7 +6,7 @@
 
 for i in */ ;
 do
-    cd $i
+    cd "$i"
     if [ -f "run-gcc.sh" ]
 	then
 	    echo running $i

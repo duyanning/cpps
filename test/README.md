@@ -2,24 +2,22 @@
 
 # linux+gcc环境下 
 要运行所有测试用例，在本目录下执行
-    ./run-all-tests.sh
-
-要将一个目录加入其中，请编辑文件tests。
+    ./test-all-gcc.sh
 
 要运行单个测试用例，可在用例目录下执行
-    ../run-this-test.sh
+    ../test-this-gcc.sh
 
-每个目录下得提供一个./test.sh
+每个目录下得提供一个run-gcc.sh
 
 # windows+vc环境下
 
 要运行所有测试用例，在本目录下执行
-    run-all-tests.bat
+    test-all-vc.bat
 
 要运行单个测试用例，可在用例目录下执行
-    ..\run-this-test.bat
+    ..\test-this-vc.bat
 
-每个目录下得提供一个test.bat
+每个目录下得提供一个run-vc.bat
 
 
 注意：得用cmd或powershell，而不能用conemu
@@ -32,13 +30,13 @@
 
 # windows+mingw环境下
 要运行所有测试用例，在本目录下执行
-    run-all-tests-mingw.bat
+    test-all-mingw.bat
 
 要运行单个测试用例，可在用例目录下执行
-    ..\run-this-test-mingw.bat
+    ..\test-this-mingw.bat
 
-每个目录下得提供一个test-mingw.bat
+每个目录下得提供一个run-mingw.bat
 
 # 将一个测试用例在gcc/mingw/vc三者间调整
-../sh2bat.sh  run-gcc.sh vc > run-vc.sh
-../sh2bat.sh  run-gcc.sh mingw > run-mingw.sh
+../sh2bat.sh  run-gcc.sh vc > run-vc.bat
+../sh2bat.sh  run-gcc.sh mingw > run-mingw.bat
