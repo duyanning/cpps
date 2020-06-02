@@ -388,7 +388,7 @@ config.txt中的`include-dir`、`lib-dir`和`dll-dir`可以在多行中出现。
 ### `linklib`与`<compiler>-linklib`
 比如一个使用了FLTK库的程序，可以以下形式链接fltk。
 ```C++
-#include <FL/Fl.H> // linklib fltk
+#include &lt;FL/Fl.H> // linklib fltk
 ```
 如果同一个库，在不同编译器下有不同的名字，你可以用`<compiler>-linklib`这种形式代替`linklib`。
 其中`<compiler>`可以是gcc、vc、mingw、clang等。
@@ -547,4 +547,7 @@ QQ交流群：492455203
 
  
 <style class="fallback">body{visibility:hidden}</style><script>markdeepOptions={tocStyle:'long'};</script>
-<!-- Markdeep: --><script src="markdeep.min.js" charset="utf-8"></script>
+<!-- Markdeep: -->
+<!--<script src="https://casual-effects.com/markdeep/latest/markdeep.min.js?" charset="utf-8"></script>-->
+
+<script src="markdeep.min.js" charset="utf-8"></script>
