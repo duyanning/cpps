@@ -1,0 +1,3 @@
+// using nocheck $(SHADOWDIR)/$1.cpp
+// cpps-make $(SHADOWDIR)/$1.cpp : $1 // bison --language=c++ -d -o $(SHADOWDIR)/$1.cpp $1
+// include-dir $(SHADOWDIR)
