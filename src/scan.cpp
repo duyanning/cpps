@@ -120,7 +120,7 @@ void scan(fs::path src_path, InfoPackageScanned& pack,
     regex usingcpp_pat{ R"(^\s*#include\s+"([\w\./]+)\.h"\s+//\s+usingcpp(\s+(nocheck))?)" };
     regex using_pat{ R"(using(\s+(nocheck)\s+|\s+)([\w\./$()]+\.(cpp|cxx|c\+\+|cc|c)))" }; // | 或的顺序还挺重要，把长的排前边。免得前缀就匹配。
     regex linklib_pat{ R"(//\s+linklib\s+(.+\w))" }; // linklib 后边可以跟多个库的名字，用空格分隔，库名字既可以带扩展名，也可以不带。
-    regex include_dir_pat{ R"(//\s+include-dir\s+([\w$()/]+))" }; // include-dir后边可以跟一个目录
+    regex include_dir_pat{ R"(//\s+include-dir\s+([\w\.\-\+$()/]+))" }; // include-dir后边可以跟一个目录
 
 	string compiler_specific_linklib_string = R"(//\s+)" + cc_info[cc].compiler_name;
     compiler_specific_linklib_string += R"(-linklib\s+(.+\w))";

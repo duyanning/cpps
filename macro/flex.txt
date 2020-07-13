@@ -1,3 +1,4 @@
 // using nocheck $(SHADOWDIR)/$1.cpp
-// cpps-make $(SHADOWDIR)/$1.cpp : $1 // flex -o$(SHADOWDIR)/$1.cpp --header-file=$(SHADOWDIR)/$1.h $1
+// cpps-make $(SHADOWDIR)/$1.cpp : $1 // flex -o$(SHADOWDIR)/$1.cpp $1
 // include-dir $(SHADOWDIR)
+// include-dir .
