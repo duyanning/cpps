@@ -1,5 +1,5 @@
 #include "driver.h"
-#include "parser.y.hpp"
+#include "parser.y.h"
 
 driver::driver ()
   : trace_parsing (false), trace_scanning (false)

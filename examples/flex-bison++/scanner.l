@@ -5,7 +5,7 @@
 # include <cstring> // strerror
 # include <string>
 # include "driver.h"
-# include "parser.y.hpp"
+# include "parser.y.h"
 %}
 
 %{

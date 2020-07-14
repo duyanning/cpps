@@ -1,4 +1,4 @@
 // using nocheck $(SHADOWDIR)/$1.cpp
-// cpps-make $(SHADOWDIR)/$1.cpp : $1 // bison --language=c++ -d -o $(SHADOWDIR)/$1.cpp $1
+// cpps-make $(SHADOWDIR)/$1.cpp : $1 // bison --language=c++ --defines=$(SHADOWDIR)/$1.h -o $(SHADOWDIR)/$1.cpp $1
 // include-dir $(SHADOWDIR)
 // include-dir .
