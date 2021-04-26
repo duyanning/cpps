@@ -2,11 +2,16 @@
 
 #include "finddialog.h"  // usingcpp
 
-// vc-extra-compile-flags: -IF:\vcpkg\installed\x86-windows\include\QtWidgets
+//´ËĞĞ×÷·Ï// vc-extra-compile-flags: -IF:\vcpkg\installed\x86-windows\include\QtWidgets
+
+// ĞèÒªconfig.txtÖĞÉèÖÃºÃÍ·ÎÄ¼ş¸ú¿âµÄÂ·¾¶¡£
+
+// linklib Qt5Widgets
+// linklib Qt5Core
 
 // using nocheck finddialog.h.moc.cpp
 // cpps-make finddialog.h.moc.cpp : finddialog.h // moc finddialog.h -o finddialog.h.moc.cpp
-// ä¸Šé¢è¿™æ˜¯å•è¡Œmakeã€‚åªæ”¯æŒä¸€æ¡å‘½ä»¤ã€‚å‘½ä»¤å†™åœ¨//ä¹‹å
+// ÉÏÃæÕâÊÇµ¥ĞĞmake¡£Ö»Ö§³ÖÒ»ÌõÃüÁî¡£ÃüÁîĞ´ÔÚ//Ö®ºó
 
 int main(int argc, char *argv[])
 {

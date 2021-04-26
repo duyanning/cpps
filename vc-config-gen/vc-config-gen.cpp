@@ -14,7 +14,7 @@ void gen_config_string(const string& prefix, const vector<string>& parts)
 		if (p != "") {
 			cout << prefix << R"( = ")" << p << R"(")" << endl;
 		}
-		
+
 	}
 }
 
@@ -29,11 +29,23 @@ int main()
 		if (boost::ifind_first(line, "PATH=").begin() == line.begin()) {
 
 			//cout << line << endl;
-			auto semicolon_pos = line.find(";");
+//			auto semicolon_pos = line.find(";");
+//			cout << R"(compiler-dir = ")"
+//				<< line.substr(5, semicolon_pos - 5)
+//				<< R"(")" << endl;
+//			cout << "\n\n\n";
+            // 有时这个目录在path的第一截，有时不在第一截
+			auto msvc_pos = line.find("VC\\Tools\\MSVC");
+			auto previous_semicolon_pos = line.rfind(";", msvc_pos);
+			if (previous_semicolon_pos == string::npos) {
+                previous_semicolon_pos = line.rfind("=", msvc_pos);
+			}
+			auto next_semicolon_pos = line.find(";", msvc_pos);
 			cout << R"(compiler-dir = ")"
-				<< line.substr(5, semicolon_pos - 5)
+				<< line.substr(previous_semicolon_pos + 1, next_semicolon_pos - previous_semicolon_pos - 1)
 				<< R"(")" << endl;
 			cout << "\n\n\n";
+
 		}
 
 		if (line.find("INCLUDE=") != string::npos) {

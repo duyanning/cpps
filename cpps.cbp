@@ -8,20 +8,23 @@
 		<Build>
 			<Target title="Debug">
 				<Option output="bin/Debug/cpps" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="./mingw-test/hello" />
+				<Option working_dir="F:/myprj/cpps/examples/hello" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="--collect main.cpp" />
+				<Option parameters="-v hello.cpp" />
 				<Compiler>
 					<Add option="-g" />
+					<Add directory="$(libs4mingw)/boost/lib" />
 				</Compiler>
 				<Linker>
-					<Add library="$(libs4mingw)/boost/lib/libboost_filesystem-mgw48-d-1_57.dll.a" />
-					<Add library="$(libs4mingw)/boost/lib/libboost_program_options-mgw48-d-1_57.dll.a" />
-					<Add library="$(libs4mingw)/boost/lib/libboost_system-mgw48-d-1_57.dll.a" />
-					<Add library="$(libs4mingw)/boost/lib/libboost_regex-mgw48-d-1_57.dll.a" />
-					<Add library="$(libs4mingw)/boost/lib/libboost_serialization-mgw48-d-1_57.dll.a" />
+					<Add library="libboost_filesystem-mgw63-mt-d-x32-1_66.dll.a" />
+					<Add library="libboost_program_options-mgw63-mt-d-x32-1_66.dll.a" />
+					<Add library="libboost_system-mgw63-mt-d-x32-1_66.dll.a" />
+					<Add library="libboost_regex-mgw63-mt-d-x32-1_66.dll.a" />
+					<Add library="libboost_serialization-mgw63-mt-d-x32-1_66.dll.a" />
+					<Add library="libboost_timer-mgw63-mt-d-x32-1_66.dll.a" />
+					<Add library="libboost_chrono-mgw63-mt-d-x32-1_66.dll.a" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -31,32 +34,42 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Option parameters="--collect main.cpp" />
+				<Compiler>
+					<Add directory="$(libs4mingw)/boost/lib" />
+				</Compiler>
 				<Linker>
 					<Add option="-s" />
-					<Add library="$(libs4mingw)/boost/lib/libboost_filesystem-mgw48-1_57.dll.a" />
-					<Add library="$(libs4mingw)/boost/lib/libboost_program_options-mgw48-1_57.dll.a" />
-					<Add library="$(libs4mingw)/boost/lib/libboost_system-mgw48-1_57.dll.a" />
-					<Add library="$(libs4mingw)/boost/lib/libboost_regex-mgw48-1_57.dll.a" />
+					<Add library="libboost_filesystem-mgw63-mt-x32-1_66.dll.a" />
+					<Add library="libboost_program_options-mgw63-mt-x32-1_66.dll.a" />
+					<Add library="libboost_system-mgw63-mt-x32-1_66.dll.a" />
+					<Add library="libboost_regex-mgw63-mt-x32-1_66.dll.a" />
+					<Add library="libboost_serialization-mgw63-mt-x32-1_66.dll.a" />
+					<Add library="libboost_timer-mgw63-mt-x32-1_66.dll.a" />
+					<Add library="libboost_chrono-mgw63-mt-x32-1_66.dll.a" />
+					<Add directory="$(libs4mingw)/boost/lib" />
 				</Linker>
 			</Target>
 			<Target title="ReleaseStatic">
 				<Option output="bin/ReleaseStatic/cpps" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="./mingw-test/hello" />
+				<Option working_dir="F:/myprj/cpps/examples/hello" />
 				<Option object_output="obj/ReleaseStatic/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="--collect main.cpp" />
+				<Option parameters="-v hello.cpp" />
+				<Compiler>
+					<Add directory="$(libs4mingw)/boost/lib" />
+				</Compiler>
 				<Linker>
 					<Add option="-s" />
 					<Add option="-static-libstdc++" />
 					<Add option="-static-libgcc" />
-					<Add library="$(libs4mingw)/boost/lib/libboost_filesystem-mgw63-mt-x32-1_66.a" />
-					<Add library="$(libs4mingw)/boost/lib/libboost_program_options-mgw63-mt-x32-1_66.a" />
-					<Add library="$(libs4mingw)/boost/lib/libboost_system-mgw63-mt-x32-1_66.a" />
-					<Add library="$(libs4mingw)/boost/lib/libboost_regex-mgw63-mt-x32-1_66.a" />
-					<Add library="$(libs4mingw)/boost/lib/libboost_serialization-mgw63-mt-x32-1_66.a" />
-					<Add library="$(libs4mingw)/boost/lib/libboost_timer-mgw63-mt-s-x32-1_66.a" />
-					<Add library="$(libs4mingw)/boost/lib/libboost_chrono-mgw63-mt-s-x32-1_66.a" />
+					<Add library="libboost_filesystem-mgw63-mt-x32-1_66.a" />
+					<Add library="libboost_program_options-mgw63-mt-x32-1_66.a" />
+					<Add library="libboost_system-mgw63-mt-x32-1_66.a" />
+					<Add library="libboost_regex-mgw63-mt-x32-1_66.a" />
+					<Add library="libboost_serialization-mgw63-mt-x32-1_66.a" />
+					<Add library="libboost_timer-mgw63-mt-x32-1_66.a" />
+					<Add library="libboost_chrono-mgw63-mt-x32-1_66.a" />
 				</Linker>
 			</Target>
 		</Build>
@@ -140,10 +153,6 @@
 		<Unit filename="src/sha1.cpp" />
 		<Unit filename="src/sha1.hpp" />
 		<Extensions>
-			<code_completion />
-			<envvars />
-			<debugger />
-			<lib_finder disable_auto="1" />
 			<DoxyBlocks>
 				<comment_style block="0" line="0" />
 				<doxyfile_project />
@@ -153,6 +162,7 @@
 				<doxyfile_dot />
 				<general />
 			</DoxyBlocks>
+			<lib_finder disable_auto="1" />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

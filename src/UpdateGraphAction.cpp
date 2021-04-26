@@ -84,6 +84,11 @@ C:\Users\duyanning\.cpps\cache\myprj\cpps\test\multiple-srcs\foo.cpp.o: \
 
         boost::algorithm::trim(line);
 
+        if (line.empty())
+            return true;
+        // 如果把一个空串交给boost_1_76_0的split_line_to_items，得到items里有一个元素。
+        // 上面return就是为了避免这点。
+
         vector<string> items;
         split_line_to_items(line, items);
 

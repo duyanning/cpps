@@ -90,7 +90,7 @@ void substitute_macro_params(string& line, vector<string> macro_args)
     // 此处还想支持$(basename foo.h)得到foo这种
     // https://en.cppreference.com/w/cpp/regex/regex_replace
     // https://www.regular-expressions.info/stdregex.html
-   
+
     regex basename_pat{ R"(\$\(basename\s+([\w\.]+)\.\w+\))" };
     line = std::regex_replace(line, basename_pat, "$1");
 }
@@ -120,7 +120,8 @@ void scan(fs::path src_path, InfoPackageScanned& pack,
     regex usingcpp_pat{ R"(^\s*#include\s+"([\w\./]+)\.h"\s+//\s+usingcpp(\s+(nocheck))?)" };
     regex using_pat{ R"(using(\s+(nocheck)\s+|\s+)([\w\./$()]+\.(cpp|cxx|c\+\+|cc|c)))" }; // | 或的顺序还挺重要，把长的排前边。免得前缀就匹配。
     regex linklib_pat{ R"(//\s+linklib\s+(.+\w))" }; // linklib 后边可以跟多个库的名字，用空格分隔，库名字既可以带扩展名，也可以不带。
-    regex include_dir_pat{ R"(//\s+include-dir\s+([\w\.\-\+$()/]+))" }; // include-dir后边可以跟一个目录
+//    regex include_dir_pat{ R"(//\s+include-dir\s+([\w\.\-\+$()/]+))" }; // include-dir后边可以跟一个目录
+    regex include_dir_pat{ R"(//\s+include-dir\s+([\-+\w.$()\\/]+))" }; // 怪癖：boost 1.66 mingw 把\-放[]中间正则引擎竟然会抛出异常
 
 	string compiler_specific_linklib_string = R"(//\s+)" + cc_info[cc].compiler_name;
     compiler_specific_linklib_string += R"(-linklib\s+(.+\w))";
@@ -244,7 +245,7 @@ void scan(fs::path src_path, InfoPackageScanned& pack,
 
         if (regex_search(line, matches, include_dir_pat)) {
             MINILOG(collect_info_detail_logger, "found include-dir: " << matches[1]);
-            //string dir = " "; 
+            //string dir = " ";
             //dir += matches[1];
             string dir = matches[1];
             add_include_dir(src_path, dir, pack);
@@ -275,7 +276,7 @@ void scan(fs::path src_path, InfoPackageScanned& pack,
             //cout << matches[1] << endl;
             string dependency_relationship;
             getline(in, dependency_relationship);
-            
+
             vector<string> commands;
             string c;
             getline(in, c);
@@ -323,7 +324,7 @@ void scan(fs::path src_path, InfoPackageScanned& pack,
             scan(src_path, pack, true, macro_file_path, macro_args);
 
         }
-        
+
 
 		if (max_line_scan != -1) {
 			n++;
