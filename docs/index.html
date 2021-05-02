@@ -227,13 +227,7 @@ git clone https://github.com/duyanning/cpps.git
 ## 安装前准备工作
 以ubuntu为例
 ```ShellSession
-sudo apt-get install libboost-filesystem-dev
-sudo apt-get install libboost-program-options-dev
-sudo apt-get install libboost-serialization-dev
-sudo apt-get install libboost-system-dev
-sudo apt-get install libboost-regex-dev
-sudo apt-get install libboost-timer-dev
-sudo apt-get install libboost-chrono-dev
+sudo apt-get install libboost-filesystem-dev libboost-program-options-dev libboost-serialization-dev libboost-system-dev libboost-regex-dev libboost-timer-dev libboost-chrono-dev
 ```
 
 ## 编译安装
@@ -366,8 +360,8 @@ config.txt中的`include-dir`、`lib-dir`和`dll-dir`可以在多行中出现。
 因为vc提供的选项没有gcc那么丰富，cpps对vc的控制无法通过现成的选项来进行，还需要分析vc的输出。
 在分析过程中，cpps会调用gnuwin32提供的minised.exe(就在minised文件夹下，你将它跟cpps.exe放一起)。
 
-熟悉Visual C++命令行编译工具的朋友都知道，在执行cl之前，得先运行`vcvars32.bat`以设置必要的环境变量。
-如果你不想每次运行cpps之前，都要先在cmd窗口中运行Visual C++提供的vcvars32.bat，你可以这样做：
+熟悉Visual C++命令行编译工具的朋友都知道，在执行cl之前，得先运行Visual C++提供的`vcvars32.bat`以设置必要的环境变量。
+如果你不想每次运行cpps之前，都要先在cmd窗口中运行vcvars32.bat，你可以这样做：
 
 - 新打开一个干净的cmd窗口
 - 在这个窗口中运行vcvars32.bat来设置环境变量
@@ -375,6 +369,7 @@ config.txt中的`include-dir`、`lib-dir`和`dll-dir`可以在多行中出现。
 - 然后将其输出复制粘贴到配置文件config.txt的vc区块即可。
 
 这样做了之后，就可以直接运行cpps，而无须先执行`vcvars32.bat`了。
+注意：Visual Studio每次升级后，vc所在的路径可能会发生变化。此时就需要重新运行vc-config-gen.exe，并用其给出的输出去更新config.txt中的过时部分。
 
 ## 解释器指令汇总
 
