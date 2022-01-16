@@ -54,8 +54,9 @@ system-header-dir = C:\Qt
 # 下面的部分是用vc-config-gen产生的。每次visual studio升级后，这个位置都会变化。
 # 如果执行cpps时提醒你'cl' is not recognized as an internal or external command，请更新这里
 
-include-dir = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29910\ATLMFC\include"
-include-dir = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29910\include"
+
+include-dir = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30037\ATLMFC\include"
+include-dir = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30037\include"
 include-dir = "C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\ucrt"
 include-dir = "C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\shared"
 include-dir = "C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\um"
@@ -64,16 +65,14 @@ include-dir = "C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\cppwi
 
 
 
-lib-dir = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29910\ATLMFC\lib\x86"
-lib-dir = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29910\lib\x86"
+lib-dir = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30037\ATLMFC\lib\x86"
+lib-dir = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30037\lib\x86"
 lib-dir = "C:\Program Files (x86)\Windows Kits\10\lib\10.0.19041.0\ucrt\x86"
 lib-dir = "C:\Program Files (x86)\Windows Kits\10\lib\10.0.19041.0\um\x86"
 
 
 
-compiler-dir = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29910\bin\HostX86\x86"
-
-
+compiler-dir = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30037\bin\HostX86\x86"
 
 # 只要在cpps对脚本进行build期间，需要执行的命令都算编译器。
 # fltk的界面设计生成工具fluid.exe所在目录。
@@ -90,7 +89,7 @@ linklib = kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.l
 linklib = F:\vcpkg\installed\x86-windows\lib\*.lib
 
 # 有个叫Qt5Bootstrap.lib，一旦链接进来，会跟qt的其他lib冲突。还是在源码中使用linklib吧
-#linklib = C:\Qt\5.15.2\msvc2019\lib\*.lib
+linklib = C:\Qt\5.15.2\msvc2019\lib\*.lib
 
 
 
