@@ -6,7 +6,7 @@
 
 
 支持GCC，MinGW，Visual C++, Clang
- 
+
 # 简介
 ## 项目地址
 [GitHub](https://github.com/duyanning/cpps)或[Gitee](https://gitee.com/duyanning/cpps)
@@ -81,11 +81,11 @@ $ make
 $ ./hello
 ```
 
-但如果你使用cpps的话，只需在main.cpp中
+但如果你使用cpps的话，只需在main.cpp中找到下面这行
 ```C++
 #include "foo.h"
 ```
-这行之后添加一条注释，使其变成：
+并在这行最后添加一条注释，使其变成：
 ```C++
 #include "foo.h" // usingcpp
 ```
@@ -93,7 +93,7 @@ $ ./hello
 然后执行
 ```shell
 $ cpps main.cpp
-```    
+```
 即可。
 
 
@@ -116,7 +116,7 @@ $ cpps main.cpp
 你只要在任意一个.cpp文件中加上这样的注释即可：
 ```C++
 // linklib pthread
-``` 
+```
 推荐做法是，如果哪个.cpp文件用了这个库，就把linklib指令写在哪个.cpp文件中。
 
 如果多个.cpp文件都用了同一个库的话，写多次也没问题。
@@ -140,7 +140,7 @@ $ cpps main.cpp
 而且build环节生成的可执行文件，并不位于将要处理的资料所在的位置。很难连同资料一起发布。
 build过程还会产生一大堆中间文件，弄脏资料所在目录。
 
-一句话，**脚本**的特点就是：_就地编写，就地运行_。
+一句话，**脚本**的特点就是：**就地编写，就地运行**。
 
 这正是cpps追求的目标。
 
@@ -242,7 +242,7 @@ make test
 如果没有问题的话
 ```ShellSession
 sudo make install
-``` 
+```
 
 我自己编译时用的是(注意版本号)：
 
@@ -252,6 +252,10 @@ sudo make install
 用较低版本可能会遇到编译或链接问题。
 
 # 使用
+
+最基本的用法已在“简介”部分介绍过了，此处不再赘述，只说一些高级用法。
+
+
 
 ## 预编译头文件
 你还可以通过预编译头文件来加速cpps的编译过程
@@ -278,12 +282,12 @@ sudo make install
 ```ShellSession
 chmod +x hello.cpp
 ./hello.cpp
-```    
+```
 感觉是不是很爽？
 
 只可惜，这一行并不是合法的C++代码。
 
-它会导致hello.cpp在编译时报错(虽然cpps通过一些魔法使得自己的底层编译器不会报错)。
+它会导致你用编译器编译hello.cpp时报错(虽然cpps通过一些魔法使得自己的底层编译器在编译时不会报错)。
 
 更好的做法是：不要在.cpp文件中直接添加shebang，而是新建一个扩展名为.cpps的文件，比如`hello.cpps`。
     
@@ -305,7 +309,7 @@ $ ./hello.cpps
 ## 干干净净运行
 ```shell
 $ cpps --clear hello.cpp
-```    
+```
 相当于先删除之前生成的.o文件、exe文件，然后再从头build，然后再运行。
 
 如果你用新版本的cpps运行以前运行过的C++程序时遇到问题，可以这样试一下。
@@ -316,7 +320,7 @@ $ cpps --clear hello.cpp
 ## 我想得到cpps在背后生成的那个可执行文件
 ```shell
 $ cpps --build hello.cpp -o hello
-```    
+```
 cpps就会把它生成的那个可执行文件给你拷贝一份。
 
 ## 使用MingGW作为底层编译器
@@ -358,7 +362,7 @@ config.txt中的`include-dir`、`lib-dir`和`dll-dir`可以在多行中出现。
 像上面这样，使用`-c`参数指定使用vc。
 
 因为vc提供的选项没有gcc那么丰富，cpps对vc的控制无法通过现成的选项来进行，还需要分析vc的输出。
-在分析过程中，cpps会调用gnuwin32提供的minised.exe(就在minised文件夹下，你将它跟cpps.exe放一起)。
+在分析过程中，cpps会调用[gnuwin32](http://gnuwin32.sourceforge.net/)项目提供的minised.exe(就在minised文件夹下，你将它跟cpps.exe放一起)。
 
 熟悉Visual C++命令行编译工具的朋友都知道，在执行cl之前，得先运行Visual C++提供的`vcvars32.bat`以设置必要的环境变量。
 如果你不想每次运行cpps之前，都要先在cmd窗口中运行vcvars32.bat，你可以这样做：
@@ -543,9 +547,3 @@ QQ交流群：492455203
 <!-- Markdeep: --><style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style><script src="markdeep.min.js" charset="utf-8"></script><script src="https://morgan3d.github.io/markdeep/latest/markdeep.min.js" charset="utf-8"></script><script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>
 
 
- 
-<!--<style class="fallback">body{visibility:hidden}</style><script>markdeepOptions={tocStyle:'long'};</script>-->
-<!-- Markdeep: -->
-<!--<script src="https://morgan3d.github.io/markdeep/latest/markdeep.min.js?" charset="utf-8"></script>-->
-
-<!--<script src="markdeep.min.js" charset="utf-8"></script>-->
