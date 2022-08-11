@@ -55,8 +55,9 @@ system-header-dir = C:\Qt
 # 如果执行cpps时提醒你'cl' is not recognized as an internal or external command，请更新这里
 
 
-include-dir = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30037\ATLMFC\include"
-include-dir = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30037\include"
+include-dir = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\ATLMFC\include"
+include-dir = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include"
+include-dir = "C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8\include\um"
 include-dir = "C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\ucrt"
 include-dir = "C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\shared"
 include-dir = "C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\um"
@@ -65,14 +66,16 @@ include-dir = "C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\cppwi
 
 
 
-lib-dir = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30037\ATLMFC\lib\x86"
-lib-dir = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30037\lib\x86"
+lib-dir = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\ATLMFC\lib\x86"
+lib-dir = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\lib\x86"
+lib-dir = "C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8\lib\um\x86"
 lib-dir = "C:\Program Files (x86)\Windows Kits\10\lib\10.0.19041.0\ucrt\x86"
 lib-dir = "C:\Program Files (x86)\Windows Kits\10\lib\10.0.19041.0\um\x86"
 
 
 
-compiler-dir = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30037\bin\HostX86\x86"
+compiler-dir = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\bin\HostX86\x86"
+
 
 # 只要在cpps对脚本进行build期间，需要执行的命令都算编译器。
 # fltk的界面设计生成工具fluid.exe所在目录。
