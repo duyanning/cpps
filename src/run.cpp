@@ -35,7 +35,7 @@ void run()
 			}
 			assert(i == n);
 
-			// 只为唯一新增的环境变量分配控件
+			// 只为唯一新增的环境变量分配空间
 			env[i] = new char[exec_cmd_env_vars.length()+1]; // 这片内存没有释放的必要
 			strcpy(env[i], exec_cmd_env_vars.c_str());
 			env[i+1] = nullptr;
