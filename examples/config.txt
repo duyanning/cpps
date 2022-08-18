@@ -39,6 +39,7 @@ include-dir = C:\Qt\5.15.2\msvc2019\include
 include-dir = C:\Qt\5.15.2\msvc2019\include\QtCore
 include-dir = C:\Qt\5.15.2\msvc2019\include\QtWidgets
 include-dir = C:\Qt\5.15.2\msvc2019\include\QtGui
+include-dir = C:\Qt\5.15.2\msvc2019\include\QtNetwork
 
 lib-dir = F:\vcpkg\installed\x86-windows\lib
 lib-dir = C:\Qt\5.15.2\msvc2019\lib
