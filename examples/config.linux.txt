@@ -1,0 +1,40 @@
+[general]
+# compile-by用来指定底层编译器。目前支持：gcc, mingw, vc, clang。
+# 在配置文件config.txt不存在的情况下，缺省的底层编译器同编译cpps的那个编译器。
+compile-by=gcc
+
+[gcc]
+extra-compile-flags = -Wall
+
+# Qt头文件所在目录可用qmake -query QT_INSTALL_HEADERS查询
+include-dir = /usr/include/x86_64-linux-gnu/qt5
+include-dir = /usr/include/x86_64-linux-gnu/qt5/QtCore
+include-dir = /usr/include/x86_64-linux-gnu/qt5/QtWidgets
+include-dir = /usr/include/x86_64-linux-gnu/qt5/QtGui
+include-dir = /usr/include/x86_64-linux-gnu/qt5/QtNetwork
+
+# Qt库文件所在目录可用qmake -query QT_INSTALL_LIBS查询，在那里有许多libQt5打头的文件
+# 在源码中用以下形式链接
+# linklib Qt5Core Qt5Widgets Qt5Gui Qt5Network
+
+[mingw]
+compiler-dir = C:\MinGW\bin
+extra-compile-flags = -Wall
+
+# 下面的libs4mingw是我自己创建的一个目录，里面是我用mingw编译生成的一些库
+
+# you can repeat include-dir and lib-dir many times
+# Boost
+include-dir = F:\libs4mingw\boost\include
+lib-dir = F:\libs4mingw\boost\lib
+dll-dir = F:\libs4mingw\boost\lib
+
+# FLTK
+include-dir = F:\libs4mingw\fltk-1.3.3
+lib-dir = F:\libs4mingw\fltk-1.3.3\lib
+
+# mingw dll
+dll-dir = C:\MinGW\bin
+
+
+[vc]

@@ -132,15 +132,21 @@ void scan(fs::path src_path, InfoPackageScanned& pack,
 	regex precompile_pat{ R"***(^\s*#include\s+"([\w\./]+\.(h|hpp|H|hh))"\s+//\s+precompile)***" };
 
 	string compiler_specific_extra_compile_flags_string = R"(//\s+)" + cc_info[cc].compiler_name;
-	compiler_specific_extra_compile_flags_string += R"(-extra-compile-flags:\s+(.*)$)";
+	//compiler_specific_extra_compile_flags_string += R"(-extra-compile-flags:\s+(.*)$)";
+    // boost和vc的regex是multiline模式的，但gcc的regx不是。不是multiline模式，$就会导致整个模式无法匹配
+	compiler_specific_extra_compile_flags_string += R"(-extra-compile-flags:\s+(.*))";
+                                                 // gcc-extra-compile-flags: -fPIC
 	regex compiler_specific_extra_compile_flags_pat{ compiler_specific_extra_compile_flags_string };
 
     string compiler_specific_extra_compile_flags_local_string = R"(//\s+)" + cc_info[cc].compiler_name;
-    compiler_specific_extra_compile_flags_local_string += R"(-extra-compile-flags(local):\s+(.*)$)";
-    regex compiler_specific_extra_compile_flags_local_pat{ compiler_specific_extra_compile_flags_string };
+    //compiler_specific_extra_compile_flags_local_string += R"(-extra-compile-flags(local):\s+(.*)$)";
+    // 非multiline模式的regex，$会导致匹配失败
+    compiler_specific_extra_compile_flags_local_string += R"(-extra-compile-flags(local):\s+(.*))";
+    regex compiler_specific_extra_compile_flags_local_pat{ compiler_specific_extra_compile_flags_local_string };
 
 	string compiler_specific_extra_link_flags_string = R"(//\s+)" + cc_info[cc].compiler_name;
-	compiler_specific_extra_link_flags_string += R"(-extra-link-flags:\s+(.*)$)";
+	//compiler_specific_extra_link_flags_string += R"(-extra-link-flags:\s+(.*)$)";
+	compiler_specific_extra_link_flags_string += R"(-extra-link-flags:\s+(.*))";
 	regex compiler_specific_extra_link_flags_pat{ compiler_specific_extra_link_flags_string };
 
     // 想要新增的指令
@@ -222,7 +228,9 @@ void scan(fs::path src_path, InfoPackageScanned& pack,
             add_libs_from_string(pack.referenced_libs, matches[1]);
 		}
 
+        //cout << "====================\n";
 		if (regex_search(line, matches, compiler_specific_extra_compile_flags_pat)) {
+            //cout << "+++++++++++++++++++++++++++\n";
             MINILOG(collect_info_detail_logger, "found extra compile flags: " << matches[1]);
             string flags = " ";
             flags += matches[1];

@@ -6,6 +6,13 @@ compile-by=vc
 [gcc]
 extra-compile-flags = -Wall
 
+# Qt头文件所在目录可用qmake -query QT_INSTALL_HEADERS查询
+include-dir = /usr/include/x86_64-linux-gnu/qt5
+include-dir = /usr/include/x86_64-linux-gnu/qt5/QtCore
+include-dir = /usr/include/x86_64-linux-gnu/qt5/QtWidgets
+include-dir = /usr/include/x86_64-linux-gnu/qt5/QtGui
+include-dir = /usr/include/x86_64-linux-gnu/qt5/QtNetwork
+
 [mingw]
 compiler-dir = C:\MinGW\bin
 extra-compile-flags = -Wall
