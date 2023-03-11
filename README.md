@@ -1,3 +1,5 @@
+[![中文](https://img.shields.io/badge/lang-zh-red.svg)](https://github.com/duyanning/cpps/blob/master/README.zh.md)
+
 #                                                                                                                                 Introduction                                
 
 Apparently, `cpps` is an interpreter for C++ scripts which can execute `.cpp` files directly just like `python` executes `.py` files directly.
@@ -502,9 +504,7 @@ The command line options overlap to a large extent with the configuration files.
 ## Configuration file  
 `config.txt`
 
-`config.txt`
-
-For GNU/Linux, it is located under the directory ~\.cpps.
+For GNU/Linux, this file is located under the directory ~\.cpps.
 
 For Windows, it is located under the directory `C:\Users\< Your Name >\.cpps`.
 

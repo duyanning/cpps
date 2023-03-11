@@ -1,3 +1,5 @@
+[![English](https://img.shields.io/badge/lang-en-blue.svg)](https://github.com/duyanning/cpps/blob/master/README.md)
+
 # 简介
 
 从表象上来看，cpps是C++脚本的解释器，它可以像python直接执行.py文件一样，直接执行.cpp文件。
