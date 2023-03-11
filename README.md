@@ -1,4 +1,4 @@
-[![中文](https://img.shields.io/badge/lang-zh-red.svg)](https://github.com/duyanning/cpps/blob/master/README.zh.md)
+[![中文](https://img.shields.io/badge/语言-中文-red.svg)](https://github.com/duyanning/cpps/blob/master/README.zh.md)
 
 #                                                                                                                                 Introduction                                
 

@@ -1,4 +1,4 @@
-[![English](https://img.shields.io/badge/lang-en-blue.svg)](https://github.com/duyanning/cpps/blob/master/README.md)
+[![English](https://img.shields.io/badge/language-English-blue.svg)](https://github.com/duyanning/cpps/blob/master/README.md)
 
 # 简介
 
