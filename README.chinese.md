@@ -4,8 +4,7 @@
 
 就本质上而言，cpps其实是一个不需要任何Makefile的C++项目建构系统引擎。它调用底层编译器(GCC，MinGW，Visual C++, Clang)将.cpp文件编译成.exe文件，然后执行生成的.exe文件，但并不会在目录中留下.o文件或是.exe文件。
 
-## 项目地址
-[GitHub](https://github.com/duyanning/cpps)或[Gitee](https://gitee.com/duyanning/cpps)
+# 基本用法
 
 ## 如果脚本只包含一个.cpp文件
 比如你有一个hello.cpp
@@ -383,7 +382,7 @@ config.txt中的`include-dir`、`lib-dir`和`dll-dir`可以在多行中出现。
 ### `linklib`与`<compiler>-linklib`
 比如一个使用了FLTK库的程序，可以以下形式链接fltk。
 ```C++
-#include &lt;FL/Fl.H> // linklib fltk
+#include <FL/Fl.H> // linklib fltk
 ```
 如果同一个库，在不同编译器下有不同的名字，你可以用`<compiler>-linklib`这种形式代替`linklib`。
 其中`<compiler>`可以是gcc、vc、mingw、clang等。
@@ -495,9 +494,9 @@ $ cpps --help
 ## 配置文件
 `config.txt`
 
-对于GNU/Linux来说，它位于目录`~\.cpps`下。
+对于GNU/Linux来说，它位于目录`~/.cpps`下。
 
-对于Windows来说，它位于目录`c:\Users\< Your Name >\.cpps`下。
+对于Windows来说，它位于目录`C:\Users\< Your Name >\.cpps`下。
 
 下面是个例子(更完备的例子请参考examples目录下的config.txt)，你可以看到其中有4个section：general、gcc、mingw、vc。
 
