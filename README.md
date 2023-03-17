@@ -2,9 +2,9 @@
 
 #                                                                                                                                 Introduction                                
 
-Apparently, `cpps` is an interpreter for C++ scripts which can execute `.cpp` files directly just like `python` executes `.py` files directly.
+On the surface, `cpps` is an interpreter for C++ scripts which can execute `.cpp` files directly just like `python` executes `.py` files directly.
 
-In essence, `cpps` is actually a C++ project building system engine that does not require any *Makefile*. It calls the underlying compilers (*GCC*, *MinGW*, *Visual C++*, *Clang*) to compile `.cpp` files into `.exe` files, and then executes the resulting `.exe` files, but does not leave `.o` files or `.exe` files in the directory.
+Beneath the surface, `cpps` is actually a C++ project building system engine that does not require any *Makefile*. It calls the underlying compilers (*GCC*, *MinGW*, *Visual C++*, *Clang*) to compile `.cpp` files into `.exe` files, and then executes the resulting `.exe` files, but does not leave `.o` files or `.exe` files in the directory.
 
 # Basic usage  
 
